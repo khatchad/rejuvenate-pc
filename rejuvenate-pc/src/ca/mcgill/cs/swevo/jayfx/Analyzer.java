@@ -45,7 +45,9 @@ public class Analyzer
 	public Set<IElement> getRange( IElement pElement, Relation pRelation )
 	{
 		Set<IElement> lReturn = new HashSet<IElement>();
-		if( (pRelation == Relation.DECLARES) || 
+		if( (pRelation == Relation.DECLARES_TYPE) || 
+			(pRelation == Relation.DECLARES_METHOD) ||
+			(pRelation == Relation.DECLARES_FIELD) ||
 			(pRelation == Relation.ACCESSES ) || (pRelation == Relation.T_ACCESSES ) || 
 			(pRelation == Relation.EXTENDS_CLASS ) || (pRelation == Relation.T_EXTENDS_CLASS ) ||
 			(pRelation == Relation.EXTENDS_INTERFACES) || (pRelation == Relation.T_EXTENDS_INTERFACES ) ||

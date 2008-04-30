@@ -107,7 +107,7 @@ public class AjASTCrawler extends AsmHierarchyBuilder {
 			IElement advice = convertBinding(aBinding);
 			this.adb.addElement(advice, aBinding.modifiers);
 			
-			this.adb.addRelation(declaringType, Relation.DECLARES , advice);
+			this.adb.addRelation(declaringType, Relation.DECLARES_METHOD, advice);
 		}
 		return false;
 	}

@@ -26,7 +26,9 @@ public enum Relation
 	CONTAINS				( Type.ID_CONTAINS, true ),
 	CHECKS 					( Type.ID_CHECKS, true ),
 	CREATES					( Type.ID_CREATES, true ),
-	DECLARES 				( Type.ID_DECLARES, true ),
+	DECLARES_METHOD 				( Type.ID_DECLARES_METHOD, true ),
+	DECLARES_FIELD 				( Type.ID_DECLARES_FIELD, true ),
+	DECLARES_TYPE 				( Type.ID_DECLARES_TYPE, true ),
 	EXTENDS_CLASS			( Type.ID_EXTENDS_CLASS, true ),
 	EXTENDS_INTERFACES		( Type.ID_EXTENDS_INTERFACES, true ),
 	HAS_PARAMETER_TYPES 	( Type.ID_HAS_PARAMETER_TYPES, true ),
@@ -280,7 +282,7 @@ public enum Relation
 		boolean lReturn = false;
 		if( pCategory == ICategories.CLASS )
 		{
-			if( this == DECLARES ||
+			if( this == DECLARES_METHOD ||
 					this == EXTENDS_CLASS ||
 					this == EXTENDS_INTERFACES ||
 					this == IMPLEMENTS_INTERFACE ||
@@ -464,6 +466,12 @@ public enum Relation
 		("creates", "creating", "created by", "a method creates an object of a type"),
 		ID_DECLARES 
 		("declares", "declaring", "declared by", "a class declares a member"), 
+		ID_DECLARES_FIELD
+		("declares_field", "declaring field", "field declared by", "a class declares a field"), 
+		ID_DECLARES_METHOD
+		("declares_method", "declaring method", "method declared by", "a class declares a method"), 
+		ID_DECLARES_TYPE
+		("declares_type", "declaring type", "type declared by", "a class declares a type"), 
 		ID_EXTENDS_CLASS 
 		("extends_class", "extending", "extended by", "a class directly extends a class"),
 		ID_EXTENDS_INTERFACES 
