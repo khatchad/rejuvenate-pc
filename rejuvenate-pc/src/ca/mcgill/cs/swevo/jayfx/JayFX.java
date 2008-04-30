@@ -364,9 +364,14 @@ public class JayFX {
 	 */
 	public Set<IElement> getRange(IElement pElement, Relation pRelation) {
 		if ((pRelation == Relation.DECLARES_TYPE
-				|| pRelation == Relation.DECLARES_FIELD || pRelation == Relation.DECLARES_METHOD)
-				&& !this.isProjectElement(pElement))
-			return this.getDeclaresForNonProjectElement(pElement);
+				&& !this.isProjectElement(pElement)))
+			return this.getDeclaresTypeForNonProjectElement(pElement);
+		if ((pRelation == Relation.DECLARES_METHOD
+				&& !this.isProjectElement(pElement)))
+			return this.getDeclaresMethodForNonProjectElement(pElement);
+		if ((pRelation == Relation.DECLARES_FIELD
+				&& !this.isProjectElement(pElement)))
+			return this.getDeclaresFieldForNonProjectElement(pElement);
 		if (pRelation == Relation.EXTENDS_CLASS
 				&& !this.isProjectElement(pElement))
 			return this.getExtendsClassForNonProjectElement(pElement);
@@ -603,7 +608,7 @@ public class JayFX {
 	 * @return A set of elements declared. Cannot be null. Emptyset if there is
 	 *         any problem converting the element.
 	 */
-	private Set<IElement> getDeclaresForNonProjectElement(IElement pElement) {
+	private Set<IElement> getDeclaresFieldForNonProjectElement(IElement pElement) {
 		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
@@ -614,9 +619,43 @@ public class JayFX {
 					final IField[] lFields = ((IType) lElement).getFields();
 					for (final IField element : lFields)
 						lReturn.add(this.convertToElement(element));
+				}
+			} catch (final ConversionException pException) {
+				// Nothing, we return the empty set.
+			} catch (final JavaModelException pException) {
+				// Nothing, we return the empty set.
+			}
+		return lReturn;
+	}
+	
+	private Set<IElement> getDeclaresMethodForNonProjectElement(IElement pElement) {
+		assert pElement != null;
+		final Set<IElement> lReturn = new HashSet<IElement>();
+		if (pElement.getCategory() == ICategories.CLASS)
+			try {
+				final IJavaElement lElement = this
+						.convertToJavaElement(pElement);
+				if (lElement instanceof IType) {
 					final IMethod[] lMethods = ((IType) lElement).getMethods();
 					for (final IMethod element : lMethods)
 						lReturn.add(this.convertToElement(element));
+				}
+			} catch (final ConversionException pException) {
+				// Nothing, we return the empty set.
+			} catch (final JavaModelException pException) {
+				// Nothing, we return the empty set.
+			}
+		return lReturn;
+	}
+	
+	private Set<IElement> getDeclaresTypeForNonProjectElement(IElement pElement) {
+		assert pElement != null;
+		final Set<IElement> lReturn = new HashSet<IElement>();
+		if (pElement.getCategory() == ICategories.CLASS)
+			try {
+				final IJavaElement lElement = this
+						.convertToJavaElement(pElement);
+				if (lElement instanceof IType) {
 					final IType[] lTypes = ((IType) lElement).getTypes();
 					for (final IType element : lTypes)
 						lReturn.add(this.convertToElement(element));
