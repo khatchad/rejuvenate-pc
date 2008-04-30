@@ -51,9 +51,9 @@ public class TestProgramDatabase extends TestCase
         assertTrue( aDB.contains( aClass1 ));
         aDB.addElement( aClass2, 0 );
         assertTrue( aDB.contains( aClass2 ));
-        aDB.addRelation( aClass1, Relation.DECLARES, aClass2 );
+        aDB.addRelation( aClass1, Relation.DECLARES_TYPE, aClass2 );
         aDB.addElement( aClass1, 0 );
-        Set lSet = aDB.getRange( aClass1, Relation.DECLARES );
+        Set lSet = aDB.getRange( aClass1, Relation.DECLARES_TYPE );
         assertTrue( lSet.size() == 1 );
     }
     
@@ -157,10 +157,10 @@ public class TestProgramDatabase extends TestCase
     	// Unit case
     	aDB.addElement( aMethod1, 0 );
     	aDB.addElement( aField1, 0 );
-    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES, aField1 );
+    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES_FIELD, aField1 );
     	aDB.addRelationAndTranspose( aClass1, Relation.CALLS, aMethod1 );
     	aDB.copyRelations( aClass1, aClass2 );
-    	Set lSet = aDB.getRange( aClass1, Relation.DECLARES );
+    	Set lSet = aDB.getRange( aClass1, Relation.DECLARES_FIELD );
     	assertTrue( lSet.size() == 1 );
     	assertTrue( lSet.contains( aField1 ));
     	lSet = aDB.getRange( aClass1, Relation.CALLS );
@@ -174,7 +174,7 @@ public class TestProgramDatabase extends TestCase
     	assertTrue( lSet.size() == 2 );
     	assertTrue( lSet.contains( aClass1 ));
     	assertTrue( lSet.contains( aClass2 ));
-    	lSet = aDB.getRange( aClass2, Relation.DECLARES );
+    	lSet = aDB.getRange( aClass2, Relation.DECLARES_FIELD );
     	assertTrue( lSet.size() == 1 );
     	assertTrue( lSet.contains( aField1 ));
     	lSet = aDB.getRange( aClass2, Relation.CALLS );
@@ -212,18 +212,18 @@ public class TestProgramDatabase extends TestCase
     	// Invalid case
     	try
 		{
-    		aDB.getRange( aClass1, Relation.DECLARES );
+    		aDB.getRange( aClass1, Relation.DECLARES_METHOD );
     		fail( "Expected ElementNotFoundException");
 		}
     	catch( ElementNotFoundException pException )
 		{}
     	// Empty Case
     	aDB.addElement( aClass1, 0 );
-    	Set lSet = aDB.getRange( aClass1, Relation.DECLARES );
+    	Set lSet = aDB.getRange( aClass1, Relation.DECLARES_METHOD );
     	assertTrue( lSet.size() == 0 );
     	aDB.addElement( aMethod1, 0 );
-    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES, aMethod1 );
-    	lSet = aDB.getRange( aClass1, Relation.DECLARES );
+    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES_METHOD, aMethod1 );
+    	lSet = aDB.getRange( aClass1, Relation.DECLARES_METHOD );
     	assertTrue( lSet.size() == 1 );
     	assertTrue( lSet.contains( aMethod1 ));
     	lSet = aDB.getRange( aMethod1, Relation.T_DECLARES );
@@ -245,7 +245,7 @@ public class TestProgramDatabase extends TestCase
     	aDB.addElement( aClass1, 0 );
     	assertFalse( aDB.hasRelations( aClass1 ));
     	aDB.addElement( aMethod1, 0 );
-    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES, aMethod1 );
+    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES_METHOD, aMethod1 );
     	assertTrue( aDB.hasRelations( aClass1 ));
     	assertTrue( aDB.hasRelations( aMethod1 ));
     }
@@ -265,7 +265,7 @@ public class TestProgramDatabase extends TestCase
     	assertFalse( aDB.contains( aClass1 ));
     	aDB.addElement( aClass1, 0 );
     	aDB.addElement( aMethod1, 0 );
-    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES, aMethod1 );
+    	aDB.addRelationAndTranspose( aClass1, Relation.DECLARES_METHOD, aMethod1 );
     	aDB.addElement( aClass2, 0 );
     	aDB.addRelationAndTranspose( aClass2, Relation.ACCESSES, aClass1 );
     	aDB.addRelationAndTranspose( aMethod1, Relation.T_DECLARES, aClass2 );
@@ -276,7 +276,7 @@ public class TestProgramDatabase extends TestCase
     	lSet = aDB.getRange( aMethod1, Relation.T_DECLARES );
     	assertTrue( lSet.size() == 1 );
     	assertTrue( lSet.contains( aClass2 ));
-    	lSet = aDB.getRange( aClass2, Relation.DECLARES );
+    	lSet = aDB.getRange( aClass2, Relation.DECLARES_METHOD );
     	assertTrue( lSet.size() == 1 );
     	assertTrue( lSet.contains( aMethod1 ));
     }

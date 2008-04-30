@@ -68,9 +68,13 @@ public class TestJayFX extends TestCase
     {
     }
     
-    public void testDeclares()
+    @SuppressWarnings("unchecked")
+	public void testDeclares()
     {
-    	Set lRange = aDB.getRange( getElement( "a.b.A", true), Relation.DECLARES );
+    	Set lRange = aDB.getRange( getElement( "a.b.A", true), Relation.DECLARES_TYPE );
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A", true), Relation.DECLARES_METHOD ));
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A", true), Relation.DECLARES_FIELD ));
+    	
     	assertEquals( 11, lRange.size() );
     	assertTrue( lRange.contains( getElement( "a.b.A.aTest3", false)));
     	assertTrue( lRange.contains( getElement( "a.b.A$AA", true)));
@@ -95,16 +99,22 @@ public class TestJayFX extends TestCase
     	
     }
     
-    public void testInnerClassDeclares() {
-    	Set lRange = aDB.getRange( getElement( "a.b.A$AA", true), Relation.DECLARES );
+    @SuppressWarnings("unchecked")
+	public void testInnerClassDeclares() {
+    	Set lRange = aDB.getRange( getElement( "a.b.A$AA", true), Relation.DECLARES_TYPE );
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A$AA", true), Relation.DECLARES_METHOD ));
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A$AA", true), Relation.DECLARES_FIELD ));
     	assertEquals( 2, lRange.size() );
     	assertTrue( lRange.contains( getElement( "a.b.A$AA$AAA", true)));
     	assertTrue( lRange.contains( getElement( "a.b.A$AA.doit(La.b.A$AA$AAA;)", false)));
     }
     
-    public void testLocalClassDeclares() 
+    @SuppressWarnings("unchecked")
+	public void testLocalClassDeclares() 
     {
-    	Set lRange = aDB.getRange( getElement( "a.b.A$AA.doit(La.b.A$AA$AAA;)", false), Relation.DECLARES );
+    	Set lRange = aDB.getRange( getElement( "a.b.A$AA.doit(La.b.A$AA$AAA;)", false), Relation.DECLARES_TYPE );
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A$AA.doit(La.b.A$AA$AAA;)", false), Relation.DECLARES_METHOD ));
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A$AA.doit(La.b.A$AA$AAA;)", false), Relation.DECLARES_FIELD ));
     	assertEquals( 3, lRange.size() );
     	
     	assertTrue( lRange.contains( getElement( "a.b.A$AA$1AAAA", true)));
@@ -114,15 +124,18 @@ public class TestJayFX extends TestCase
     }
     
     public void testInterfaceDeclares() {
-    	Set lRange = aDB.getRange( getElement( "a.b.A$AB", true), Relation.DECLARES );
+    	Set lRange = aDB.getRange( getElement( "a.b.A$AB", true), Relation.DECLARES_TYPE );
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A$AB", true), Relation.DECLARES_METHOD ));
+    	lRange.addAll(aDB.getRange( getElement( "a.b.A$AB", true), Relation.DECLARES_FIELD ));
     	assertEquals( 3, lRange.size() );
     	assertTrue( lRange.contains( getElement( "a.b.A$AB.<clinit>()", false)));
     	assertTrue( lRange.contains( getElement( "a.b.A$AB.aTest1", false)));
     	assertTrue( lRange.contains( getElement( "a.b.A$AB.doit()", false)));
     }
     
-    public void testSuperClassDeclares() {
-    	Set lRange = aDB.getRange( getElement( "java.lang.Object", true ), Relation.DECLARES );
+    @SuppressWarnings("unchecked")
+	public void testSuperClassDeclares() {
+    	Set lRange = aDB.getRange( getElement( "java.lang.Object", true ), Relation.DECLARES_METHOD );
     	assertEquals( 14, lRange.size() );
     	assertTrue( lRange.contains( getElement( "java.lang.Object.registerNatives()", false)));
     	assertTrue( lRange.contains( getElement( "java.lang.Object.wait(J)", false)));
@@ -139,11 +152,11 @@ public class TestJayFX extends TestCase
     	assertTrue( lRange.contains( getElement( "java.lang.Object.<init>()", false)));
     	assertTrue( lRange.contains( getElement( "java.lang.Object.wait(J,I)", false)));
     	
-    	lRange = aDB.getRange( getElement( "java.io.FileFilter", true ), Relation.DECLARES );
+    	lRange = aDB.getRange( getElement( "java.io.FileFilter", true ), Relation.DECLARES_METHOD );
     	assertEquals( 1, lRange.size() );
     	assertTrue( lRange.contains( getElement( "java.io.FileFilter.accept(Ljava.io.File;)", false)));
     	
-    	lRange = aDB.getRange( getElement( "java.awt.BufferCapabilities", true ), Relation.DECLARES );
+    	lRange = aDB.getRange( getElement( "java.awt.BufferCapabilities", true ), Relation.DECLARES_METHOD );
     	assertEquals( 12, lRange.size() );
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities$FlipContents", true)));
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities.<init>(Ljava.awt.ImageCapabilities;,Ljava.awt.ImageCapabilities;,Ljava.awt.BufferCapabilities$FlipContents;)", false)));
@@ -158,7 +171,8 @@ public class TestJayFX extends TestCase
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities.isFullScreenRequired()", false)));
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities.isMultiBufferAvailable()", false)));
     	
-    	lRange = aDB.getRange( getElement( "java.awt.BufferCapabilities$FlipContents", true ), Relation.DECLARES );
+    	lRange = aDB.getRange( getElement( "java.awt.BufferCapabilities$FlipContents", true ), Relation.DECLARES_FIELD );
+    	lRange.addAll(aDB.getRange( getElement( "java.awt.BufferCapabilities$FlipContents", true ), Relation.DECLARES_METHOD ));
     	assertEquals( 11, lRange.size() );
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities$FlipContents.I_UNDEFINED", false)));
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities$FlipContents.BACKGROUND", false)));
@@ -173,7 +187,7 @@ public class TestJayFX extends TestCase
     	assertTrue( lRange.contains( getElement( "java.awt.BufferCapabilities$FlipContents.<clinit>()", false)));
     }
     public void testClassDeclares2() {
-    	Set lRange = aDB.getRange( getElement( "a.b.D", true ), Relation.DECLARES );
+    	Set lRange = aDB.getRange( getElement( "a.b.D", true ), Relation.DECLARES_METHOD );
     	assertEquals( 2, lRange.size() );
     	assertTrue( lRange.contains( getElement( "a.b.D.doit()", false)));
     	assertTrue( lRange.contains( getElement( "a.b.D.equals(Ljava.lang.Object;)", false)));
@@ -1046,7 +1060,8 @@ public class TestJayFX extends TestCase
     
     public void testEnumDeclares()
     {
-    	Set lRange = aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet", true), Relation.DECLARES );
+    	Set lRange = aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet", true), Relation.DECLARES_METHOD );
+    	lRange.addAll(aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet", true), Relation.DECLARES_FIELD ));
     	for (Object i : lRange)
     	{
     		System.out.println(i.toString());
@@ -1061,11 +1076,11 @@ public class TestJayFX extends TestCase
     	assertTrue( lRange.contains( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet.<clinit>()" , false)));
     	assertFalse( lRange.contains( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet.<init>()" , false)));
     	
-    	lRange = aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet$Composition", true), Relation.DECLARES );
+    	lRange = aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet$Composition", true), Relation.DECLARES_FIELD );
     	assertEquals( 3, lRange.size() );
     	assertFalse( lRange.contains( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet$Composition.SOLID", false)));
     	
-    	lRange = aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Card", true), Relation.DECLARES );
+    	lRange = aDB.getRange( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Card", true), Relation.DECLARES_FIELD );
     	assertEquals( 5, lRange.size() );
     	assertFalse( lRange.contains( getElement( "ca.cs.mcgill.swevo.jayfxbenchmark.enumtest.Planet.<clinit>()" , false)));
     }

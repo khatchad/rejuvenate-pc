@@ -491,7 +491,8 @@ public class ASTCrawler extends ASTVisitor
 		MethodElement lMethod = (MethodElement) FlyweightElementFactory.getElement( ICategories.METHOD, aCurrType.getId() + "." + aCLINIT_METHOD_NAME, null );
 		if( aDB.contains( lMethod ) && aDB.hasRelations( lMethod ) )
 		{
-			aDB.addRelation( aCurrType, Relation.DECLARES, lMethod );
+			aDB.addRelation( aCurrType, Relation.DECLARES_METHOD, lMethod );
+			aDB.addRelation( aCurrType, Relation.DECLARES_FIELD, lMethod );
 		}
 			
 		if( aDB.hasRelations( aTempMethod ))
@@ -501,7 +502,7 @@ public class ASTCrawler extends ASTVisitor
 				IElement lDefaultConstructor = FlyweightElementFactory.getElement( ICategories.METHOD, aCurrType.getId() + "." + aINIT_METHOD_NAME, null );
 				aDB.addElement( lDefaultConstructor, aINIT_METHOD_MODIFIERS );
 				aDB.copyRelations( aTempMethod, lDefaultConstructor );
-				aDB.addRelation( aCurrType, Relation.DECLARES, lDefaultConstructor );
+				aDB.addRelation( aCurrType, Relation.DECLARES_METHOD, lDefaultConstructor );
 			}
 			else 
 			{
@@ -603,7 +604,7 @@ public class ASTCrawler extends ASTVisitor
 		aCurrTypeReminder.push( aCurrType );
 		aCurrType = ( ClassElement ) lAnonymousClass;
 		aDB.addElement( aCurrType, pNode.resolveBinding().getModifiers() );
-		aDB.addRelation( (IElement) aCurrMethod, Relation.DECLARES, aCurrType );
+		aDB.addRelation( (IElement) aCurrMethod, Relation.DECLARES_TYPE, aCurrType );
 		
 		ITypeBinding lSuperBinding = lBinding.getSuperclass();
 		if( lSuperBinding != null )
@@ -708,7 +709,7 @@ public class ASTCrawler extends ASTVisitor
 		IElement lField;
 		lField = FlyweightElementFactory.getElement( ICategories.FIELD, aCurrType.getId() + "." + lSimpleName, pNode.resolveVariable().getJavaElement() );
 		aDB.addElement( lField, pNode.getModifiers() );
-		aDB.addRelation( aCurrType, Relation.DECLARES, lField );
+		aDB.addRelation( aCurrType, Relation.DECLARES_FIELD, lField );
 		
 		//	Register CALLS relationship to constructor
 //		IMethodBinding lCBinding = pNode.resolveConstructorBinding();
@@ -737,7 +738,7 @@ public class ASTCrawler extends ASTVisitor
 			// TODO: check if enum type is always a member class of an closing class
 			if( lBinding.isMember() )
 			{
-				aDB.addRelation( aCurrTypeReminder.peek(), Relation.DECLARES, aCurrType );
+				aDB.addRelation( aCurrTypeReminder.peek(), Relation.DECLARES_TYPE, aCurrType );
 			}
 			
 			// Find interfaces.
@@ -813,7 +814,7 @@ public class ASTCrawler extends ASTVisitor
 				lField = FlyweightElementFactory.getElement( ICategories.FIELD, aCurrType.getId() + "." + lSimpleName, null );
 				aDB.addElement( lField, pNode.getModifiers() );
 				
-				aDB.addRelation( aCurrType, Relation.DECLARES, lField );
+				aDB.addRelation( aCurrType, Relation.DECLARES_FIELD, lField );
 								
 				//If there is any initialization to this field then we write them as an access by <init> or <clinit>
 				if( lInit != null )
@@ -849,7 +850,7 @@ public class ASTCrawler extends ASTVisitor
 		}
 		
 		aDB.addElement( aCurrMethod, pNode.getModifiers() );
-		aDB.addRelation( aCurrType, Relation.DECLARES, aCurrMethod );
+		aDB.addRelation( aCurrType, Relation.DECLARES_METHOD, aCurrMethod );
 		return true;
 	}
   
@@ -879,7 +880,7 @@ public class ASTCrawler extends ASTVisitor
 		if( checkForNull( lMBinding )) return false;
 		saveMethodRelation( lMBinding );
 		
-		aDB.addRelation( aCurrType, Relation.DECLARES, aCurrMethod );
+		aDB.addRelation( aCurrType, Relation.DECLARES_METHOD, aCurrMethod );
 		
 		//If this is a constructor, we dump the class initilization relations into the constructor
 		if( lMBinding.isConstructor() )
@@ -1310,11 +1311,11 @@ public class ASTCrawler extends ASTVisitor
 			//Add Declaration relations if this is a local or nested class
 			if( lBinding.isLocal() || lBinding.isAnonymous() )
 			{
-				aDB.addRelation( (IElement) aCurrMethod, Relation.DECLARES, aCurrType );
+				aDB.addRelation( (IElement) aCurrMethod, Relation.DECLARES_TYPE, aCurrType );
 			}
 			else if( lBinding.isNested() )
 			{
-				aDB.addRelation( aCurrTypeReminder.peek(), Relation.DECLARES, aCurrType );
+				aDB.addRelation( aCurrTypeReminder.peek(), Relation.DECLARES_TYPE, aCurrType );
 			}
 				
 			//Find superclass

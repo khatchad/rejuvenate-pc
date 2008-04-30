@@ -147,7 +147,7 @@ public class JayFX {
 	public IElement convertToElement(IJavaElement pElement)
 			throws ConversionException {
 		IElement ret = this.aConverter.getElement(pElement);
-		if ( ret == null )
+		if (ret == null)
 			throw new IllegalStateException("In trouble.");
 		return ret;
 	}
@@ -188,7 +188,7 @@ public class JayFX {
 			elem.disable();
 			monitor.worked(1);
 		}
-//		monitor.done();
+		//		monitor.done();
 
 		final IProject proj = advElem.getJavaProject().getProject();
 		final List<AJRelationship> relationshipList = AJModel
@@ -218,8 +218,7 @@ public class JayFX {
 
 					// this.aDB.addRelation(adviceElem, Relation.ADVISES,
 					// this.convertToElement(meth));
-					final IElement toEnable = this
-							.convertToElement(meth);
+					final IElement toEnable = this.convertToElement(meth);
 					if (toEnable == null)
 						throw new IllegalStateException("In trouble!");
 					toEnable.enable();
@@ -233,7 +232,7 @@ public class JayFX {
 								&& meth.getParameterNames().length == 0) {
 							final IElement toEnable = this
 									.convertToElement(meth);
-							if ( toEnable == null )
+							if (toEnable == null)
 								throw new IllegalStateException("In trouble!");
 							toEnable.enable();
 						}
@@ -296,7 +295,7 @@ public class JayFX {
 			}
 			monitor.worked(1);
 		}
-//		monitor.done();
+		//		monitor.done();
 	}
 
 	/**
@@ -364,7 +363,9 @@ public class JayFX {
 	 *         range.
 	 */
 	public Set<IElement> getRange(IElement pElement, Relation pRelation) {
-		if (pRelation == Relation.DECLARES && !this.isProjectElement(pElement))
+		if ((pRelation == Relation.DECLARES_TYPE
+				|| pRelation == Relation.DECLARES_FIELD || pRelation == Relation.DECLARES_METHOD)
+				&& !this.isProjectElement(pElement))
 			return this.getDeclaresForNonProjectElement(pElement);
 		if (pRelation == Relation.EXTENDS_CLASS
 				&& !this.isProjectElement(pElement))
@@ -474,8 +475,8 @@ public class JayFX {
 		 */
 
 		if (!pCHA) {
-//			if (pProgress != null)
-//				pProgress.done();
+			//			if (pProgress != null)
+			//				pProgress.done();
 			return;
 		}
 
@@ -555,7 +556,7 @@ public class JayFX {
 		// throw new JayFXException( "Could not build project ", e);
 		// }
 		// }
-//		pProgress.done();
+		//		pProgress.done();
 	}
 
 	/**
@@ -739,7 +740,7 @@ public class JayFX {
 		final String lThisName = pMethod.getName();
 
 		final Set<IElement> lElements = this
-				.getRange(pClass, Relation.DECLARES);
+				.getRange(pClass, Relation.DECLARES_METHOD);
 		for (final IElement lMethodElement : lElements)
 			if (lMethodElement.getCategory() == ICategories.METHOD)
 				if (!((MethodElement) lMethodElement).getName().startsWith(

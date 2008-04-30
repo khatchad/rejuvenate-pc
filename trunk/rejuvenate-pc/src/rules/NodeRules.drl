@@ -7,7 +7,6 @@ import uk.ac.lancs.khatchad.IntentionEdge;
 import uk.ac.lancs.khatchad.IntentionNode;
 import uk.ac.lancs.khatchad.IntentionGraph;
 import uk.ac.lancs.khatchad.IntentionElement;
-import ca.mcgill.cs.swevo.jayfx.model.Relation;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import java.util.LinkedHashSet;
 import uk.ac.lancs.khatchad.IntentionPath;

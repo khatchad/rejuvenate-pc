@@ -68,7 +68,9 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 			makeEdges(elem, node, Relation.CALLS);
 			makeEdges(elem, node, Relation.OVERRIDES);
 			makeEdges(elem, node, Relation.IMPLEMENTS_METHOD);
-			makeEdges(elem, node, Relation.DECLARES);
+			makeEdges(elem, node, Relation.DECLARES_METHOD);
+			makeEdges(elem, node, Relation.DECLARES_FIELD);
+			makeEdges(elem, node, Relation.DECLARES_TYPE);
 			makeEdges(elem, node, Relation.EXTENDS_CLASS);
 			makeEdges(elem, node, Relation.EXTENDS_INTERFACES);
 			makeEdges(elem, node, Relation.IMPLEMENTS_INTERFACE);
