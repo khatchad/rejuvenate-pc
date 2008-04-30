@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+	<extension
+	    point="org.eclipse.ui.actionSets">
+	    <actionSet
+            description="Analyzes a pointcut expression."
+            id="uk.ac.lancs.comp.khatchad.analyze.pointcut"
+            label="Rejuvinate Pointcut"
+            visible="true">
+         <action
+               class="ca.mcgill.cs.swevo.jayfx.test.Test"
+               definitionId="uk.ac.lancs.comp.khatchad.analyze.pointcut"
+               enablesFor="+"
+               helpContextId="uk.ac.lancs.comp.khatchad.AnalyzePointcut.help"
+               id="uk.ac.lancs.comp.khatchad.RejuvinatePointcut.action"
+               label="&amp;Analyze Pointcut..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               style="push"
+	           toolbarPath="Normal"
+               tooltip="Analyze Pointcut"/>
+      </actionSet>
+   </extension>
+      <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.ajdt.core.javaelements.AdviceElement"
+            adaptable="true"
+            id="uk.ac.lancs.comp.khatchad.analyze.pointcut.object.contribution">
+         <action
+               label="Analyze Pointcut..."
+               class="ca.mcgill.cs.swevo.jayfx.test.Test"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.analyze.pointcut.popup">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.contribution">
+         <action
+               label="Analyze Pointcut..."
+               class="ca.mcgill.cs.swevo.jayfx.test.Test"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.popup">
+         </action>
+      </objectContribution>
+   </extension>
+	    <!--
+		<actionSet
+	        id="ca.mcgill.cs.swevo.jayfx.JayFXActions"
+	        visible="true"
+	        label="JayFX Actions"> 
+	    	<menu
+	        	label="Run &amp;JayFX"
+	           	id="jayfxMenu">
+	        	<separator
+	            	name="jayfxGroup">
+	        	</separator>
+	     	</menu>   
+	        <action 
+	           	id="ca.mcgill.cs.swevo.jayfx.test.TestAction"
+	           	label="&amp;Test JayFX"
+	           	style="push"
+	           	icon="icons/reload.gif"
+	           	tooltip="Test JayFX"
+	   			menubarPath="jayfxMenu/jayfxGroup"
+	           	toolbarPath="Normal"
+	           	class="ca.mcgill.cs.swevo.jayfx.test.Test">
+	        </action>             
+	
+	    </actionSet>
+	    -->
+</plugin>

@@ -1,0 +1,66 @@
+#created on: Apr 17, 2008
+package NodeRules
+
+#list any import classes here.
+import uk.ac.lancs.khatchad.IntentionSequence;
+import uk.ac.lancs.khatchad.IntentionEdge;
+import uk.ac.lancs.khatchad.IntentionNode;
+import uk.ac.lancs.khatchad.IntentionGraph;
+import uk.ac.lancs.khatchad.IntentionElement;
+import ca.mcgill.cs.swevo.jayfx.model.Relation;
+import ca.mcgill.cs.swevo.jayfx.model.IElement;
+import java.util.LinkedHashSet;
+import uk.ac.lancs.khatchad.IntentionPath;
+import uk.ac.lancs.khatchad.IntentionElement;
+import java.util.List;
+import java.util.Collections;
+import java.util.ArrayList;
+import uk.ac.lancs.comp.khatchad.core.*;
+
+#declare any global variables here
+
+# Two nodes are connected when there is an edge in between them. (base case).
+rule "connected"
+	when
+		$edge : IntentionEdge()
+	then
+		Path<IntentionEdge<IElement>> aPath = new Path<IntentionEdge<IElement>>();
+		aPath.push($edge);
+		insert(aPath);
+end
+
+rule "path building"
+	when
+		$edge : IntentionEdge($source : fromNode, $target : toNode)
+		$path : Path(size < 2, topNode == $target, tailNodes not contains $source) # more work here?
+	then
+		Path aPath = (Path)$path.clone();
+		aPath.push($edge);
+		insert(aPath);
+end
+
+query "all paths"
+	$path : Path()
+end
+
+query "forward suggested execution nodes"
+	$node : IntentionNode(enabled == true)
+	$enabledPath : Path(firstNode == $node, $commonNode : lastNode, $enabledSize : size)
+	$intersectingPath : Path($suggestedNode : firstNode, lastNode == $commonNode, size == $enabledSize) 
+	eval($enabledPath.typeEquivalent($intersectingPath))
+end
+
+
+query "backward suggested execution nodes"
+	$node : IntentionNode(enabled == true)
+	$enabledPath : Path(lastNode == $node, $commonNode : firstNode, $enabledSize : size)
+	$intersectingPath : Path($suggestedNode : lastNode, firstNode == $commonNode, size == $enabledSize) 
+	eval($enabledPath.typeEquivalent($intersectingPath))
+end
+
+/*
+query "forward suggested call arcs"
+	($node : IntentionNode())
+	($enabledEdge : IntentionEdge(enabled == true) from $node.edges)
+end
+*/
