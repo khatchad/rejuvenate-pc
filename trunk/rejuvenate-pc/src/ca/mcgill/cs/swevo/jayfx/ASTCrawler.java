@@ -492,7 +492,6 @@ public class ASTCrawler extends ASTVisitor
 		if( aDB.contains( lMethod ) && aDB.hasRelations( lMethod ) )
 		{
 			aDB.addRelation( aCurrType, Relation.DECLARES_METHOD, lMethod );
-			aDB.addRelation( aCurrType, Relation.DECLARES_FIELD, lMethod );
 		}
 			
 		if( aDB.hasRelations( aTempMethod ))
