@@ -43,16 +43,15 @@ query "all paths"
 end
 
 query "forward suggested execution nodes"
-	$node : IntentionNode(enabled == true)
-	$enabledPath : Path(firstNode == $node, $commonNode : lastNode, $enabledSize : size)
+	$enabledNode : IntentionNode(enabled == true)
+	$enabledPath : Path(firstNode == $enabledNode, $commonNode : lastNode, $enabledSize : size)
 	$intersectingPath : Path($suggestedNode : firstNode, lastNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end
 
-
 query "backward suggested execution nodes"
-	$node : IntentionNode(enabled == true)
-	$enabledPath : Path(lastNode == $node, $commonNode : firstNode, $enabledSize : size)
+	$enabledNode : IntentionNode(enabled == true)
+	$enabledPath : Path(lastNode == $enabledNode, $commonNode : firstNode, $enabledSize : size)
 	$intersectingPath : Path($suggestedNode : lastNode, firstNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end

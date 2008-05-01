@@ -140,6 +140,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			
 			makeDotFile(graph, pointcut_count);
 
+			System.out.println("Forward execution suggestions:");
 			final QueryResults forwardSuggestedExecutionNodes = workingMemory
 					.getQueryResults("forward suggested execution nodes");
 			lMonitor.beginTask("Suggesting forward execution nodes.", forwardSuggestedExecutionNodes.size());
@@ -149,13 +150,21 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				final QueryResult result = (QueryResult) it.next();
 				final IntentionNode node = (IntentionNode) result
 						.get("$suggestedNode");
-				forwardSuggestedNodeCollection.add(node);
+				System.out.println("Suggested node: " + node);
+				System.out.println("Enabled node: " + result.get("$enabledNode"));
+				System.out.println("Enabled path: " + result.get("$enabledPath"));
+				System.out.println("Intersecting path: " + result.get("$intersectingPath"));
+				System.out.println("+===+");
+				System.out.println();
+//				forwardSuggestedNodeCollection.add(node);
 				lMonitor.worked(1);
 			}
-			System.out.println("Forward suggestions:");
-			for (final Object node : forwardSuggestedNodeCollection)
-				System.out.println(node);
+			System.out.println("=+++=");
+			System.out.println();
+//			for (final Object node : forwardSuggestedNodeCollection)
+//				System.out.println(node);
 			
+			System.out.println("Backward execution suggestion:");
 			final QueryResults backwardSuggestedExecutionNodes = workingMemory
 					.getQueryResults("backward suggested execution nodes");
 			lMonitor.beginTask("Suggesting backward execution nodes.", backwardSuggestedExecutionNodes.size());
@@ -165,12 +174,18 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				final QueryResult result = (QueryResult) it.next();
 				final IntentionNode node = (IntentionNode) result
 						.get("$suggestedNode");
-				backwardSuggestedNodeCollection.add(node);
+				System.out.println("Suggested node: " + node);
+				System.out.println("Enabled node: " + result.get("$enabledNode"));
+				System.out.println("Enabled path: " + result.get("$enabledPath"));
+				System.out.println("Intersecting path: " + result.get("$intersectingPath"));
+				System.out.println("+===+");
+//				backwardSuggestedNodeCollection.add(node);
 				lMonitor.worked(1);
 			}
-			System.out.println("Backward suggestion:");
-			for (final Object node : backwardSuggestedNodeCollection)
-				System.out.println(node);
+			System.out.println("=+++=");
+			System.out.println();
+//			for (final Object node : backwardSuggestedNodeCollection)
+//				System.out.println(node);
 
 			pointcut_count++;
 			lMonitor.worked(1);
