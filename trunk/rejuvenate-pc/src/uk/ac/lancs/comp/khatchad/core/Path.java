@@ -145,9 +145,9 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 		return this.toArray(ret);
 	}
 
-	public Collection<IntentionNode<?>> getNodes() {
-		Collection<IntentionNode<?>> ret = new LinkedHashSet<IntentionNode<?>>();
-		for (IntentionEdge<?> edge : this) {
+	public Collection<IntentionNode<IElement>> getNodes() {
+		Collection<IntentionNode<IElement>> ret = new LinkedHashSet<IntentionNode<IElement>>();
+		for (IntentionEdge<IElement> edge : this) {
 			ret.add(edge.getFromNode());
 			ret.add(edge.getToNode());
 		}
@@ -161,5 +161,23 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 			if (!this.get(i).getType().equals(rhs.get(i).getType()))
 				return false;
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Vector#equals(java.lang.Object)
+	 */
+	@Override
+	public synchronized boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return super.equals(o);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Vector#hashCode()
+	 */
+	@Override
+	public synchronized int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
 	}
 }
