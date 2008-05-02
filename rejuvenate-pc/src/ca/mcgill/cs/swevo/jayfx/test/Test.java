@@ -152,8 +152,14 @@ public class Test implements IWorkbenchWindowActionDelegate {
 						.get("$suggestedNode");
 				System.out.println("Suggested node: " + node);
 				System.out.println("Enabled node: " + result.get("$enabledNode"));
-				System.out.println("Enabled path: " + result.get("$enabledPath"));
+				
+				Path enabledPath = (Path)result.get("$enabledPath");
+				System.out.println("Enabled path: " + enabledPath);
 				System.out.println("Intersecting path: " + result.get("$intersectingPath"));
+				
+				IntentionNode commonNode = (IntentionNode)result.get("$commonNode");
+				Path pattern = enabledPath.extractPattern(commonNode);
+				System.out.println("Pattern: " + pattern);
 				System.out.println("+===+");
 				System.out.println();
 //				forwardSuggestedNodeCollection.add(node);
@@ -176,8 +182,14 @@ public class Test implements IWorkbenchWindowActionDelegate {
 						.get("$suggestedNode");
 				System.out.println("Suggested node: " + node);
 				System.out.println("Enabled node: " + result.get("$enabledNode"));
-				System.out.println("Enabled path: " + result.get("$enabledPath"));
+				
+				Path enabledPath = (Path)result.get("$enabledPath");
+				System.out.println("Enabled path: " + enabledPath);
 				System.out.println("Intersecting path: " + result.get("$intersectingPath"));
+				
+				IntentionNode commonNode = (IntentionNode)result.get("$commonNode");
+				Path pattern = enabledPath.extractPattern(commonNode);
+				System.out.println("Pattern: " + pattern);
 				System.out.println("+===+");
 //				backwardSuggestedNodeCollection.add(node);
 				lMonitor.worked(1);
