@@ -11,7 +11,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -34,6 +36,8 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
 import uk.ac.lancs.comp.khatchad.core.Path;
+import uk.ac.lancs.comp.khatchad.core.WildcardElement;
+import uk.ac.lancs.khatchad.IntentionEdge;
 import uk.ac.lancs.khatchad.IntentionElement;
 import uk.ac.lancs.khatchad.IntentionGraph;
 import uk.ac.lancs.khatchad.IntentionNode;
@@ -128,6 +132,9 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			workingMemory.update(handle, path);
 			lMonitor.worked(1);
 		}
+		
+		Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+		Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
 		lMonitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
@@ -144,15 +151,16 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			final QueryResults forwardSuggestedExecutionNodes = workingMemory
 					.getQueryResults("forward suggested execution nodes");
 			lMonitor.beginTask("Suggesting forward execution nodes.", forwardSuggestedExecutionNodes.size());
-			final Set<IntentionNode<IElement>> forwardSuggestedNodeCollection = new LinkedHashSet<IntentionNode<IElement>>();
 			for (final Iterator it = forwardSuggestedExecutionNodes.iterator(); it
 					.hasNext();) {
 				final QueryResult result = (QueryResult) it.next();
-				final IntentionNode node = (IntentionNode) result
+				final IntentionNode suggestedNode = (IntentionNode) result
 						.get("$suggestedNode");
-				System.out.println("Suggested node: " + node);
-				System.out.println("Enabled node: " + result.get("$enabledNode"));
+				System.out.println("Suggested node: " + suggestedNode);
 				
+				IntentionNode enabledNode = (IntentionNode)result.get("$enabledNode");
+				System.out.println("Enabled node: " + enabledNode);
+								
 				Path enabledPath = (Path)result.get("$enabledPath");
 				System.out.println("Enabled path: " + enabledPath);
 				System.out.println("Intersecting path: " + result.get("$intersectingPath"));
@@ -160,28 +168,36 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				IntentionNode commonNode = (IntentionNode)result.get("$commonNode");
 				Path pattern = enabledPath.extractPattern(commonNode);
 				System.out.println("Pattern: " + pattern);
+				
+				if ( !patternToResultMap.containsKey(pattern) ) {
+					 patternToResultMap.put(pattern, new LinkedHashSet<IntentionElement<IElement>>());
+				}
+				patternToResultMap.get(pattern).add(suggestedNode);
+				
+				if (!patternToEnabledElementMap.containsKey(pattern))
+					patternToEnabledElementMap.put(pattern, new LinkedHashSet<IntentionElement<IElement>>());
+				patternToEnabledElementMap.get(pattern).add(enabledNode);
+				
 				System.out.println("+===+");
 				System.out.println();
-//				forwardSuggestedNodeCollection.add(node);
 				lMonitor.worked(1);
 			}
 			System.out.println("=+++=");
 			System.out.println();
-//			for (final Object node : forwardSuggestedNodeCollection)
-//				System.out.println(node);
 			
 			System.out.println("Backward execution suggestion:");
 			final QueryResults backwardSuggestedExecutionNodes = workingMemory
 					.getQueryResults("backward suggested execution nodes");
 			lMonitor.beginTask("Suggesting backward execution nodes.", backwardSuggestedExecutionNodes.size());
-			final Set<IntentionNode<IElement>> backwardSuggestedNodeCollection = new LinkedHashSet<IntentionNode<IElement>>();
 			for (final Iterator it = backwardSuggestedExecutionNodes.iterator(); it
 					.hasNext();) {
 				final QueryResult result = (QueryResult) it.next();
-				final IntentionNode node = (IntentionNode) result
+				final IntentionNode suggestedNode = (IntentionNode) result
 						.get("$suggestedNode");
-				System.out.println("Suggested node: " + node);
-				System.out.println("Enabled node: " + result.get("$enabledNode"));
+				System.out.println("Suggested node: " + suggestedNode);
+				
+				IntentionElement enabledNode = (IntentionElement)result.get("$enabledNode");
+				System.out.println("Enabled node: " + enabledNode);
 				
 				Path enabledPath = (Path)result.get("$enabledPath");
 				System.out.println("Enabled path: " + enabledPath);
@@ -190,18 +206,23 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				IntentionNode commonNode = (IntentionNode)result.get("$commonNode");
 				Path pattern = enabledPath.extractPattern(commonNode);
 				System.out.println("Pattern: " + pattern);
+				
+				if ( !patternToResultMap.containsKey(pattern) )
+					patternToResultMap.put(pattern, new LinkedHashSet<IntentionElement<IElement>>());
+				patternToResultMap.get(pattern).add(suggestedNode);
+				
+				if (!patternToEnabledElementMap.containsKey(pattern))
+					patternToEnabledElementMap.put(pattern, new LinkedHashSet<IntentionElement<IElement>>());
+				patternToEnabledElementMap.get(pattern).add(enabledNode);				
+				
 				System.out.println("+===+");
-//				backwardSuggestedNodeCollection.add(node);
 				lMonitor.worked(1);
 			}
 			System.out.println("=+++=");
 			System.out.println();
-//			for (final Object node : backwardSuggestedNodeCollection)
-//				System.out.println(node);
 
 			pointcut_count++;
 			lMonitor.worked(1);
-			System.out.println("+++");
 			/** ***************************************************************************************************** */
 			/*
 			//Enumerate all paths.
@@ -328,6 +349,25 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			resOut.close();
 			txtOut.close();
 			*/
+			System.out.println("Results:");
+			for (Path pattern : patternToResultMap.keySet()) {
+				System.out.println("Pattern results for: " + pattern);
+				System.out.println("\t" + "Suggested elements:");
+				for ( IntentionElement<IElement> resultNode : patternToResultMap.get(pattern)) {
+					System.out.println("\t\t" + resultNode);
+				}
+				
+				double precision = calculatePrecision(patternToEnabledElementMap.get(pattern), patternToResultMap.get(pattern));
+				System.out.println("\tPrecision: " + precision);
+				
+				double concreteness = calculateConcreteness(pattern);
+				System.out.println("\tConcreteness: " + concreteness);
+				
+				double confidence = calculateConfidence(precision, concreteness, .5);
+				System.out.println("\tConfidence: " + confidence);
+				
+				System.out.println();
+			}
 		}
 
 		final long elapsed = System.currentTimeMillis() - start;
@@ -335,6 +375,45 @@ public class Test implements IWorkbenchWindowActionDelegate {
 		System.out.println("Time (s): " + secs);
 		System.out.println();
 	}
+
+	/**
+	 * @param precision
+	 * @param concreteness
+	 * @param d
+	 * @return
+	 */
+	private static double calculateConfidence(double precision, double concreteness,
+			double weight) {
+		double result = precision * weight + (1 - concreteness) * (1 - weight);
+		return Math.max(result, precision);
+	}
+
+	/**
+	 * @param pattern
+	 * @return
+	 */
+	private static double calculateConcreteness(Path<IntentionEdge<IElement>> pattern) {
+		Collection<IntentionNode<IElement>> nodes = pattern.getNodes();
+		int totalNodes = nodes.size();
+		int numberOfWild = 0;
+		for ( IntentionNode<IElement> node : nodes )
+			if ( node.getElem() instanceof WildcardElement )
+				numberOfWild++;
+		return ((double)(totalNodes - numberOfWild))/totalNodes;
+	}
+
+	/**
+	 * @param searchedFor
+	 * @param set
+	 * @return
+	 */
+	private static double calculatePrecision(Set<IntentionElement<IElement>> searchedFor,
+			Set<IntentionElement<IElement>> found) {
+		int totalElements = found.size();
+		int lookingFor = searchedFor.size(); 
+		return ((double)lookingFor)/totalElements;
+	}
+	
 
 	/**
 	 * @param graph
@@ -346,11 +425,6 @@ public class Test implements IWorkbenchWindowActionDelegate {
 		PrintWriter resOut = new PrintWriter(resFileOut);
 		resOut.println(graph.toDotFormat());
 		resOut.close();
-	}
-
-	private double calculateConfidence(double precision, double concreteness,
-			double d) {
-		return 0;
 	}
 
 	private Collection<AdviceElement> getSelectedAdvice() {
