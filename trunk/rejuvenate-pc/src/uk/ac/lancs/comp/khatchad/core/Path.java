@@ -23,7 +23,37 @@ import uk.ac.lancs.khatchad.IntentionNode;
  * @author raffi
  * 
  */
-public class Path<E extends IntentionEdge<?>> extends Stack<E> {
+public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
+
+	public Path<IntentionEdge<IElement>> extractPattern(
+			IntentionNode<IElement> commonNode) {
+		Path<IntentionEdge<IElement>> ret = new Path<IntentionEdge<IElement>>();
+		for (IntentionEdge<IElement> edge : this) {
+			if (edge.getFromNode().equals(commonNode)) {
+				IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
+						edge.getFromNode(),
+						edge.getToNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+								: IntentionNode.DISABLED_WILDCARD, edge
+								.getType());
+				ret.add(newEdge);
+			} else if (edge.getToNode().equals(commonNode)) {
+				IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
+						edge.getFromNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+								: IntentionNode.DISABLED_WILDCARD, edge
+								.getToNode(), edge.getType());
+				ret.add(newEdge);
+			} else {
+				IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
+						edge.getFromNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+								: IntentionNode.DISABLED_WILDCARD,
+						edge.getToNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+								: IntentionNode.DISABLED_WILDCARD, edge
+								.getType());
+				ret.add(newEdge);
+			}
+		}
+		return ret;
+	}
 
 	@Override
 	public E push(E o) {
@@ -31,11 +61,11 @@ public class Path<E extends IntentionEdge<?>> extends Stack<E> {
 			throw new IllegalArgumentException("Not connectable: " + o);
 		return super.push(o);
 	}
-	
+
 	public IntentionNode<?> getFirstNode() {
 		return this.firstElement().getFromNode();
 	}
-	
+
 	public IntentionNode<?> getLastNode() {
 		return this.lastElement().getToNode();
 	}
@@ -43,24 +73,25 @@ public class Path<E extends IntentionEdge<?>> extends Stack<E> {
 	public IntentionNode<?> getTopNode() {
 		return this.peek().getFromNode();
 	}
-	
+
 	public Collection<IntentionNode<?>> getTailNodes() {
 		Collection<IntentionNode<?>> ret = new ArrayList<IntentionNode<?>>();
-		
-		if ( !this.isEmpty() )
+
+		if (!this.isEmpty())
 			ret.add(this.get(0).getToNode());
-		
-		for ( int i = 1; i < this.size(); i++ ) {
+
+		for (int i = 1; i < this.size(); i++) {
 			IntentionEdge<?> edge = this.get(i);
 			ret.add(edge.getFromNode());
 			ret.add(edge.getToNode());
 		}
-		
+
 		return ret;
 	}
-	
+
 	public PathElements<IntentionNode<?>> getPathElements() {
-		PathElements<IntentionNode<?>> ret = new PathElements<IntentionNode<?>>(this);
+		PathElements<IntentionNode<?>> ret = new PathElements<IntentionNode<?>>(
+				this);
 		ret.add(this.getTopNode());
 		ret.addAll(this.getTailNodes());
 		return ret;
@@ -98,7 +129,7 @@ public class Path<E extends IntentionEdge<?>> extends Stack<E> {
 		buf.append("]");
 		return buf.toString();
 	}
-	
+
 	public static class PathObjectFilter implements ObjectFilter {
 
 		/* (non-Javadoc)
@@ -108,25 +139,26 @@ public class Path<E extends IntentionEdge<?>> extends Stack<E> {
 			return object instanceof Path;
 		}
 	}
-	
+
 	public IntentionEdge<?>[] getEdges() {
-		IntentionEdge<?>[] ret = new IntentionEdge[ this.size() ];
+		IntentionEdge<?>[] ret = new IntentionEdge[this.size()];
 		return this.toArray(ret);
 	}
-	
+
 	public Collection<IntentionNode<?>> getNodes() {
 		Collection<IntentionNode<?>> ret = new LinkedHashSet<IntentionNode<?>>();
-		for (IntentionEdge<?> edge : this ) {
+		for (IntentionEdge<?> edge : this) {
 			ret.add(edge.getFromNode());
 			ret.add(edge.getToNode());
 		}
 		return ret;
 	}
-	
+
 	public boolean typeEquivalent(Path<E> rhs) {
-		if ( this.size() != rhs.size() ) return false;
-		for ( int i = 0; i < this.size(); i++ )
-			if ( !this.get(i).getType().equals(rhs.get(i).getType()) )
+		if (this.size() != rhs.size())
+			return false;
+		for (int i = 0; i < this.size(); i++)
+			if (!this.get(i).getType().equals(rhs.get(i).getType()))
 				return false;
 		return true;
 	}

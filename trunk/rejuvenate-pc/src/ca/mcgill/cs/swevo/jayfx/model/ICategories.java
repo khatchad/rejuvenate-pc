@@ -22,6 +22,6 @@ public enum ICategories
 	PACKAGE,
 	ASPECT,
 	ADVICE,
-	AJCODE
+	AJCODE, WILDCARD
 }
 
