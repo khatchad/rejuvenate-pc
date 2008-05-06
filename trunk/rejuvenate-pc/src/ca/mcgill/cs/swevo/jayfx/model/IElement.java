@@ -10,6 +10,9 @@
 
 package ca.mcgill.cs.swevo.jayfx.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 
@@ -62,4 +65,6 @@ public interface IElement
 	 * @param calls
 	 */
 	public void enableIncommingRelationsFor(Relation calls);
+	
+	public void disableAllIncommingRelations();
 }

@@ -132,4 +132,11 @@ public class FieldElement extends AbstractElement
 	public void disable() {
 		this.enabled = false;
 	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
+	 */
+	public void disableAllIncommingRelations() {
+		this.enabledIncommingRelations.clear();
+	}
 }

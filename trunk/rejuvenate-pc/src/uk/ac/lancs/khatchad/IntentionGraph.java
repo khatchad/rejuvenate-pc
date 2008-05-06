@@ -18,6 +18,7 @@ import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -64,7 +65,8 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 			}
 
 			// now make the edges.
-			makeEdges(elem, node, Relation.ACCESSES);
+			makeEdges(elem, node, Relation.GETS);
+			makeEdges(elem, node, Relation.SETS);
 			makeEdges(elem, node, Relation.CALLS);
 			makeEdges(elem, node, Relation.OVERRIDES);
 			makeEdges(elem, node, Relation.IMPLEMENTS_METHOD);
@@ -114,9 +116,9 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 		return ret;
 	}
 	
-	public void enableElementsAccordingTo(AdviceElement advElem, IProgressMonitor monitor) throws JavaModelException, ConversionException {
-		this.database.enableElementsAccordingTo(advElem, monitor);
-		this.updateStateToReflectDatabase(monitor);
+	public void enableElementsAccordingTo(AdviceElement advElem, IProgressMonitor monitor) throws ConversionException, CoreException {
+		this.database.enableElementsAccordingTo(advElem, new SubProgressMonitor(monitor, 1));
+		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, 1));
 		
 	/*
 		IProject proj = this.database.getSelectedAdvice().getJavaProject().getProject();
@@ -163,7 +165,7 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 			else
 				node.disable();
 			
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 0);
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 			subMonitor.beginTask("Updating edges.", node.getEdges().size());
 			for ( IntentionEdge<IElement> edge : node.getEdges()) {
 				if ( edge.getToNode().hasEnabledEdgesForIncommingRelation(edge.getType()))
@@ -175,6 +177,7 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 			subMonitor.done();
 			monitor.worked(1);
 		}
+		monitor.done();
 	}
 	
 	public String getProlog(IProgressMonitor monitor) {

@@ -15,7 +15,7 @@
                helpContextId="uk.ac.lancs.comp.khatchad.AnalyzePointcut.help"
                id="uk.ac.lancs.comp.khatchad.RejuvinatePointcut.action"
                label="&amp;Analyze Pointcut..."
-               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
                style="push"
 	           toolbarPath="Normal"
                tooltip="Analyze Pointcut"/>
