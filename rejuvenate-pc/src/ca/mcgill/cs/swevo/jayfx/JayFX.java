@@ -25,6 +25,7 @@ import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -179,16 +180,9 @@ public class JayFX {
 	@SuppressWarnings( { "restriction", "unchecked" })
 	public void enableElementsAccordingTo(AdviceElement advElem,
 			IProgressMonitor monitor) throws ConversionException,
-			JavaModelException {
-
-		// reset all elements.
-		monitor.beginTask("Disabling intention elements.", this.aDB
-				.getAllElements().size());
-		for (final IElement elem : this.aDB.getAllElements()) {
-			elem.disable();
-			monitor.worked(1);
-		}
-		//		monitor.done();
+			CoreException {
+		
+		resetAllElements(new SubProgressMonitor(monitor, 1));
 
 		final IProject proj = advElem.getJavaProject().getProject();
 		final List<AJRelationship> relationshipList = AJModel
@@ -196,12 +190,36 @@ public class JayFX {
 				.getAllRelationships(
 						proj,
 						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
+	
+		enableElementsAccordingTo(advElem, new SubProgressMonitor(monitor, 1), relationshipList);
+	}
 
+	private enum JoinpointType {
+		FIELD_GET,
+		FIELD_SET,
+		METHOD_CALL;
+	}
+	
+	/**
+	 * @param advElem
+	 * @param monitor
+	 * @param relationshipList
+	 * @throws ConversionException
+	 * @throws CoreException 
+	 */
+	private void enableElementsAccordingTo(AdviceElement advElem,
+			IProgressMonitor monitor,
+			final List<AJRelationship> relationshipList)
+			throws ConversionException, CoreException {
+		
 		monitor.beginTask("Enabling elements according to advice pointcut.",
 				relationshipList.size());
+		
 		for (final AJRelationship relationship : relationshipList) {
+			
 			final AdviceElement advice = (AdviceElement) relationship
 					.getSource();
+			
 			if (advice.equals(advElem)) {
 				final IJavaElement target = relationship.getTarget();
 				// IElement adviceElem = Util.convertBinding(ICategories.ADVICE,
@@ -247,44 +265,27 @@ public class JayFX {
 					final IAJCodeElement ajElem = (IAJCodeElement) target;
 					final StringBuilder targetString = new StringBuilder(ajElem
 							.getElementName());
-					targetString.delete(0, targetString.indexOf(" ") + 1);
-					targetString.deleteCharAt(targetString.length() - 1);
-
-					final SearchPattern pattern = SearchPattern.createPattern(
-							targetString.toString(),
-							IJavaSearchConstants.METHOD,
-							IJavaSearchConstants.DECLARATIONS,
-							SearchPattern.R_EXACT_MATCH
-									| SearchPattern.R_CASE_SENSITIVE);
-					final SearchEngine engine = new SearchEngine();
-					final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
-					try {
-						engine.search(pattern,
-								new SearchParticipant[] { SearchEngine
-										.getDefaultSearchParticipant() },
-								SearchEngine.createWorkspaceScope(),
-								new SearchRequestor() {
-
-									@Override
-									public void acceptSearchMatch(
-											SearchMatch match)
-											throws CoreException {
-										if (match.getAccuracy() == SearchMatch.A_ACCURATE
-												&& !match.isInsideDocComment())
-											results.add(match);
-									}
-								}, null);
-					} catch (final CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					String type = targetString.substring(0, targetString.indexOf("("));
+					StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
+					int pos = typeBuilder.indexOf("-");
+					
+					switch(JoinpointType.valueOf(typeBuilder.replace(pos, pos+1, "_").toString())) {
+						case FIELD_GET: {
+							enableElementsAccordingToFieldGet(targetString);
+							break;
+						}
+						
+						case FIELD_SET: {
+							enableElementsAccordingToFieldSet(targetString);
+							break;
+						}
+						
+						case METHOD_CALL: {
+							enableElementsAccordingToMethodCall(targetString);
+							break;
+						}
 					}
-
-					for (final SearchMatch match : results) {
-						final IElement toEnable = this
-								.convertToElement((IJavaElement) match
-										.getElement());
-						toEnable.enableIncommingRelationsFor(Relation.CALLS);
-					}
+					
 					break;
 				}
 				default:
@@ -295,7 +296,178 @@ public class JayFX {
 			}
 			monitor.worked(1);
 		}
-		//		monitor.done();
+		monitor.done();
+	}
+
+	/**
+	 * @param targetString
+	 * @throws CoreException 
+	 * @throws ConversionException 
+	 */
+	private void enableElementsAccordingToFieldSet(StringBuilder targetString) throws CoreException, ConversionException {
+		transformTargetStringToFieldName(targetString);
+		final SearchPattern pattern = SearchPattern.createPattern(
+				targetString.toString(),
+				IJavaSearchConstants.FIELD,
+				IJavaSearchConstants.DECLARATIONS,
+				SearchPattern.R_EXACT_MATCH
+						| SearchPattern.R_CASE_SENSITIVE);
+		final SearchEngine engine = new SearchEngine();
+		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
+		try {
+			engine.search(pattern,
+					new SearchParticipant[] { SearchEngine
+							.getDefaultSearchParticipant() },
+					SearchEngine.createWorkspaceScope(),
+					new SearchRequestor() {
+
+						@Override
+						public void acceptSearchMatch(
+								SearchMatch match)
+								throws CoreException {
+							if (match.getAccuracy() == SearchMatch.A_ACCURATE
+									&& !match.isInsideDocComment())
+								results.add(match);
+						}
+					}, null);
+		} 
+		catch(NullPointerException e) {
+			System.out.println("Caught " + e + " from search engine. Rethrowing.");
+			throw e;
+		}
+
+		for (final SearchMatch match : results) {
+			final IElement toEnable = this
+					.convertToElement((IJavaElement) match
+							.getElement());
+			toEnable.enableIncommingRelationsFor(Relation.SETS);
+		}
+	}
+
+	/**
+	 * @param targetString
+	 */
+	private static void transformTargetStringToFieldName(StringBuilder targetString) {
+		targetString.delete(0, targetString.indexOf(" ") + 1);
+		targetString.deleteCharAt(targetString.length() - 1);
+	}
+	
+
+	/**
+	 * @param targetString
+	 * @throws CoreException 
+	 * @throws ConversionException 
+	 */
+	private void enableElementsAccordingToFieldGet(StringBuilder targetString) throws CoreException, ConversionException {
+		transformTargetStringToFieldName(targetString);
+		final SearchPattern pattern = SearchPattern.createPattern(
+				targetString.toString(),
+				IJavaSearchConstants.FIELD,
+				IJavaSearchConstants.DECLARATIONS,
+				SearchPattern.R_EXACT_MATCH
+						| SearchPattern.R_CASE_SENSITIVE);
+		final SearchEngine engine = new SearchEngine();
+		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
+		try {
+			engine.search(pattern,
+					new SearchParticipant[] { SearchEngine
+							.getDefaultSearchParticipant() },
+					SearchEngine.createWorkspaceScope(),
+					new SearchRequestor() {
+
+						@Override
+						public void acceptSearchMatch(
+								SearchMatch match)
+								throws CoreException {
+							if (match.getAccuracy() == SearchMatch.A_ACCURATE
+									&& !match.isInsideDocComment())
+								results.add(match);
+						}
+					}, null);
+		} 
+		catch(NullPointerException e) {
+			System.out.println("Caught " + e + " from search engine. Rethrowing.");
+			throw e;
+		}
+
+		for (final SearchMatch match : results) {
+			final IElement toEnable = this
+					.convertToElement((IJavaElement) match
+							.getElement());
+			toEnable.enableIncommingRelationsFor(Relation.GETS);
+		}
+	}
+
+	/**
+	 * @param targetString
+	 * @throws ConversionException
+	 */
+	private void enableElementsAccordingToMethodCall(
+			final StringBuilder targetString) throws ConversionException {
+		transformTargetStringToMethodName(targetString);
+		final SearchPattern pattern = SearchPattern.createPattern(
+				targetString.toString(),
+				IJavaSearchConstants.METHOD,
+				IJavaSearchConstants.DECLARATIONS,
+				SearchPattern.R_EXACT_MATCH
+						| SearchPattern.R_CASE_SENSITIVE);
+		final SearchEngine engine = new SearchEngine();
+		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
+		try {
+			engine.search(pattern,
+					new SearchParticipant[] { SearchEngine
+							.getDefaultSearchParticipant() },
+					SearchEngine.createWorkspaceScope(),
+					new SearchRequestor() {
+
+						@Override
+						public void acceptSearchMatch(
+								SearchMatch match)
+								throws CoreException {
+							if (match.getAccuracy() == SearchMatch.A_ACCURATE
+									&& !match.isInsideDocComment())
+								results.add(match);
+						}
+					}, null);
+		} 
+		catch(NullPointerException e) {
+			System.out.println("Caught " + e + " from search engine. Rethrowing.");
+			throw e;
+		}
+		catch (final CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		for (final SearchMatch match : results) {
+			final IElement toEnable = this
+					.convertToElement((IJavaElement) match
+							.getElement());
+			toEnable.enableIncommingRelationsFor(Relation.CALLS);
+		}
+	}
+
+	/**
+	 * @param targetString
+	 */
+	private static void transformTargetStringToMethodName(final StringBuilder targetString) {
+		targetString.delete(0, targetString.indexOf(" ") + 1);
+		targetString.deleteCharAt(targetString.length() - 1);
+	}
+
+	/**
+	 * @param monitor
+	 */
+	private void resetAllElements(IProgressMonitor monitor) {
+		// reset all elements.	
+		monitor.beginTask("Disabling intention elements.", this.aDB
+				.getAllElements().size());
+		for (final IElement elem : this.aDB.getAllElements()) {
+			elem.disable();
+			elem.disableAllIncommingRelations();
+			monitor.worked(1);
+		}
+		monitor.done();
 	}
 
 	/**

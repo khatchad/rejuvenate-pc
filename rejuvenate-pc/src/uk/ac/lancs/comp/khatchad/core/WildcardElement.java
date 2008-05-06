@@ -94,4 +94,10 @@ public class WildcardElement implements IElement {
 	public boolean isEnabled() {
 		return this.enabled;
 	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
+	 */
+	public void disableAllIncommingRelations() {
+	}
 }

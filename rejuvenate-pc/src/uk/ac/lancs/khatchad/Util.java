@@ -466,9 +466,9 @@ public class Util {
 	 * @return
 	 * @throws JavaModelException
 	 */
-	public static Collection<? extends AdviceElement> extractAdviceElements(
+	public static Collection<? extends AdviceElement> extractValidAdviceElements(
 			IJavaProject proj) throws JavaModelException {
-		Collection<AdviceElement> ret = new ArrayList<AdviceElement>();
+		Collection<AdviceElement> ret = new LinkedHashSet<AdviceElement>();
 
 		if (AspectJPlugin.isAJProject(proj.getProject())) {
 			for (IPackageFragment frag : proj.getPackageFragments())
@@ -495,7 +495,7 @@ public class Util {
 	 */
 	@SuppressWarnings("restriction")
 	public static Set<IProject> getProjects(
-			Collection<AdviceElement> adviceCol) {
+			Collection<? extends AdviceElement> adviceCol) {
 		Set<IProject> ret = new LinkedHashSet<IProject>();
 		for ( AdviceElement elem : adviceCol )
 			ret.add(elem.getJavaProject().getProject());

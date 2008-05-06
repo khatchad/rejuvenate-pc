@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaElement;
 
+import uk.ac.lancs.comp.khatchad.core.NullElement;
 import uk.ac.lancs.comp.khatchad.core.WildcardElement;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -37,6 +38,7 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	
 	public static final IntentionNode<IElement> DISABLED_WILDCARD = new IntentionNode<IElement>(new WildcardElement());
 	public static final IntentionNode<IElement> ENABLED_WILDCARD = new IntentionNode<IElement>(new WildcardElement(true));
+	public static final IntentionNode<IElement> NULL = new IntentionNode<IElement>(new NullElement());
 
 	/**
 	 * @param elem

@@ -34,13 +34,13 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 						edge.getFromNode(),
 						edge.getToNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD, edge
-								.getType());
+								.getType(), edge.isEnabled());
 				ret.add(newEdge);
 			} else if (edge.getToNode().equals(commonNode)) {
 				IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
 						edge.getFromNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD, edge
-								.getToNode(), edge.getType());
+								.getToNode(), edge.getType(), edge.isEnabled());
 				ret.add(newEdge);
 			} else {
 				IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
@@ -48,7 +48,7 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 								: IntentionNode.DISABLED_WILDCARD,
 						edge.getToNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD, edge
-								.getType());
+								.getType(), edge.isEnabled());
 				ret.add(newEdge);
 			}
 		}
@@ -64,6 +64,14 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 
 	public IntentionNode<?> getFirstNode() {
 		return this.firstElement().getFromNode();
+	}
+
+	public IntentionEdge<?> getFirstEdge() {
+		return this.firstElement();
+	}
+	
+	public IntentionEdge<?> getLastEdge() {
+		return this.lastElement();
 	}
 
 	public IntentionNode<?> getLastNode() {

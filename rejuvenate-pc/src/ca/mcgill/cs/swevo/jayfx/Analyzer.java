@@ -49,6 +49,8 @@ public class Analyzer
 			(pRelation == Relation.DECLARES_METHOD) ||
 			(pRelation == Relation.DECLARES_FIELD) ||
 			(pRelation == Relation.ACCESSES ) || (pRelation == Relation.T_ACCESSES ) || 
+			(pRelation == Relation.SETS) ||
+			(pRelation == Relation.GETS) ||
 			(pRelation == Relation.EXTENDS_CLASS ) || (pRelation == Relation.T_EXTENDS_CLASS ) ||
 			(pRelation == Relation.EXTENDS_INTERFACES) || (pRelation == Relation.T_EXTENDS_INTERFACES ) ||
 			(pRelation == Relation.OVERRIDES) || (pRelation == Relation.T_OVERRIDES ) ||

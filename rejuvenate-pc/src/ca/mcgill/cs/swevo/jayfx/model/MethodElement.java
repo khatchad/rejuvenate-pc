@@ -195,4 +195,11 @@ public class MethodElement extends AbstractElement {
 		final int lIndex = this.getId().indexOf("(");
 		return this.getId().substring(0, lIndex);
 	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
+	 */
+	public void disableAllIncommingRelations() {
+		this.enabledIncommingRelations.clear();
+	}
 }

@@ -8,6 +8,7 @@ import uk.ac.lancs.khatchad.IntentionNode;
 import uk.ac.lancs.khatchad.IntentionGraph;
 import uk.ac.lancs.khatchad.IntentionElement;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
+import ca.mcgill.cs.swevo.jayfx.model.Relation;
 import java.util.LinkedHashSet;
 import uk.ac.lancs.khatchad.IntentionPath;
 import uk.ac.lancs.khatchad.IntentionElement;
@@ -31,7 +32,7 @@ end
 rule "path building"
 	when
 		$edge : IntentionEdge($source : fromNode, $target : toNode)
-		$path : Path(size < 2, topNode == $target, tailNodes not contains $source) # more work here?
+		$path : Path(size < 3, topNode == $target, tailNodes not contains $source) # more work here?
 	then
 		Path aPath = (Path)$path.clone();
 		aPath.push($edge);
@@ -56,9 +57,16 @@ query "backward suggested execution nodes"
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end
 
-/*
-query "forward suggested call arcs"
-	($node : IntentionNode())
-	($enabledEdge : IntentionEdge(enabled == true) from $node.edges)
+query "forward suggested X arcs" (Relation x)
+	$enabledEdge : IntentionEdge(enabled == true, type == x)
+	$enabledPath : Path(firstEdge == $enabledEdge, $commonNode : lastNode, $enabledSize : size)
+	$intersectingPath : Path($suggestedEdge : firstEdge, lastNode == $commonNode, size == $enabledSize) 
+	eval($enabledPath.typeEquivalent($intersectingPath))
 end
-*/
+
+query "backward suggested X arcs" (Relation x)
+	$enabledEdge : IntentionEdge(enabled == true, type == x)
+	$enabledPath : Path(lastEdge == $enabledEdge, $commonNode : firstNode, $enabledSize : size)
+	$intersectingPath : Path($suggestedEdge : lastEdge, firstNode == $commonNode, size == $enabledSize) 
+	eval($enabledPath.typeEquivalent($intersectingPath))
+end

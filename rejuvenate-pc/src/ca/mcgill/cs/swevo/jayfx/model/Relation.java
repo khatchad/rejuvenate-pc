@@ -26,9 +26,9 @@ public enum Relation
 	CONTAINS				( Type.ID_CONTAINS, true ),
 	CHECKS 					( Type.ID_CHECKS, true ),
 	CREATES					( Type.ID_CREATES, true ),
-	DECLARES_METHOD 				( Type.ID_DECLARES_METHOD, true ),
-	DECLARES_FIELD 				( Type.ID_DECLARES_FIELD, true ),
-	DECLARES_TYPE 				( Type.ID_DECLARES_TYPE, true ),
+	DECLARES_METHOD 		( Type.ID_DECLARES_METHOD, true ),
+	DECLARES_FIELD 			( Type.ID_DECLARES_FIELD, true ),
+	DECLARES_TYPE 			( Type.ID_DECLARES_TYPE, true ),
 	EXTENDS_CLASS			( Type.ID_EXTENDS_CLASS, true ),
 	EXTENDS_INTERFACES		( Type.ID_EXTENDS_INTERFACES, true ),
 	HAS_PARAMETER_TYPES 	( Type.ID_HAS_PARAMETER_TYPES, true ),
@@ -39,6 +39,8 @@ public enum Relation
 	TRANS_IMPLEMENTS		( Type.ID_TRANS_IMPLEMENTS, true ),
 
 	ACCESSES 				( Type.ID_ACCESSES, true ),
+	SETS					( Type.ID_SETS, true),
+	GETS					( Type.ID_GETS, true),
 	ADVISES					( Type.ID_ADVISES, true ),
 	CALLS					( Type.ID_CALLS, true ),
 	IMPLEMENTS_METHOD		( Type.ID_IMPLEMENTS_METHOD, true ),
@@ -309,6 +311,8 @@ public enum Relation
 		else if( pCategory == ICategories.METHOD )
 		{
 			if( this == ACCESSES ||
+					this == SETS ||
+					this == GETS || 
 					this == CALLS ||
 					this == EXPLICITLY_CALLS ||
 					this == CHECKS ||
@@ -491,7 +495,12 @@ public enum Relation
 		("transitively_implements", "transitively implementing", "transitively implemented by", "a class transitively implements an interface"),
 
 		ID_ACCESSES 
-		("accesses", "accessing", "accessed by", "a method accesses a field, either to read or write"),
+		("accesses_field", "accessing", "accessed by", "a method accesses a field, either to read or write"),
+		ID_SETS 
+		("sets_field", "setting", "set by", "a method sets a field"),
+		ID_GETS
+		("gets_field", "getting", "got by", "a method gets a field"),
+		
 		ID_ADVISES
 		("advises", "advising", "advised by", "an advise advises something"),
 		ID_CALLS 
