@@ -215,54 +215,84 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			makeDotFile(graph, pointcut_count);
 
 			//			System.out.println("Forward execution suggestions:");
-			executeNodeQuery(new SubProgressMonitor(lMonitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), workingMemory, patternToResultMap,
-					patternToEnabledElementMap, "forward suggested execution nodes");
+			executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap,
+					"forward suggested execution nodes");
 			//			System.out.println("=+++=");
 			//			System.out.println();
 
 			//			System.out.println("Backward execution suggestion:");
-			executeNodeQuery(new SubProgressMonitor(lMonitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK), workingMemory, patternToResultMap,
-					patternToEnabledElementMap, "backward suggested execution nodes");
-			
+			executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap,
+					"backward suggested execution nodes");
+
 			//			System.out.println("Forward call suggestions:");
-			executeArcQuery("forward suggested X arcs", Relation.CALLS, workingMemory, patternToResultMap,
-					patternToEnabledElementMap, new SubProgressMonitor(lMonitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			executeArcQuery("forward suggested X arcs", Relation.CALLS,
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap, new SubProgressMonitor(
+							lMonitor, 1,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+			executeArcQuery("backward suggested X arcs", Relation.CALLS,
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap, new SubProgressMonitor(
+							lMonitor, 1,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+			executeArcQuery("forward suggested X arcs", Relation.GETS,
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap, new SubProgressMonitor(
+							lMonitor, 1,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			
-			executeArcQuery("Backward suggested X arcs", Relation.CALLS, workingMemory, patternToResultMap,
-					patternToEnabledElementMap, new SubProgressMonitor(lMonitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			executeArcQuery("backward suggested X arcs", Relation.GETS,
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap, new SubProgressMonitor(
+							lMonitor, 1,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+
+			executeArcQuery("forward suggested X arcs", Relation.SETS,
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap, new SubProgressMonitor(
+							lMonitor, 1,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 			
-			executeArcQuery("forward suggested X arcs", Relation.GETS, workingMemory, patternToResultMap,
-					patternToEnabledElementMap, new SubProgressMonitor(lMonitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-			
-			executeArcQuery("Backward suggested X arcs", Relation.SETS, workingMemory, patternToResultMap,
-					patternToEnabledElementMap, new SubProgressMonitor(lMonitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			executeArcQuery("backward suggested X arcs", Relation.SETS,
+					workingMemory, patternToResultMap,
+					patternToEnabledElementMap, new SubProgressMonitor(
+							lMonitor, 1,
+							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 			//			System.out.println("Backward call suggestions:");
 			//			System.out.println("=+++=");
 			//			System.out.println();
 
-			//			PrintWriter suggestionOut = getSuggestionWriter();
-			//			suggestionOut
-			//					.println("Benchmark\tAdvice #\tAdvice Name\tPattern\tSuggestion");
+			PrintWriter suggestionOut = getSuggestionWriter();
+			suggestionOut
+					.println("Benchmark\tAdvice #\tAdvice Name\tPattern\tSuggestion");
 
-			//			System.out.println("Results:");
+			System.out.println("Results:");
 			for (Path pattern : patternToResultMap.keySet()) {
-				//				System.out.println("Pattern results for: " + pattern);
-				//				System.out.println("\t" + "Suggested elements:");
-				//				for (IntentionElement<IElement> resultNode : patternToResultMap
-				//						.get(pattern)) {
-				//					System.out.println("\t\t" + resultNode);
-				//					suggestionOut.println(advElem.getJavaProject().getProject()
-				//							.getName()
-				//							+ "\t"
-				//							+ pointcut_count
-				//							+ "\t"
-				//							+ advElem.readableName()
-				//							+ "\t"
-				//							+ pattern
-				//							+ "\t"
-				//							+ resultNode);
-				//				}
+				System.out.println("Pattern results for: " + pattern);
+				System.out.println("\t" + "Suggested elements:");
+				for (IntentionElement<IElement> resultNode : patternToResultMap
+						.get(pattern)) {
+					System.out.println("\t\t" + resultNode);
+					suggestionOut.println(advElem.getJavaProject().getProject()
+							.getName()
+							+ "\t"
+							+ pointcut_count
+							+ "\t"
+							+ advElem.readableName()
+							+ "\t"
+							+ pattern
+							+ "\t"
+							+ resultNode);
+				}
 
 				double precision = calculatePrecision(
 						patternToEnabledElementMap.get(pattern),
@@ -287,7 +317,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				patternOut.print(concreteness + "\t");
 				patternOut.println();
 			}
-			//			suggestionOut.close();
+			suggestionOut.close();
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
@@ -434,26 +464,29 @@ public class Test implements IWorkbenchWindowActionDelegate {
 	}
 
 	/**
-	 * @param relation 
-	 * @param string 
+	 * @param relation
+	 * @param string
 	 * @param workingMemory
 	 * @param patternToResultMap
 	 * @param patternToEnabledElementMap
 	 * @param lMonitor
 	 */
 	private static void executeArcQuery(
-			String queryString, Relation relation, final WorkingMemory workingMemory,
+			String queryString,
+			Relation relation,
+			final WorkingMemory workingMemory,
 			Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
 			Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			IProgressMonitor lMonitor) {
-		
-		final QueryResults forwardSuggestedArcs = workingMemory
-				.getQueryResults("forward suggested X arcs", new Object[] {relation});
-		
-		lMonitor.beginTask("Executing query: " + queryString.replace("X", relation.toString()) + ".",
-				forwardSuggestedArcs.size());
-		for (final Iterator it = forwardSuggestedArcs.iterator(); it
-				.hasNext();) {
+
+		final QueryResults suggestedArcs = workingMemory
+				.getQueryResults(queryString,
+						new Object[] { relation });
+
+		lMonitor.beginTask("Executing query: "
+				+ queryString.replace("X", relation.toString()) + ".",
+				suggestedArcs.size());
+		for (final Iterator it = suggestedArcs.iterator(); it.hasNext();) {
 			final QueryResult result = (QueryResult) it.next();
 			final IntentionEdge suggestedEdge = (IntentionEdge) result
 					.get("$suggestedEdge");
@@ -501,13 +534,12 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
 			Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			String queryString) {
-		
+
 		final QueryResults suggestedNodes = workingMemory
 				.getQueryResults(queryString);
 		lMonitor.beginTask("Executing node query: " + queryString + ".",
 				suggestedNodes.size());
-		for (final Iterator it = suggestedNodes.iterator(); it
-				.hasNext();) {
+		for (final Iterator it = suggestedNodes.iterator(); it.hasNext();) {
 			final QueryResult result = (QueryResult) it.next();
 			final IntentionNode suggestedNode = (IntentionNode) result
 					.get("$suggestedNode");
