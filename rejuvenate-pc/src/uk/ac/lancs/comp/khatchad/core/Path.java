@@ -154,7 +154,7 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 	}
 
 	public Collection<IntentionNode<IElement>> getNodes() {
-		Collection<IntentionNode<IElement>> ret = new LinkedHashSet<IntentionNode<IElement>>();
+		Collection<IntentionNode<IElement>> ret = new ArrayList<IntentionNode<IElement>>();
 		for (IntentionEdge<IElement> edge : this) {
 			ret.add(edge.getFromNode());
 			ret.add(edge.getToNode());
