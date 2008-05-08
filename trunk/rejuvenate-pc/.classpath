@@ -9,30 +9,5 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/animationLib.jar" sourcepath="/Users/raffi/local/JLog/Source">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/raffi/local/JLog/Documentation/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/builtinsLib.jar" sourcepath="/Users/raffi/local/JLog/Source">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/raffi/local/JLog/Documentation/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/databaseLib.jar" sourcepath="/Users/raffi/local/JLog/Source">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/raffi/local/JLog/Documentation/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/filesystemLib.jar" sourcepath="/Users/raffi/local/JLog/Source">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/raffi/local/JLog/Documentation/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/jlogic.jar" sourcepath="/Users/raffi/local/JLog/Source">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/raffi/local/JLog/Documentation/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

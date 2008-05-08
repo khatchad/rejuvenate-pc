@@ -212,7 +212,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 
 			graph.enableElementsAccordingTo(advElem, lMonitor);
 
-			makeDotFile(graph, pointcut_count);
+//			makeDotFile(graph, pointcut_count);
 
 			//			System.out.println("Forward execution suggestions:");
 			executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
@@ -271,28 +271,28 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			//			System.out.println("=+++=");
 			//			System.out.println();
 
-			PrintWriter suggestionOut = getSuggestionWriter();
-			suggestionOut
-					.println("Benchmark\tAdvice #\tAdvice Name\tPattern\tSuggestion");
+//			PrintWriter suggestionOut = getSuggestionWriter();
+//			suggestionOut
+//					.println("Benchmark\tAdvice#\tAdvice\tPattern\tSuggestion");
 
-			System.out.println("Results:");
+//			System.out.println("Results:");
 			for (Path pattern : patternToResultMap.keySet()) {
-				System.out.println("Pattern results for: " + pattern);
-				System.out.println("\t" + "Suggested elements:");
-				for (IntentionElement<IElement> resultNode : patternToResultMap
-						.get(pattern)) {
-					System.out.println("\t\t" + resultNode);
-					suggestionOut.println(advElem.getJavaProject().getProject()
-							.getName()
-							+ "\t"
-							+ pointcut_count
-							+ "\t"
-							+ advElem.readableName()
-							+ "\t"
-							+ pattern
-							+ "\t"
-							+ resultNode);
-				}
+//				System.out.println("Pattern results for: " + pattern);
+//				System.out.println("\t" + "Suggested elements:");
+//				for (IntentionElement<IElement> resultNode : patternToResultMap
+//						.get(pattern)) {
+//					System.out.println("\t\t" + resultNode);
+//					suggestionOut.println(advElem.getJavaProject().getProject()
+//							.getName()
+//							+ "\t"
+//							+ pointcut_count
+//							+ "\t"
+//							+ advElem.readableName()
+//							+ "\t"
+//							+ pattern
+//							+ "\t"
+//							+ resultNode);
+//				}
 
 				double precision = calculatePrecision(
 						patternToEnabledElementMap.get(pattern),
@@ -309,7 +309,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				//				System.out.println();
 
 				patternOut.print(advElem.getJavaProject().getProject()
-						.getName() + '\t');
+						.getName() + "\t");
 				patternOut.print(pointcut_count + "\t");
 				patternOut.print(advElem.readableName() + "\t");
 				patternOut.print(pattern + "\t");
@@ -317,7 +317,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				patternOut.print(concreteness + "\t");
 				patternOut.println();
 			}
-			suggestionOut.close();
+//			suggestionOut.close();
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
