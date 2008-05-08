@@ -81,7 +81,8 @@ public class JayFX {
 				for (final ICompilationUnit element2 : lCUs)
 					lReturn.add(element2);
 			}
-		} catch (final JavaModelException pException) {
+		}
+		catch (final JavaModelException pException) {
 			throw new JayFXException(
 					"Could not extract compilation units from project",
 					pException);
@@ -112,7 +113,8 @@ public class JayFX {
 					.getReferencedProjects();
 			for (final IProject element : lReferencedProjects)
 				lReturn.add(JavaCore.create(element));
-		} catch (final CoreException pException) {
+		}
+		catch (final CoreException pException) {
 			throw new JayFXException("Could not extract project information",
 					pException);
 		}
@@ -179,9 +181,8 @@ public class JayFX {
 
 	@SuppressWarnings( { "restriction", "unchecked" })
 	public void enableElementsAccordingTo(AdviceElement advElem,
-			IProgressMonitor monitor) throws ConversionException,
-			CoreException {
-		
+			IProgressMonitor monitor) throws ConversionException, CoreException {
+
 		resetAllElements(new SubProgressMonitor(monitor, 1));
 
 		final IProject proj = advElem.getJavaProject().getProject();
@@ -190,108 +191,116 @@ public class JayFX {
 				.getAllRelationships(
 						proj,
 						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
-	
-		enableElementsAccordingTo(advElem, new SubProgressMonitor(monitor, 1), relationshipList);
+
+		enableElementsAccordingTo(advElem, new SubProgressMonitor(monitor, 1),
+				relationshipList);
 	}
 
 	private enum JoinpointType {
-		FIELD_GET,
-		FIELD_SET,
-		METHOD_CALL;
+		FIELD_GET, FIELD_SET, CONSTRUCTOR_CALL, METHOD_CALL;
 	}
-	
+
 	/**
 	 * @param advElem
 	 * @param monitor
 	 * @param relationshipList
 	 * @throws ConversionException
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private void enableElementsAccordingTo(AdviceElement advElem,
 			IProgressMonitor monitor,
 			final List<AJRelationship> relationshipList)
 			throws ConversionException, CoreException {
-		
+
 		monitor.beginTask("Enabling elements according to advice pointcut.",
 				relationshipList.size());
-		
+
 		for (final AJRelationship relationship : relationshipList) {
-			
+
 			final AdviceElement advice = (AdviceElement) relationship
 					.getSource();
-			
+
 			if (advice.equals(advElem)) {
 				final IJavaElement target = relationship.getTarget();
 				// IElement adviceElem = Util.convertBinding(ICategories.ADVICE,
 				// advice.getHandleIdentifier());
 				switch (target.getElementType()) {
-				case IJavaElement.METHOD: {
-					final IMethod meth = (IMethod) target;
-					// try {
-					// this.aDB.addElement(adviceElem, advice.getFlags());
-					// } catch (JavaModelException e) {
-					// // TODO Auto-generated catch block
-					// e.printStackTrace();
-					// }
+					case IJavaElement.METHOD: {
+						final IMethod meth = (IMethod) target;
+						// try {
+						// this.aDB.addElement(adviceElem, advice.getFlags());
+						// } catch (JavaModelException e) {
+						// // TODO Auto-generated catch block
+						// e.printStackTrace();
+						// }
 
-					// this.aDB.addRelation(adviceElem, Relation.ADVISES,
-					// this.convertToElement(meth));
-					final IElement toEnable = this.convertToElement(meth);
-					if (toEnable == null)
-						throw new IllegalStateException("In trouble!");
-					toEnable.enable();
-					break;
-				}
-				case IJavaElement.TYPE: {
-					// its a default ctor.
-					final IType type = (IType) target;
-					for (final IMethod meth : type.getMethods())
-						if (meth.isConstructor()
-								&& meth.getParameterNames().length == 0) {
-							final IElement toEnable = this
-									.convertToElement(meth);
-							if (toEnable == null)
-								throw new IllegalStateException("In trouble!");
-							toEnable.enable();
-						}
-					break;
-				}
-				case IJavaElement.LOCAL_VARIABLE: {
-					// its an aspect element.
-					if (!(target instanceof IAJCodeElement))
-						throw new IllegalStateException(
-								"Something is screwy here.");
-
-					final IAJCodeElement ajElem = (IAJCodeElement) target;
-					final StringBuilder targetString = new StringBuilder(ajElem
-							.getElementName());
-					String type = targetString.substring(0, targetString.indexOf("("));
-					StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
-					int pos = typeBuilder.indexOf("-");
-					
-					switch(JoinpointType.valueOf(typeBuilder.replace(pos, pos+1, "_").toString())) {
-						case FIELD_GET: {
-							enableElementsAccordingToFieldGet(targetString);
-							break;
-						}
-						
-						case FIELD_SET: {
-							enableElementsAccordingToFieldSet(targetString);
-							break;
-						}
-						
-						case METHOD_CALL: {
-							enableElementsAccordingToMethodCall(targetString);
-							break;
-						}
+						// this.aDB.addRelation(adviceElem, Relation.ADVISES,
+						// this.convertToElement(meth));
+						final IElement toEnable = this.convertToElement(meth);
+						if (toEnable == null)
+							throw new IllegalStateException("In trouble!");
+						toEnable.enable();
+						break;
 					}
-					
-					break;
-				}
-				default:
-					throw new IllegalStateException(
-							"Unexpected relationship target type: "
-									+ target.getElementType());
+					case IJavaElement.TYPE: {
+						// its a default ctor.
+						final IType type = (IType) target;
+						for (final IMethod meth : type.getMethods())
+							if (meth.isConstructor()
+									&& meth.getParameterNames().length == 0) {
+								final IElement toEnable = this
+										.convertToElement(meth);
+								if (toEnable == null)
+									throw new IllegalStateException(
+											"In trouble!");
+								toEnable.enable();
+							}
+						break;
+					}
+					case IJavaElement.LOCAL_VARIABLE: {
+						// its an aspect element.
+						if (!(target instanceof IAJCodeElement))
+							throw new IllegalStateException(
+									"Something is screwy here.");
+
+						final IAJCodeElement ajElem = (IAJCodeElement) target;
+						final StringBuilder targetString = new StringBuilder(
+								ajElem.getElementName());
+						String type = targetString.substring(0, targetString
+								.indexOf("("));
+						StringBuilder typeBuilder = new StringBuilder(type
+								.toUpperCase());
+						int pos = typeBuilder.indexOf("-");
+
+						switch (JoinpointType.valueOf(typeBuilder.replace(pos,
+								pos + 1, "_").toString())) {
+							case FIELD_GET: {
+								enableElementsAccordingToFieldGet(targetString);
+								break;
+							}
+
+							case FIELD_SET: {
+								enableElementsAccordingToFieldSet(targetString);
+								break;
+							}
+
+							case METHOD_CALL: {
+								enableElementsAccordingToMethodCall(targetString);
+								break;
+							}
+
+							case CONSTRUCTOR_CALL: {
+								enableElementsAccordingToConstructorCall(targetString);
+								break;
+							}
+						}
+
+						break;
+					}
+					default:
+						throw new IllegalStateException(
+								"Unexpected relationship target type: "
+										+ target.getElementType());
 				}
 			}
 			monitor.worked(1);
@@ -299,47 +308,45 @@ public class JayFX {
 		monitor.done();
 	}
 
+	private static final String INIT_STRING = ".<init>";
+
 	/**
 	 * @param targetString
-	 * @throws CoreException 
-	 * @throws ConversionException 
+	 * @throws CoreException
+	 * @throws ConversionException
 	 */
-	private void enableElementsAccordingToFieldSet(StringBuilder targetString) throws CoreException, ConversionException {
+	private void enableElementsAccordingToFieldSet(StringBuilder targetString)
+			throws CoreException, ConversionException {
 		transformTargetStringToFieldName(targetString);
-		final SearchPattern pattern = SearchPattern.createPattern(
-				targetString.toString(),
-				IJavaSearchConstants.FIELD,
-				IJavaSearchConstants.DECLARATIONS,
-				SearchPattern.R_EXACT_MATCH
+		final SearchPattern pattern = SearchPattern.createPattern(targetString
+				.toString(), IJavaSearchConstants.FIELD,
+				IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH
 						| SearchPattern.R_CASE_SENSITIVE);
 		final SearchEngine engine = new SearchEngine();
 		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
 		try {
-			engine.search(pattern,
-					new SearchParticipant[] { SearchEngine
-							.getDefaultSearchParticipant() },
-					SearchEngine.createWorkspaceScope(),
-					new SearchRequestor() {
+			engine.search(pattern, new SearchParticipant[] { SearchEngine
+					.getDefaultSearchParticipant() }, SearchEngine
+					.createWorkspaceScope(), new SearchRequestor() {
 
-						@Override
-						public void acceptSearchMatch(
-								SearchMatch match)
-								throws CoreException {
-							if (match.getAccuracy() == SearchMatch.A_ACCURATE
-									&& !match.isInsideDocComment())
-								results.add(match);
-						}
-					}, null);
-		} 
-		catch(NullPointerException e) {
-			System.out.println("Caught " + e + " from search engine. Rethrowing.");
+				@Override
+				public void acceptSearchMatch(SearchMatch match)
+						throws CoreException {
+					if (match.getAccuracy() == SearchMatch.A_ACCURATE
+							&& !match.isInsideDocComment())
+						results.add(match);
+				}
+			}, null);
+		}
+		catch (NullPointerException e) {
+			System.out.println("Caught " + e
+					+ " from search engine. Rethrowing.");
 			throw e;
 		}
 
 		for (final SearchMatch match : results) {
 			final IElement toEnable = this
-					.convertToElement((IJavaElement) match
-							.getElement());
+					.convertToElement((IJavaElement) match.getElement());
 			toEnable.enableIncommingRelationsFor(Relation.SETS);
 		}
 	}
@@ -347,53 +354,49 @@ public class JayFX {
 	/**
 	 * @param targetString
 	 */
-	private static void transformTargetStringToFieldName(StringBuilder targetString) {
+	private static void transformTargetStringToFieldName(
+			StringBuilder targetString) {
 		targetString.delete(0, targetString.indexOf(" ") + 1);
 		targetString.deleteCharAt(targetString.length() - 1);
 	}
-	
 
 	/**
 	 * @param targetString
-	 * @throws CoreException 
-	 * @throws ConversionException 
+	 * @throws CoreException
+	 * @throws ConversionException
 	 */
-	private void enableElementsAccordingToFieldGet(StringBuilder targetString) throws CoreException, ConversionException {
+	private void enableElementsAccordingToFieldGet(StringBuilder targetString)
+			throws CoreException, ConversionException {
 		transformTargetStringToFieldName(targetString);
-		final SearchPattern pattern = SearchPattern.createPattern(
-				targetString.toString(),
-				IJavaSearchConstants.FIELD,
-				IJavaSearchConstants.DECLARATIONS,
-				SearchPattern.R_EXACT_MATCH
+		final SearchPattern pattern = SearchPattern.createPattern(targetString
+				.toString(), IJavaSearchConstants.FIELD,
+				IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH
 						| SearchPattern.R_CASE_SENSITIVE);
 		final SearchEngine engine = new SearchEngine();
 		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
 		try {
-			engine.search(pattern,
-					new SearchParticipant[] { SearchEngine
-							.getDefaultSearchParticipant() },
-					SearchEngine.createWorkspaceScope(),
-					new SearchRequestor() {
+			engine.search(pattern, new SearchParticipant[] { SearchEngine
+					.getDefaultSearchParticipant() }, SearchEngine
+					.createWorkspaceScope(), new SearchRequestor() {
 
-						@Override
-						public void acceptSearchMatch(
-								SearchMatch match)
-								throws CoreException {
-							if (match.getAccuracy() == SearchMatch.A_ACCURATE
-									&& !match.isInsideDocComment())
-								results.add(match);
-						}
-					}, null);
-		} 
-		catch(NullPointerException e) {
-			System.out.println("Caught " + e + " from search engine. Rethrowing.");
+				@Override
+				public void acceptSearchMatch(SearchMatch match)
+						throws CoreException {
+					if (match.getAccuracy() == SearchMatch.A_ACCURATE
+							&& !match.isInsideDocComment())
+						results.add(match);
+				}
+			}, null);
+		}
+		catch (NullPointerException e) {
+			System.out.println("Caught " + e
+					+ " from search engine. Rethrowing.");
 			throw e;
 		}
 
 		for (final SearchMatch match : results) {
 			final IElement toEnable = this
-					.convertToElement((IJavaElement) match
-							.getElement());
+					.convertToElement((IJavaElement) match.getElement());
 			toEnable.enableIncommingRelationsFor(Relation.GETS);
 		}
 	}
@@ -402,36 +405,54 @@ public class JayFX {
 	 * @param targetString
 	 * @throws ConversionException
 	 */
-	private void enableElementsAccordingToMethodCall(
-			final StringBuilder targetString) throws ConversionException {
+	private void enableElementsAccordingToConstructorCall(
+			StringBuilder targetString) throws ConversionException {
+		transformTargetStringToConstructorName(targetString);
+		this.enableElementsAccordingToCall(targetString,
+				IJavaSearchConstants.CONSTRUCTOR);
+	}
+
+	/**
+	 * @param targetString
+	 * @throws ConversionException
+	 */
+	private void enableElementsAccordingToMethodCall(StringBuilder targetString)
+			throws ConversionException {
 		transformTargetStringToMethodName(targetString);
-		final SearchPattern pattern = SearchPattern.createPattern(
-				targetString.toString(),
-				IJavaSearchConstants.METHOD,
-				IJavaSearchConstants.DECLARATIONS,
-				SearchPattern.R_EXACT_MATCH
+		this.enableElementsAccordingToCall(targetString,
+				IJavaSearchConstants.METHOD);
+	}
+
+	/**
+	 * @param targetString
+	 * @throws ConversionException
+	 */
+	private void enableElementsAccordingToCall(
+			final StringBuilder targetString, int javaSearchConstant)
+			throws ConversionException {
+		final SearchPattern pattern = SearchPattern.createPattern(targetString
+				.toString(), javaSearchConstant,
+				IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH
 						| SearchPattern.R_CASE_SENSITIVE);
 		final SearchEngine engine = new SearchEngine();
 		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
 		try {
-			engine.search(pattern,
-					new SearchParticipant[] { SearchEngine
-							.getDefaultSearchParticipant() },
-					SearchEngine.createWorkspaceScope(),
-					new SearchRequestor() {
+			engine.search(pattern, new SearchParticipant[] { SearchEngine
+					.getDefaultSearchParticipant() }, SearchEngine
+					.createWorkspaceScope(), new SearchRequestor() {
 
-						@Override
-						public void acceptSearchMatch(
-								SearchMatch match)
-								throws CoreException {
-							if (match.getAccuracy() == SearchMatch.A_ACCURATE
-									&& !match.isInsideDocComment())
-								results.add(match);
-						}
-					}, null);
-		} 
-		catch(NullPointerException e) {
-			System.out.println("Caught " + e + " from search engine. Rethrowing.");
+				@Override
+				public void acceptSearchMatch(SearchMatch match)
+						throws CoreException {
+					if (match.getAccuracy() == SearchMatch.A_ACCURATE
+							&& !match.isInsideDocComment())
+						results.add(match);
+				}
+			}, null);
+		}
+		catch (NullPointerException e) {
+			System.err.println("Caught " + e
+					+ " from search engine. Rethrowing.");
 			throw e;
 		}
 		catch (final CoreException e) {
@@ -441,8 +462,7 @@ public class JayFX {
 
 		for (final SearchMatch match : results) {
 			final IElement toEnable = this
-					.convertToElement((IJavaElement) match
-							.getElement());
+					.convertToElement((IJavaElement) match.getElement());
 			toEnable.enableIncommingRelationsFor(Relation.CALLS);
 		}
 	}
@@ -450,9 +470,17 @@ public class JayFX {
 	/**
 	 * @param targetString
 	 */
-	private static void transformTargetStringToMethodName(final StringBuilder targetString) {
+	private static void transformTargetStringToMethodName(
+			final StringBuilder targetString) {
 		targetString.delete(0, targetString.indexOf(" ") + 1);
 		targetString.deleteCharAt(targetString.length() - 1);
+	}
+
+	private static void transformTargetStringToConstructorName(
+			final StringBuilder targetString) {
+		transformTargetStringToMethodName(targetString);
+		int initPos = targetString.indexOf(INIT_STRING);
+		targetString.delete(initPos, initPos + INIT_STRING.length());
 	}
 
 	/**
@@ -535,14 +563,14 @@ public class JayFX {
 	 *         range.
 	 */
 	public Set<IElement> getRange(IElement pElement, Relation pRelation) {
-		if ((pRelation == Relation.DECLARES_TYPE
-				&& !this.isProjectElement(pElement)))
+		if ((pRelation == Relation.DECLARES_TYPE && !this
+				.isProjectElement(pElement)))
 			return this.getDeclaresTypeForNonProjectElement(pElement);
-		if ((pRelation == Relation.DECLARES_METHOD
-				&& !this.isProjectElement(pElement)))
+		if ((pRelation == Relation.DECLARES_METHOD && !this
+				.isProjectElement(pElement)))
 			return this.getDeclaresMethodForNonProjectElement(pElement);
-		if ((pRelation == Relation.DECLARES_FIELD
-				&& !this.isProjectElement(pElement)))
+		if ((pRelation == Relation.DECLARES_FIELD && !this
+				.isProjectElement(pElement)))
 			return this.getDeclaresFieldForNonProjectElement(pElement);
 		if (pRelation == Relation.EXTENDS_CLASS
 				&& !this.isProjectElement(pElement))
@@ -630,7 +658,8 @@ public class JayFX {
 				final IPackageDeclaration[] lPDs = lCU.getPackageDeclarations();
 				if (lPDs.length > 0)
 					this.aPackages.add(lPDs[0].getElementName());
-			} catch (final JavaModelException lException) {
+			}
+			catch (final JavaModelException lException) {
 				throw new JayFXException(lException);
 			}
 			lAnalyzer.analyze(lCU);
@@ -685,9 +714,11 @@ public class JayFX {
 									if (Modifier.isAbstract(lModifiers))
 										lModifiers += 16384;
 								}
-							} catch (final ConversionException lException) {
+							}
+							catch (final ConversionException lException) {
 								// Ignore, the modifiers used is 0
-							} catch (final JavaModelException lException) {
+							}
+							catch (final JavaModelException lException) {
 								// Ignore, the modifierds used is 0
 							}
 							this.aDB.addElement(lMethod, lModifiers);
@@ -792,15 +823,18 @@ public class JayFX {
 					for (final IField element : lFields)
 						lReturn.add(this.convertToElement(element));
 				}
-			} catch (final ConversionException pException) {
+			}
+			catch (final ConversionException pException) {
 				// Nothing, we return the empty set.
-			} catch (final JavaModelException pException) {
+			}
+			catch (final JavaModelException pException) {
 				// Nothing, we return the empty set.
 			}
 		return lReturn;
 	}
-	
-	private Set<IElement> getDeclaresMethodForNonProjectElement(IElement pElement) {
+
+	private Set<IElement> getDeclaresMethodForNonProjectElement(
+			IElement pElement) {
 		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
@@ -812,14 +846,16 @@ public class JayFX {
 					for (final IMethod element : lMethods)
 						lReturn.add(this.convertToElement(element));
 				}
-			} catch (final ConversionException pException) {
+			}
+			catch (final ConversionException pException) {
 				// Nothing, we return the empty set.
-			} catch (final JavaModelException pException) {
+			}
+			catch (final JavaModelException pException) {
 				// Nothing, we return the empty set.
 			}
 		return lReturn;
 	}
-	
+
 	private Set<IElement> getDeclaresTypeForNonProjectElement(IElement pElement) {
 		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
@@ -832,9 +868,11 @@ public class JayFX {
 					for (final IType element : lTypes)
 						lReturn.add(this.convertToElement(element));
 				}
-			} catch (final ConversionException pException) {
+			}
+			catch (final ConversionException pException) {
 				// Nothing, we return the empty set.
-			} catch (final JavaModelException pException) {
+			}
+			catch (final JavaModelException pException) {
 				// Nothing, we return the empty set.
 			}
 		return lReturn;
@@ -879,9 +917,11 @@ public class JayFX {
 						lReturn.add(lSuperclass);
 					}
 				}
-			} catch (final ConversionException lException) {
+			}
+			catch (final ConversionException lException) {
 				// Nothing, we return the empty set.
-			} catch (final JavaModelException lException) {
+			}
+			catch (final JavaModelException lException) {
 				// Nothing, we return the empty set.
 			}
 		return lReturn;
@@ -928,9 +968,11 @@ public class JayFX {
 								lReturn.add(lInterface);
 							}
 					}
-			} catch (final ConversionException lException) {
+			}
+			catch (final ConversionException lException) {
 				// Nothing, we return the empty set.
-			} catch (final JavaModelException lException) {
+			}
+			catch (final JavaModelException lException) {
 				// Nothing, we return the empty set.
 			}
 		return lReturn;
@@ -950,8 +992,8 @@ public class JayFX {
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		final String lThisName = pMethod.getName();
 
-		final Set<IElement> lElements = this
-				.getRange(pClass, Relation.DECLARES_METHOD);
+		final Set<IElement> lElements = this.getRange(pClass,
+				Relation.DECLARES_METHOD);
 		for (final IElement lMethodElement : lElements)
 			if (lMethodElement.getCategory() == ICategories.METHOD)
 				if (!((MethodElement) lMethodElement).getName().startsWith(
