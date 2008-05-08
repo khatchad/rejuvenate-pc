@@ -32,7 +32,7 @@ end
 rule "path building"
 	when
 		$edge : IntentionEdge($source : fromNode, $target : toNode)
-		$path : Path(size < 3, topNode == $target, tailNodes not contains $source) # more work here?
+		$path : Path(size < 2, topNode == $target, tailNodes not contains $source) # more work here?
 	then
 		Path aPath = (Path)$path.clone();
 		aPath.push($edge);
