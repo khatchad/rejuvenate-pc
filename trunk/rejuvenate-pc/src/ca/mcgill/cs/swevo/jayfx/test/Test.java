@@ -194,9 +194,9 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			lMonitor.worked(1);
 		}
 
-		PrintWriter patternOut = getPatternStatsWriter();
-		patternOut
-				.println("Benchmark\tAdvice #\tAdvice Name\tPattern\tPrecision\tConcreteness");
+//		PrintWriter patternOut = getPatternStatsWriter();
+//		patternOut
+//				.println("Benchmark\tAdvice #\tAdvice Name\tPattern\tPrecision\tConcreteness");
 
 		lMonitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
@@ -308,21 +308,21 @@ public class Test implements IWorkbenchWindowActionDelegate {
 
 				//				System.out.println();
 
-				patternOut.print(advElem.getJavaProject().getProject()
-						.getName() + "\t");
-				patternOut.print(pointcut_count + "\t");
-				patternOut.print(advElem.readableName() + "\t");
-				patternOut.print(pattern + "\t");
-				patternOut.print(precision + "\t");
-				patternOut.print(concreteness + "\t");
-				patternOut.println();
+//				patternOut.print(advElem.getJavaProject().getProject()
+//						.getName() + "\t");
+//				patternOut.print(pointcut_count + "\t");
+//				patternOut.print(advElem.readableName() + "\t");
+//				patternOut.print(pattern + "\t");
+//				patternOut.print(precision + "\t");
+//				patternOut.print(concreteness + "\t");
+//				patternOut.println();
 			}
 //			suggestionOut.close();
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
-		patternOut.println();
-		patternOut.close();
+//		patternOut.println();
+//		patternOut.close();
 
 		//		System.out.println("Time (s): " + secs);
 
