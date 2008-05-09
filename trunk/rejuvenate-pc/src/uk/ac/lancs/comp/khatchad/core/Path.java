@@ -155,9 +155,20 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
 
 	public Collection<IntentionNode<IElement>> getNodes() {
 		Collection<IntentionNode<IElement>> ret = new ArrayList<IntentionNode<IElement>>();
-		for (IntentionEdge<IElement> edge : this) {
-			ret.add(edge.getFromNode());
-			ret.add(edge.getToNode());
+		if ( !this.isEmpty() ) {
+			ret.add(this.firstElement().getFromNode());
+			for ( IntentionEdge<IElement> edge : this )
+				ret.add(edge.getToNode());
+		}
+		return ret;
+	}
+	
+	public Collection<IntentionNode<IElement>> getWildcardNodes() {
+		Collection<IntentionNode<IElement>> ret = this.getNodes();
+		for ( Iterator<IntentionNode<IElement>> it = ret.iterator(); it.hasNext(); ) {
+			IntentionNode<IElement> node = it.next();
+			if ( !(node.getElem() instanceof WildcardElement))
+				it.remove();
 		}
 		return ret;
 	}

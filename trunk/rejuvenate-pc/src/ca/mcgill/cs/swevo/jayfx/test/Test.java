@@ -24,10 +24,17 @@ import org.drools.QueryResults;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -51,13 +58,19 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
 public class Test implements IWorkbenchWindowActionDelegate {
 
-	private static final String RESULT_PATH = "/Users/raffi/Documents/Results/";
+	private static final String RESULT_PATH = new File(ResourcesPlugin
+			.getWorkspace().getRoot().getLocation().toOSString()
+			+ File.separator + "results").getPath() + File.separator;
 	private IStructuredSelection aSelection;
 
 	public void dispose() {
 	}
 
 	public void init(IWorkbenchWindow lWindow) {
+		File resultFolder = new File(RESULT_PATH);
+		if (!resultFolder.exists()) {
+			resultFolder.mkdir();
+		}
 	}
 
 	public void run(IAction action) {
@@ -196,7 +209,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 
 		PrintWriter patternOut = getPatternStatsWriter();
 		patternOut
-				.println("Benchmark\tAdvice #\tAdvice Name\tPattern\tPrecision\tConcreteness");
+				.println("Benchmark\tAdvice#\tAdvice\tPattern\tSize\tPrecision\tConcreteness");
 
 		lMonitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
@@ -212,7 +225,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 
 			graph.enableElementsAccordingTo(advElem, lMonitor);
 
-//			makeDotFile(graph, pointcut_count);
+			//			makeDotFile(graph, pointcut_count);
 
 			//			System.out.println("Forward execution suggestions:");
 			executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
@@ -248,7 +261,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-			
+
 			executeArcQuery("backward suggested X arcs", Relation.GETS,
 					workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
@@ -260,7 +273,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-			
+
 			executeArcQuery("backward suggested X arcs", Relation.SETS,
 					workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
@@ -271,28 +284,28 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			//			System.out.println("=+++=");
 			//			System.out.println();
 
-//			PrintWriter suggestionOut = getSuggestionWriter();
-//			suggestionOut
-//					.println("Benchmark\tAdvice#\tAdvice\tPattern\tSuggestion");
+			//			PrintWriter suggestionOut = getSuggestionWriter();
+			//			suggestionOut
+			//					.println("Benchmark\tAdvice#\tAdvice\tPattern\tSuggestion");
 
-//			System.out.println("Results:");
+			//			System.out.println("Results:");
 			for (Path pattern : patternToResultMap.keySet()) {
-//				System.out.println("Pattern results for: " + pattern);
-//				System.out.println("\t" + "Suggested elements:");
-//				for (IntentionElement<IElement> resultNode : patternToResultMap
-//						.get(pattern)) {
-//					System.out.println("\t\t" + resultNode);
-//					suggestionOut.println(advElem.getJavaProject().getProject()
-//							.getName()
-//							+ "\t"
-//							+ pointcut_count
-//							+ "\t"
-//							+ advElem.readableName()
-//							+ "\t"
-//							+ pattern
-//							+ "\t"
-//							+ resultNode);
-//				}
+				//				System.out.println("Pattern results for: " + pattern);
+				//				System.out.println("\t" + "Suggested elements:");
+				//				for (IntentionElement<IElement> resultNode : patternToResultMap
+				//						.get(pattern)) {
+				//					System.out.println("\t\t" + resultNode);
+				//					suggestionOut.println(advElem.getJavaProject().getProject()
+				//							.getName()
+				//							+ "\t"
+				//							+ pointcut_count
+				//							+ "\t"
+				//							+ advElem.readableName()
+				//							+ "\t"
+				//							+ pattern
+				//							+ "\t"
+				//							+ resultNode);
+				//				}
 
 				double precision = calculatePrecision(
 						patternToEnabledElementMap.get(pattern),
@@ -309,15 +322,17 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				//				System.out.println();
 
 				patternOut.print(advElem.getJavaProject().getProject()
-						.getName() + "\t");
+						.getName()
+						+ "\t");
 				patternOut.print(pointcut_count + "\t");
 				patternOut.print(advElem.readableName() + "\t");
 				patternOut.print(pattern + "\t");
+				patternOut.print(pattern.size() + "\t");
 				patternOut.print(precision + "\t");
 				patternOut.print(concreteness + "\t");
 				patternOut.println();
 			}
-//			suggestionOut.close();
+			//			suggestionOut.close();
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
@@ -479,9 +494,8 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			IProgressMonitor lMonitor) {
 
-		final QueryResults suggestedArcs = workingMemory
-				.getQueryResults(queryString,
-						new Object[] { relation });
+		final QueryResults suggestedArcs = workingMemory.getQueryResults(
+				queryString, new Object[] { relation });
 
 		lMonitor.beginTask("Executing query: "
 				+ queryString.replace("X", relation.toString()) + ".",
@@ -625,13 +639,11 @@ public class Test implements IWorkbenchWindowActionDelegate {
 	 */
 	private static double calculateConcreteness(
 			Path<IntentionEdge<IElement>> pattern) {
-		Collection<IntentionNode<IElement>> nodes = pattern.getNodes();
-		int totalNodes = nodes.size();
-		int numberOfWild = 0;
-		for (IntentionNode<IElement> node : nodes)
-			if (node.getElem() instanceof WildcardElement)
-				numberOfWild++;
-		return ((double) (totalNodes - numberOfWild)) / totalNodes;
+		Collection<IntentionNode<IElement>> allNodes = pattern.getNodes();
+		Collection<IntentionNode<IElement>> wildNodes = pattern
+				.getWildcardNodes();
+		return ((double) (allNodes.size() - wildNodes.size()))
+				/ allNodes.size();
 	}
 
 	/**
