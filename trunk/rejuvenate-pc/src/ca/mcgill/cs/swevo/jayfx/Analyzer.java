@@ -32,7 +32,7 @@ public class Analyzer
 	 */
 	public Analyzer( ProgramDatabase pDB )
 	{
-		assert( pDB != null );
+//		assert( pDB != null );
 		aDB = pDB;
 	}
 	
@@ -100,7 +100,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getCalls( IElement pElement )
 	{
-		assert(pElement instanceof MethodElement);
+//		assert(pElement instanceof MethodElement);
 		
 		Set<IElement> lReturn = new HashSet<IElement>();
 		// static stuff
@@ -127,7 +127,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTCalls( IElement pElement )
 	{
-		assert(pElement instanceof MethodElement);
+//		assert(pElement instanceof MethodElement);
 		
 		Set<IElement> lReturn = new HashSet<IElement>();
 		// static stuff
@@ -151,7 +151,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTransitivelyExtends( IElement pElement )
 	{
-		assert(pElement instanceof ClassElement);
+//		assert(pElement instanceof ClassElement);
 		
 	    Set<IElement> lRange = aDB.getRange(pElement, Relation.EXTENDS_CLASS );
 	    Set<IElement> lReturn = new HashSet<IElement>();
@@ -198,7 +198,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTransitivelyImplements( IElement pElement )
 	{
-		assert(pElement instanceof ClassElement);
+//		assert(pElement instanceof ClassElement);
 		
 		Set<IElement> lReturn  = new HashSet<IElement>();
 		
@@ -238,7 +238,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTTransitivelyImplements( IElement pElement )
 	{
-		assert(pElement instanceof ClassElement);
+//		assert(pElement instanceof ClassElement);
 		
 		Set<IElement> lReturn  = new HashSet<IElement>();
 		

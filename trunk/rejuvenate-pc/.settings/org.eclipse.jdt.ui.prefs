@@ -1,4 +1,4 @@
-#Mon Apr 14 19:07:24 CEST 2008
+#Fri May 09 13:22:38 BST 2008
 cleanup.add_default_serial_version_id=false
 cleanup.add_generated_serial_version_id=true
 cleanup.add_missing_annotations=true
@@ -48,3 +48,4 @@ cleanup.use_this_for_non_static_method_access_only_if_necessary=false
 cleanup_profile=_Raffi
 cleanup_settings_version=2
 eclipse.preferences.version=1
+internal.default.compliance=default

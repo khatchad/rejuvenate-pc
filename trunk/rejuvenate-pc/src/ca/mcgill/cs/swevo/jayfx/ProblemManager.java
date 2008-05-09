@@ -33,7 +33,7 @@ class ProblemManager
 	public static void reportException( Exception pException )
 	{
 		Bundle lJayFX = Platform.getBundle("ca.mcgill.cs.swevo.jayfx");
-		assert( lJayFX != null );
+//		assert( lJayFX != null );
 		Platform.getLog( lJayFX ).log( new Status( IStatus.ERROR, "ca.mcgill.cs.swevo.jayfx", IStatus.OK, 
 			pException.getClass().getName(), pException ));
 	}
