@@ -95,7 +95,7 @@ public class FastConverter
 	 */
 	public IJavaElement getJavaElement( IElement pElement ) throws ConversionException
 	{
-	    assert( pElement!= null );
+//	    assert( pElement!= null );
 	    IJavaElement lReturn = null;
 	    if( pElement.getCategory() == ICategories.CLASS )
 	    {
@@ -155,7 +155,7 @@ public class FastConverter
 	        	throw new ConversionException( "Unsupported element type " + pElement.getClass().getName() );
 	        }
 	    }
-	    assert( lReturn != null );
+//	    assert( lReturn != null );
 	    return lReturn;
 	}
 	
@@ -242,7 +242,7 @@ public class FastConverter
 	 */
 	public IElement getElement( IJavaElement pElement ) throws ConversionException
 	{
-	    assert( pElement != null );
+//	    assert( pElement != null );
 	    IElement lReturn = null;
 	    
 	    if( pElement instanceof IType )
