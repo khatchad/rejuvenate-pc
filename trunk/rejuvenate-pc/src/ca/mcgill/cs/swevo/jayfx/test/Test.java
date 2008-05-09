@@ -1,6 +1,7 @@
 package ca.mcgill.cs.swevo.jayfx.test;
 
 import java.io.File;
+import uk.ac.lancs.comp.khatchad.core.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -60,7 +61,8 @@ public class Test implements IWorkbenchWindowActionDelegate {
 
 	private static final String RESULT_PATH = new File(ResourcesPlugin
 			.getWorkspace().getRoot().getLocation().toOSString()
-			+ File.separator + "results").getPath() + File.separator;
+			+ File.separator + "results").getPath()
+			+ File.separator;
 	private IStructuredSelection aSelection;
 
 	public void dispose() {
@@ -126,7 +128,12 @@ public class Test implements IWorkbenchWindowActionDelegate {
 					e.printStackTrace();
 					throw new RuntimeException(e);
 				}
-				final long elapsed = System.currentTimeMillis() - start;
+
+				TimeColletor collector = TimeColletor.aspectOf();
+
+				long elapsed = System.currentTimeMillis()
+						- (start + collector.getCollectedTime());
+				collector.clear();
 				final int secs = (int) elapsed / 1000;
 
 				benchmarkOut.print(proj.getProject().getName() + "\t");
@@ -315,8 +322,8 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				double concreteness = calculateConcreteness(pattern);
 				//				System.out.println("\tConcreteness: " + concreteness);
 
-				double confidence = calculateConfidence(precision,
-						concreteness, .5);
+				//				double confidence = calculateConfidence(precision,
+				//						concreteness, .5);
 				//				System.out.println("\tConfidence: " + confidence);
 
 				//				System.out.println();
@@ -336,7 +343,6 @@ public class Test implements IWorkbenchWindowActionDelegate {
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
-		patternOut.println();
 		patternOut.close();
 
 		//		System.out.println("Time (s): " + secs);
