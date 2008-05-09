@@ -98,7 +98,7 @@ public class ProgramDatabase {
 	 * @return Whether the database has information about pElement.
 	 */
 	public boolean contains(IElement pElement) {
-		assert (pElement != null);
+//		assert (pElement != null);
 		return aElements.containsKey(pElement);
 	}
 
@@ -112,7 +112,7 @@ public class ProgramDatabase {
 	 *            The modifier flags for this element.
 	 */
 	public void addElement(IElement pElement, int pModifier) {
-		assert (pElement != null);
+//		assert (pElement != null);
 		if (!aElements.containsKey(pElement)) {
 			aElements.put(pElement, new Bundle(pModifier));
 		}
@@ -134,9 +134,9 @@ public class ProgramDatabase {
 	 */
 	public void addRelation(IElement pElement1, Relation pRelation,
 			IElement pElement2) throws ElementNotFoundException {
-		assert (pElement1 != null);
-		assert (pElement2 != null);
-		assert (pRelation != null);
+//		assert (pElement1 != null);
+//		assert (pElement2 != null);
+//		assert (pRelation != null);
 
 		if (!contains(pElement1))
 			throw new ElementNotFoundException(pElement1.getId());
@@ -145,7 +145,7 @@ public class ProgramDatabase {
 
 		Map<Relation, Set<IElement>> lRelations = (aElements.get(pElement1))
 				.getRelationMap();
-		assert (lRelations != null);
+//		assert (lRelations != null);
 
 		Set<IElement> lElements = lRelations.get(pRelation);
 		if (lElements == null) {
@@ -169,8 +169,8 @@ public class ProgramDatabase {
 	 */
 	public Set<IElement> getRange(IElement pElement, Relation pRelation)
 			throws ElementNotFoundException {
-		assert (pElement != null);
-		assert (pRelation != null);
+//		assert (pElement != null);
+//		assert (pRelation != null);
 		if (!contains(pElement))
 			throw new ElementNotFoundException(pElement.getId());
 
@@ -200,9 +200,9 @@ public class ProgramDatabase {
 	 */
 	public void addRelationAndTranspose(IElement pElement1, Relation pRelation,
 			IElement pElement2) throws ElementNotFoundException {
-		assert (pElement1 != null);
-		assert (pElement2 != null);
-		assert (pRelation != null);
+//		assert (pElement1 != null);
+//		assert (pElement2 != null);
+//		assert (pRelation != null);
 
 		if (!contains(pElement1))
 			throw new ElementNotFoundException(pElement1.getId());
@@ -225,7 +225,7 @@ public class ProgramDatabase {
 	 */
 	public boolean hasRelations(IElement pElement)
 			throws ElementNotFoundException {
-		assert (pElement != null);
+//		assert (pElement != null);
 		if (!contains(pElement))
 			throw new ElementNotFoundException(pElement.getId());
 
@@ -248,8 +248,8 @@ public class ProgramDatabase {
 	 */
 	public void copyRelations(IElement pFrom, IElement pTo)
 			throws ElementNotFoundException {
-		assert (pFrom != null);
-		assert (pTo != null);
+//		assert (pFrom != null);
+//		assert (pTo != null);
 
 		if (!contains(pFrom))
 			throw new ElementNotFoundException(pFrom.getId());
@@ -284,9 +284,9 @@ public class ProgramDatabase {
 	 */
 	private void removeRelation(IElement pElement1, Relation pRelation,
 			IElement pElement2) throws ElementNotFoundException {
-		assert (pElement1 != null);
-		assert (pElement2 != null);
-		assert (pRelation != null);
+//		assert (pElement1 != null);
+//		assert (pElement2 != null);
+//		assert (pRelation != null);
 
 		if (!contains(pElement1))
 			throw new ElementNotFoundException(pElement1.getId());
@@ -311,7 +311,7 @@ public class ProgramDatabase {
 	 */
 	public void removeElement(IElement pElement)
 			throws ElementNotFoundException {
-		assert (pElement != null);
+//		assert (pElement != null);
 		if (!contains(pElement))
 			throw new ElementNotFoundException(pElement.getId());
 

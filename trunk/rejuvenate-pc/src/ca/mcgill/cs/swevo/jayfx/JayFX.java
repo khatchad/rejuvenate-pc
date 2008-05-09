@@ -69,7 +69,7 @@ public class JayFX {
 	 */
 	private static List<ICompilationUnit> getCompilationUnits(
 			IJavaProject pProject) throws JayFXException {
-		assert pProject != null;
+//		assert pProject != null;
 
 		final List<ICompilationUnit> lReturn = new ArrayList<ICompilationUnit>();
 
@@ -104,7 +104,7 @@ public class JayFX {
 	 */
 	private static List<IJavaProject> getJavaProjects(IProject pProject)
 			throws JayFXException {
-		assert pProject != null;
+//		assert pProject != null;
 
 		final List<IJavaProject> lReturn = new ArrayList<IJavaProject>();
 		try {
@@ -527,7 +527,7 @@ public class JayFX {
 	 *         abstract.
 	 */
 	public Set<IElement> getOverridenMethods(IElement pMethod) {
-		assert pMethod != null && pMethod instanceof MethodElement;
+//		assert pMethod != null && pMethod instanceof MethodElement;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 
 		if (!this.isAbstractMethod(pMethod)) {
@@ -798,7 +798,7 @@ public class JayFX {
 	 * @return true if pElement is a project element.
 	 */
 	public boolean isProjectElement(IElement pElement) {
-		assert pElement != null;
+//		assert pElement != null;
 		return this.aPackages.contains(pElement.getPackageName());
 	}
 
@@ -812,7 +812,7 @@ public class JayFX {
 	 *         any problem converting the element.
 	 */
 	private Set<IElement> getDeclaresFieldForNonProjectElement(IElement pElement) {
-		assert pElement != null;
+//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -835,7 +835,7 @@ public class JayFX {
 
 	private Set<IElement> getDeclaresMethodForNonProjectElement(
 			IElement pElement) {
-		assert pElement != null;
+//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -857,7 +857,7 @@ public class JayFX {
 	}
 
 	private Set<IElement> getDeclaresTypeForNonProjectElement(IElement pElement) {
-		assert pElement != null;
+//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -897,7 +897,7 @@ public class JayFX {
 	 *         any problem converting the element.
 	 */
 	private Set<IElement> getExtendsClassForNonProjectElement(IElement pElement) {
-		assert pElement != null;
+//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -913,7 +913,7 @@ public class JayFX {
 												(IType) lElement).substring(1,
 												lSignature.length() - 1),
 										lElement);
-						assert lSuperclass instanceof ClassElement;
+//						assert lSuperclass instanceof ClassElement;
 						lReturn.add(lSuperclass);
 					}
 				}
@@ -941,7 +941,7 @@ public class JayFX {
 	 */
 	private Set<IElement> getInterfacesForNonProjectElement(IElement pElement,
 			boolean pImplements) {
-		assert pElement != null;
+//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
