@@ -3,6 +3,10 @@
  */
 package uk.ac.lancs.comp.khatchad.core;
 
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.*;
+import java.io.*;
+
 /**
  * @author raffi
  *
@@ -10,9 +14,13 @@ package uk.ac.lancs.comp.khatchad.core;
 public aspect TimeColletor {
 	private long collectedTime;
 	pointcut toRemove() : 
-		call(* java.io.PrintWriter+.print(..)) ||
-		call(* java.io.PrintWriter+.println(..)) ||
-		call(* java.io.PrintWriter+.close(..));
+		call(* PrintWriter+.print(..)) ||
+		call(* PrintWriter+.println(..)) ||
+		call(* PrintWriter+.close(..)) ||
+		call(CompilationUnit getCompilationUnit(ICompilationUnit)) ||
+		call(PrintWriter+ get*StatsWriter(..)) ||
+		call(* ASTParser+.createAST(..)) ||
+		call(* calculate*(..));
 	
 	Object around() : toRemove() {
 		long start = System.currentTimeMillis();
