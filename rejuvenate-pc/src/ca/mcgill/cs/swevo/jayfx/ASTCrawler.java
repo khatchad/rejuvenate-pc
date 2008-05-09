@@ -319,9 +319,9 @@ public class ASTCrawler extends ASTVisitor {
 	 * @pre pBinding is not null
 	 */
 	private void addAccessRelation(IVariableBinding pBinding) {
-		assert (pBinding != null);
-		assert (aDB.contains(aCurrMethod));
-		assert (aCurrMethod != null);
+		//assert (pBinding != null);
+		//assert (aDB.contains(aCurrMethod));
+		//assert (aCurrMethod != null);
 
 		if (pBinding.getDeclaringClass() == null) {
 			// This is most likely an access to the length
@@ -334,9 +334,9 @@ public class ASTCrawler extends ASTVisitor {
 	}
 
 	private void addSetsRelation(IVariableBinding pBinding) {
-		assert (pBinding != null);
-		assert (aDB.contains(aCurrMethod));
-		assert (aCurrMethod != null);
+//		assert (pBinding != null);
+//		assert (aDB.contains(aCurrMethod));
+//		assert (aCurrMethod != null);
 
 		if (pBinding.getDeclaringClass() == null) {
 			// This is most likely an access to the length
@@ -349,9 +349,9 @@ public class ASTCrawler extends ASTVisitor {
 	}
 
 	private void addGetsRelation(IVariableBinding pBinding) {
-		assert (pBinding != null);
-		assert (aDB.contains(aCurrMethod));
-		assert (aCurrMethod != null);
+//		assert (pBinding != null);
+//		assert (aDB.contains(aCurrMethod));
+//		assert (aCurrMethod != null);
 
 		if (pBinding.getDeclaringClass() == null) {
 			// This is most likely an access to the length
@@ -644,7 +644,7 @@ public class ASTCrawler extends ASTVisitor {
 	}
 
 	public boolean visit(CastExpression pNode) {
-		assert (aCurrMethod != null);
+//		assert (aCurrMethod != null);
 
 		ITypeBinding lBinding = pNode.resolveTypeBinding();
 
@@ -719,7 +719,7 @@ public class ASTCrawler extends ASTVisitor {
 
 	public boolean visit(EnumConstantDeclaration pNode) {
 		// JLS3(§8.9): It is impossible to define a local (§14.3) enum, or to define an enum in an inner class (§8.1.3).
-		assert (aCurrMethodReminder.empty());
+//		assert (aCurrMethodReminder.empty());
 
 		String lSimpleName = pNode.getName().getIdentifier();
 		if (lSimpleName == null)
@@ -745,7 +745,7 @@ public class ASTCrawler extends ASTVisitor {
 	 */
 	public boolean visit(EnumDeclaration pNode) {
 		ITypeBinding lBinding = pNode.resolveBinding();
-		assert (lBinding.isEnum());
+//		assert (lBinding.isEnum());
 
 		if (checkForNull(lBinding))
 			return false;
