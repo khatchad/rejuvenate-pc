@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import uk.ac.lancs.khatchad.Util;
+
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
@@ -32,7 +34,7 @@ public class Analyzer
 	 */
 	public Analyzer( ProgramDatabase pDB )
 	{
-//		assert( pDB != null );
+		Util.assertExpression( pDB != null );
 		aDB = pDB;
 	}
 	
@@ -100,7 +102,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getCalls( IElement pElement )
 	{
-//		assert(pElement instanceof MethodElement);
+//		Util.assertExpression(pElement instanceof MethodElement);
 		
 		Set<IElement> lReturn = new HashSet<IElement>();
 		// static stuff
@@ -127,7 +129,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTCalls( IElement pElement )
 	{
-//		assert(pElement instanceof MethodElement);
+//		Util.assertExpression(pElement instanceof MethodElement);
 		
 		Set<IElement> lReturn = new HashSet<IElement>();
 		// static stuff
@@ -151,14 +153,14 @@ public class Analyzer
 	 */
 	private Set<IElement> getTransitivelyExtends( IElement pElement )
 	{
-//		assert(pElement instanceof ClassElement);
+//		Util.assertExpression(pElement instanceof ClassElement);
 		
 	    Set<IElement> lRange = aDB.getRange(pElement, Relation.EXTENDS_CLASS );
 	    Set<IElement> lReturn = new HashSet<IElement>();
 	    
 	    while( lRange.size() > 0 )
 	    {
-	        assert( lRange.size() == 1 );
+//	        Util.assertExpression( lRange.size() == 1 );
 	        
 	        IElement lSuperClass = (IElement)lRange.iterator().next();
 	        lReturn.add( lSuperClass );
@@ -174,7 +176,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTTransitivelyExtends( IElement pElement )
 	{
-		assert(pElement instanceof ClassElement);
+//		Util.assertExpression(pElement instanceof ClassElement);
 		
 		Set<IElement> lToProcess = aDB.getRange( pElement, Relation.T_EXTENDS_CLASS );
 	    Set<IElement> lReturn = new HashSet<IElement>();
@@ -198,7 +200,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTransitivelyImplements( IElement pElement )
 	{
-//		assert(pElement instanceof ClassElement);
+//		Util.assertExpression(pElement instanceof ClassElement);
 		
 		Set<IElement> lReturn  = new HashSet<IElement>();
 		
@@ -238,7 +240,7 @@ public class Analyzer
 	 */
 	private Set<IElement> getTTransitivelyImplements( IElement pElement )
 	{
-//		assert(pElement instanceof ClassElement);
+//		Util.assertExpression(pElement instanceof ClassElement);
 		
 		Set<IElement> lReturn  = new HashSet<IElement>();
 		
