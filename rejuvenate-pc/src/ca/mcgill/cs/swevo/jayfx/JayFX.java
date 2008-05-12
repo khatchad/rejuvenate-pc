@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJRelationship;
@@ -236,6 +237,8 @@ public class JayFX {
 
 						// this.aDB.addRelation(adviceElem, Relation.ADVISES,
 						// this.convertToElement(meth));
+						if ( meth.getParent() instanceof AspectElement) break;
+						
 						final IElement toEnable = this.convertToElement(meth);
 						if (toEnable == null)
 							throw new IllegalStateException("In trouble!");

@@ -253,12 +253,12 @@ public class Util {
 					"Can not get IMember from null element.");
 
 		switch (elem.getElementType()) {
-		case IJavaElement.METHOD:
-		case IJavaElement.FIELD:
-		case IJavaElement.INITIALIZER:
-		case IJavaElement.TYPE: {
-			return (IMember) elem;
-		}
+			case IJavaElement.METHOD:
+			case IJavaElement.FIELD:
+			case IJavaElement.INITIALIZER:
+			case IJavaElement.TYPE: {
+				return (IMember) elem;
+			}
 		}
 
 		return getIMember(elem.getParent());
@@ -398,7 +398,8 @@ public class Util {
 		col.toArray(objs);
 		try {
 			Arrays.sort(objs);
-		} catch (final ClassCastException E) {
+		}
+		catch (final ClassCastException E) {
 			for (int i = 0; i < objs.length; i++)
 				for (int j = i + 1; j < objs.length; j++)
 					if (objs[i].equals(objs[j]))
@@ -430,7 +431,8 @@ public class Util {
 			IntentionPath path = new IntentionPath();
 			try {
 				path.push(startingFrom);
-			} catch (CycleDetectedException E) {
+			}
+			catch (CycleDetectedException E) {
 				return ret;
 			}
 			ret.add(path);
@@ -438,11 +440,13 @@ public class Util {
 		}
 
 		for (IntentionEdge<IElement> edge : startingFrom.getEdges()) {
-			for (IntentionPath path : enumeratePaths(edge.getToNode(), length - 1)) {
+			for (IntentionPath path : enumeratePaths(edge.getToNode(),
+					length - 1)) {
 				try {
 					path.push(edge);
 					path.push(startingFrom);
-				} catch (CycleDetectedException E) {
+				}
+				catch (CycleDetectedException E) {
 					return ret;
 				}
 				ret.add(path);
@@ -497,31 +501,36 @@ public class Util {
 	public static Set<IProject> getProjects(
 			Collection<? extends AdviceElement> adviceCol) {
 		Set<IProject> ret = new LinkedHashSet<IProject>();
-		for ( AdviceElement elem : adviceCol )
+		for (AdviceElement elem : adviceCol)
 			ret.add(elem.getJavaProject().getProject());
 		return ret;
 	}
 
+	public static void assertExpression(boolean exp) {
+		if (exp == false)
+			throw new AssertionError("Failed assertion");
+	}
+
 	/**
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static RuleBase readRule(Reader source) throws Exception {
 		//Use package builder to build up a rule package.
 		//An alternative lower level class called "DrlParser" can also be used...
-		
+
 		PackageBuilder builder = new PackageBuilder();
 
 		//this wil parse and compile in one step
 		//NOTE: There are 2 methods here, the one argument one is for normal DRL.
-		builder.addPackageFromDrl( source );
+		builder.addPackageFromDrl(source);
 
 		//get the compiled package (which is serializable)
 		org.drools.rule.Package pkg = builder.getPackage();
-		
+
 		//add the package to a rulebase (deploy the rule package).
 		RuleBase ruleBase = RuleBaseFactory.newRuleBase();
-		ruleBase.addPackage( pkg );
+		ruleBase.addPackage(pkg);
 		return ruleBase;
 	}
 }
