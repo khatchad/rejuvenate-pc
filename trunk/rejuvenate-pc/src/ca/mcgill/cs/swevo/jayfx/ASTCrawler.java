@@ -1240,7 +1240,7 @@ public class ASTCrawler extends ASTVisitor {
 		}
 
 		if (lBinding.getKind() == IBinding.VARIABLE) {
-			if (((IVariableBinding) lBinding).isField()) {
+			if (((IVariableBinding) lBinding).isField() && this.aCurrMethod != null) {
 				addAccessRelation((IVariableBinding) lBinding);
 				
 				Assignment assignment = getAssignment(pNode);
