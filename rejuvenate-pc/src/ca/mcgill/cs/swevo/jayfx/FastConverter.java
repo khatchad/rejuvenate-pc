@@ -22,6 +22,9 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.internal.compiler.lookup.TypeBinding;
 
 import ca.mcgill.cs.swevo.jayfx.model.FieldElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -273,11 +276,23 @@ public class FastConverter
 	    	String[] lParams = ((IMethod)pElement).getParameterTypes();
 			for( int i = 0 ; i < lParams.length -1; i++ )
 			{
-				lSignature += resolveType( lParams[i], ((IMethod)pElement).getDeclaringType() ) + ",";
+				String param = null;
+				if ( Signature.getTypeSignatureKind(lParams[i]) == Signature.TYPE_VARIABLE_SIGNATURE ) //its a type variable, erase it.
+					param = "Ljava.lang.Object";
+				else 
+					param = lParams[ i ];
+					
+				lSignature += resolveType( param, ((IMethod)pElement).getDeclaringType() ) + ",";
 			}
 			if( lParams.length > 0 )
 			{
-				lSignature += resolveType( lParams[ lParams.length - 1 ], ((IMethod)pElement).getDeclaringType() );
+				String param = null;
+				if ( Signature.getTypeSignatureKind(lParams[lParams.length - 1]) == Signature.TYPE_VARIABLE_SIGNATURE ) //its a type variable, erase it.
+					param = "Ljava.lang.Object";
+				else 
+					param = lParams[ lParams.length - 1 ];
+				
+				lSignature += resolveType( param, ((IMethod)pElement).getDeclaringType() );
 			}
 			lSignature += ")";
 			lReturn = FlyweightElementFactory.getElement( ICategories.METHOD, lClass.getId() + "." + lName + lSignature, pElement);
