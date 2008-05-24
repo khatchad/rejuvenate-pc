@@ -278,7 +278,7 @@ public class FastConverter
 			{
 				String param = null;
 				if ( Signature.getTypeSignatureKind(lParams[i]) == Signature.TYPE_VARIABLE_SIGNATURE ) //its a type variable, erase it.
-					param = "Ljava.lang.Object";
+					param = "Ljava.lang.Object;";
 				else 
 					param = lParams[ i ];
 					
@@ -286,12 +286,14 @@ public class FastConverter
 			}
 			if( lParams.length > 0 )
 			{
-				String param = null;
-				if ( Signature.getTypeSignatureKind(lParams[lParams.length - 1]) == Signature.TYPE_VARIABLE_SIGNATURE ) //its a type variable, erase it.
-					param = "Ljava.lang.Object";
+				String param = lParams[lParams.length - 1];
+				if ( Signature.getTypeSignatureKind(Signature.getElementType(param)) == Signature.TYPE_VARIABLE_SIGNATURE) //its a type variable, erase it.
+					param = "Ljava.lang.Object;";
 				else 
 					param = lParams[ lParams.length - 1 ];
 				
+				if ( param.charAt(0) == 'Q' && param.charAt(1) == 'T' )
+					param = "Ljava.lang.Object;";
 				lSignature += resolveType( param, ((IMethod)pElement).getDeclaringType() );
 			}
 			lSignature += ")";
@@ -347,11 +349,13 @@ public class FastConverter
 		{
 		    try
 		    {
+		    	pType = Signature.getTypeErasure(pType);
 		    	int lIndex2 = pType.indexOf( Signature.C_NAME_END );
 				String lType = pType.substring( lIndex + 1, lIndex2 );
 		        String[][] lTypes = pEnclosingType.resolveType( lType );
-		        if( lTypes == null )
+		        if( lTypes == null ) {
 		        	throw new ConversionException( "Cannot convert type " + lType + " in " + pEnclosingType );
+		        }
 		        if( lTypes.length != 1 )
 		            throw new ConversionException( "Cannot convert type " + lType + " in " + pEnclosingType );
 		        for( int i = 0; i < lDepth; i++ )
