@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -25,6 +26,10 @@ import org.drools.QueryResults;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.ajdt.core.model.AJModel;
+import org.eclipse.ajdt.core.model.AJRelationship;
+import org.eclipse.ajdt.core.model.AJRelationshipManager;
+import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -110,7 +115,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
-			benchmarkOut.println("Benchmark\t#Advice\tTime(s)");
+			benchmarkOut.println("Benchmark\t#Advice\t#Shadows\tTime(s)");
 			for (IJavaProject proj : selectedProjectCol) {
 				final long start = System.currentTimeMillis();
 				Collection<? extends AdviceElement> toAnalyze = null;
@@ -129,6 +134,8 @@ public class Test implements IWorkbenchWindowActionDelegate {
 					throw new RuntimeException(e);
 				}
 
+				int numShadows = getTotalNumberOfShadows(proj);
+
 				TimeColletor collector = TimeColletor.aspectOf();
 
 				long elapsed = System.currentTimeMillis()
@@ -138,6 +145,7 @@ public class Test implements IWorkbenchWindowActionDelegate {
 
 				benchmarkOut.print(proj.getProject().getName() + "\t");
 				benchmarkOut.print(toAnalyze.size() + "\t");
+				benchmarkOut.print(numShadows + "\t");
 				benchmarkOut.print(secs + "\t");
 				benchmarkOut.println();
 			}
@@ -166,6 +174,16 @@ public class Test implements IWorkbenchWindowActionDelegate {
 		}
 		*/
 		lMonitor.done();
+	}
+
+	@SuppressWarnings("unchecked")
+	private int getTotalNumberOfShadows(IJavaProject proj) {
+		final List<AJRelationship> relationshipList = AJModel
+				.getInstance()
+				.getAllRelationships(
+						proj.getProject(),
+						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
+		return relationshipList.size();
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
