@@ -70,7 +70,7 @@ public class JayFX {
 	 */
 	private static List<ICompilationUnit> getCompilationUnits(
 			IJavaProject pProject) throws JayFXException {
-//		assert pProject != null;
+		//		assert pProject != null;
 
 		final List<ICompilationUnit> lReturn = new ArrayList<ICompilationUnit>();
 
@@ -105,7 +105,7 @@ public class JayFX {
 	 */
 	private static List<IJavaProject> getJavaProjects(IProject pProject)
 			throws JayFXException {
-//		assert pProject != null;
+		//		assert pProject != null;
 
 		final List<IJavaProject> lReturn = new ArrayList<IJavaProject>();
 		try {
@@ -198,7 +198,7 @@ public class JayFX {
 	}
 
 	private enum JoinpointType {
-		FIELD_GET, FIELD_SET, CONSTRUCTOR_CALL, METHOD_CALL;
+		FIELD_GET, FIELD_SET, CONSTRUCTOR_CALL, METHOD_CALL, EXCEPTION_HANDLER;
 	}
 
 	/**
@@ -218,8 +218,7 @@ public class JayFX {
 
 		for (final AJRelationship relationship : relationshipList) {
 
-			final AdviceElement advice = (AdviceElement) relationship
-					.getSource();
+			final IJavaElement advice = relationship.getSource();
 
 			if (advice.equals(advElem)) {
 				final IJavaElement target = relationship.getTarget();
@@ -237,8 +236,9 @@ public class JayFX {
 
 						// this.aDB.addRelation(adviceElem, Relation.ADVISES,
 						// this.convertToElement(meth));
-						if ( meth.getParent() instanceof AspectElement) break;
-						
+						if (meth.getParent() instanceof AspectElement)
+							break;
+
 						final IElement toEnable = this.convertToElement(meth);
 						if (toEnable == null)
 							throw new IllegalStateException("In trouble!");
@@ -275,8 +275,13 @@ public class JayFX {
 								.toUpperCase());
 						int pos = typeBuilder.indexOf("-");
 
-						switch (JoinpointType.valueOf(typeBuilder.replace(pos,
-								pos + 1, "_").toString())) {
+						String joinPointTypeAsString = typeBuilder.replace(pos,
+								pos + 1, "_").toString();
+
+						JoinpointType joinPointTypeAsEnum = JoinpointType
+								.valueOf(joinPointTypeAsString);
+
+						switch (joinPointTypeAsEnum) {
 							case FIELD_GET: {
 								enableElementsAccordingToFieldGet(targetString);
 								break;
@@ -294,6 +299,12 @@ public class JayFX {
 
 							case CONSTRUCTOR_CALL: {
 								enableElementsAccordingToConstructorCall(targetString);
+								break;
+							}
+
+							case EXCEPTION_HANDLER: {
+								System.out
+										.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
 								break;
 							}
 						}
@@ -530,7 +541,7 @@ public class JayFX {
 	 *         abstract.
 	 */
 	public Set<IElement> getOverridenMethods(IElement pMethod) {
-//		assert pMethod != null && pMethod instanceof MethodElement;
+		//		assert pMethod != null && pMethod instanceof MethodElement;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 
 		if (!this.isAbstractMethod(pMethod)) {
@@ -801,7 +812,7 @@ public class JayFX {
 	 * @return true if pElement is a project element.
 	 */
 	public boolean isProjectElement(IElement pElement) {
-//		assert pElement != null;
+		//		assert pElement != null;
 		return this.aPackages.contains(pElement.getPackageName());
 	}
 
@@ -815,7 +826,7 @@ public class JayFX {
 	 *         any problem converting the element.
 	 */
 	private Set<IElement> getDeclaresFieldForNonProjectElement(IElement pElement) {
-//		assert pElement != null;
+		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -838,7 +849,7 @@ public class JayFX {
 
 	private Set<IElement> getDeclaresMethodForNonProjectElement(
 			IElement pElement) {
-//		assert pElement != null;
+		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -860,7 +871,7 @@ public class JayFX {
 	}
 
 	private Set<IElement> getDeclaresTypeForNonProjectElement(IElement pElement) {
-//		assert pElement != null;
+		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -900,7 +911,7 @@ public class JayFX {
 	 *         any problem converting the element.
 	 */
 	private Set<IElement> getExtendsClassForNonProjectElement(IElement pElement) {
-//		assert pElement != null;
+		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {
@@ -916,7 +927,7 @@ public class JayFX {
 												(IType) lElement).substring(1,
 												lSignature.length() - 1),
 										lElement);
-//						assert lSuperclass instanceof ClassElement;
+						//						assert lSuperclass instanceof ClassElement;
 						lReturn.add(lSuperclass);
 					}
 				}
@@ -944,7 +955,7 @@ public class JayFX {
 	 */
 	private Set<IElement> getInterfacesForNonProjectElement(IElement pElement,
 			boolean pImplements) {
-//		assert pElement != null;
+		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		if (pElement.getCategory() == ICategories.CLASS)
 			try {

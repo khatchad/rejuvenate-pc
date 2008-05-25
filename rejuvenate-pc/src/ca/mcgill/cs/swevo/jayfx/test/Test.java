@@ -121,7 +121,8 @@ public class Test implements IWorkbenchWindowActionDelegate {
 				Collection<? extends AdviceElement> toAnalyze = null;
 				try {
 					toAnalyze = Util.extractValidAdviceElements(proj);
-					this.analyze(toAnalyze, lMonitor);
+					if ( !toAnalyze.isEmpty() )
+						this.analyze(toAnalyze, lMonitor);
 				}
 				catch (JavaModelException e) {
 					// TODO Auto-generated catch block
@@ -134,7 +135,9 @@ public class Test implements IWorkbenchWindowActionDelegate {
 					throw new RuntimeException(e);
 				}
 
-				int numShadows = getTotalNumberOfShadows(proj);
+				int numShadows = 0;
+				if ( !toAnalyze.isEmpty() )
+					numShadows = getTotalNumberOfShadows(proj);
 
 				TimeColletor collector = TimeColletor.aspectOf();
 
