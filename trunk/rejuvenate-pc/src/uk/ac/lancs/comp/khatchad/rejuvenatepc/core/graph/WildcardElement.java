@@ -21,7 +21,7 @@ public class WildcardElement implements IElement {
 	public WildcardElement() {
 	}
 
-	public WildcardElement(boolean enabled) {
+	public WildcardElement(final boolean enabled) {
 		this.enabled = enabled;
 	}
 
@@ -33,13 +33,19 @@ public class WildcardElement implements IElement {
 	}
 
 	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
+	 */
+	public void disableAllIncommingRelations() {
+	}
+
+	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
 	 */
 	public void enable() {
 		this.enabled = true;
 	}
 
-	public void enableIncommingRelationsFor(Relation calls) {
+	public void enableIncommingRelationsFor(final Relation calls) {
 	}
 
 	public ICategories getCategory() {
@@ -84,7 +90,7 @@ public class WildcardElement implements IElement {
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
 	 */
-	public boolean hasEnabledRelationFor(Relation relation) {
+	public boolean hasEnabledRelationFor(final Relation relation) {
 		return false;
 	}
 
@@ -93,11 +99,5 @@ public class WildcardElement implements IElement {
 	 */
 	public boolean isEnabled() {
 		return this.enabled;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
 	}
 }

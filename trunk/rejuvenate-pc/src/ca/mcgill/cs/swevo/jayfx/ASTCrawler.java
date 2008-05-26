@@ -11,36 +11,16 @@
 package ca.mcgill.cs.swevo.jayfx;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
-import org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder;
-import org.aspectj.asm.AsmManager;
-import org.aspectj.asm.IProgramElement;
-import org.aspectj.weaver.AsmRelationshipProvider;
-import org.aspectj.weaver.AsmRelationshipUtils;
-import org.eclipse.ajdt.core.AspectJPlugin;
-import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
-import org.eclipse.ajdt.core.javaelements.AJCompilationUnitManager;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
-import org.eclipse.ajdt.core.javaelements.AspectElement;
-import org.eclipse.ajdt.core.javaelements.PointcutElement;
 import org.eclipse.ajdt.core.model.AJModel;
-import org.eclipse.ajdt.core.model.AJProjectModel;
-import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
-import org.eclipse.ajdt.core.model.AJRelationshipType;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -49,7 +29,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
-import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.Assignment;
@@ -84,7 +63,6 @@ import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
@@ -159,12 +137,11 @@ public class ASTCrawler extends ASTVisitor {
 	 * @param pObject
 	 *            Object to check.
 	 */
-	private static boolean checkForNull(Object pObject) {
+	private static boolean checkForNull(final Object pObject) {
 		boolean lReturn = false;
-		if (pObject == null) {
+		if (pObject == null)
 			//			Thread.dumpStack();
 			lReturn = true;
-		}
 		return lReturn;
 	}
 
@@ -175,33 +152,32 @@ public class ASTCrawler extends ASTVisitor {
 	 *            The binding to covert. Cannot be null.
 	 * @return A method element corresponding to pBinding. Never null.
 	 */
-	private static IElement convertBinding(IMethodBinding pBinding) {
-		checkForNull(pBinding);
+	private static IElement convertBinding(final IMethodBinding pBinding) {
+		ASTCrawler.checkForNull(pBinding);
 		String lReturn = null;
 		try {
-			lReturn = convertBinding(pBinding.getDeclaringClass()).getId()
+			lReturn = ASTCrawler.convertBinding(pBinding.getDeclaringClass())
+					.getId()
 					+ ".";
 		}
-		catch (NullPointerException E) {
+		catch (final NullPointerException E) {
 			E.printStackTrace();
 			throw E;
 		}
-		if (pBinding.isConstructor()) {
+		if (pBinding.isConstructor())
 			lReturn += "<init>";
-		}
-		else {
+		else
 			lReturn += pBinding.getName();
-		}
 		lReturn += "(";
-		ITypeBinding lParamBindings[] = pBinding.getParameterTypes();
+		final ITypeBinding lParamBindings[] = pBinding.getParameterTypes();
 		for (int i = 0; i < lParamBindings.length - 1; i++) {
-			lReturn += convertParameterTypeBinding(lParamBindings[i]).getId();
+			lReturn += ASTCrawler
+					.convertParameterTypeBinding(lParamBindings[i]).getId();
 			lReturn += ",";
 		}
-		if (lParamBindings.length > 0) {
-			lReturn += convertParameterTypeBinding(
+		if (lParamBindings.length > 0)
+			lReturn += ASTCrawler.convertParameterTypeBinding(
 					lParamBindings[lParamBindings.length - 1]).getId();
-		}
 		lReturn += ")";
 
 		return FlyweightElementFactory.getElement(ICategories.METHOD, lReturn,
@@ -216,13 +192,13 @@ public class ASTCrawler extends ASTVisitor {
 	 * @return A class or enum element representing this binding. Cannot be
 	 *         null.
 	 */
-	private static IElement convertBinding(ITypeBinding pBinding) {
-		checkForNull(pBinding);
+	private static IElement convertBinding(final ITypeBinding pBinding) {
+		ASTCrawler.checkForNull(pBinding);
 		IJavaElement elem = null;
 		try {
 			elem = pBinding.getJavaElement();
 		}
-		catch (NullPointerException E) {
+		catch (final NullPointerException E) {
 			System.out.println("Bug in eclipse encountered for: "
 					+ pBinding.getName());
 			return null;
@@ -238,9 +214,10 @@ public class ASTCrawler extends ASTVisitor {
 	 *            The binding to convert. Cannot be null.
 	 * @return A field element representing this binding. Cannot be null.
 	 */
-	private static IElement convertBinding(IVariableBinding pBinding) {
-		checkForNull(pBinding);
-		String lFieldID = convertBinding(pBinding.getDeclaringClass()).getId()
+	private static IElement convertBinding(final IVariableBinding pBinding) {
+		ASTCrawler.checkForNull(pBinding);
+		final String lFieldID = ASTCrawler.convertBinding(
+				pBinding.getDeclaringClass()).getId()
 				+ "." + pBinding.getName();
 		return FlyweightElementFactory.getElement(ICategories.FIELD, lFieldID,
 				pBinding.getJavaElement());
@@ -255,9 +232,10 @@ public class ASTCrawler extends ASTVisitor {
 	 *            The binding to convert. Cannot be null.
 	 * @return A class element representing this binding. Cannot be null.
 	 */
-	private static IElement convertParameterTypeBinding(ITypeBinding pBinding) {
-		checkForNull(pBinding);
-		if ((pBinding.getDimensions() == 0) && !(pBinding.isPrimitive()))
+	private static IElement convertParameterTypeBinding(
+			final ITypeBinding pBinding) {
+		ASTCrawler.checkForNull(pBinding);
+		if (pBinding.getDimensions() == 0 && !pBinding.isPrimitive())
 			return FlyweightElementFactory.getElement(ICategories.CLASS,
 					Signature.C_RESOLVED + pBinding.getBinaryName()
 							+ Signature.C_SEMICOLON, pBinding.getJavaElement());
@@ -266,15 +244,50 @@ public class ASTCrawler extends ASTVisitor {
 					pBinding.getBinaryName(), pBinding.getJavaElement());
 	}
 
+	@SuppressWarnings({ "unchecked", "unused" })
+	private static List<AdviceElement> getApplicableAdvice(final IJavaElement je) {
+		final List<AdviceElement> advisedBy = new ArrayList<AdviceElement>();
+		final List<AdviceElement> direct = AJModel.getInstance()
+				.getRelatedElements(AJRelationshipManager.ADVISED_BY, je);
+		if (direct != null)
+			advisedBy.addAll(direct);
+
+		// check for advised code elements
+		final List extras = AJModel.getInstance().getExtraChildren(je);
+		if (extras != null)
+			for (final Iterator iter = extras.iterator(); iter.hasNext();) {
+				final IJavaElement element = (IJavaElement) iter.next();
+				final List<AdviceElement> indirect = AJModel.getInstance()
+						.getRelatedElements(AJRelationshipManager.ADVISED_BY,
+								element);
+				if (indirect != null)
+					advisedBy.addAll(indirect);
+			}
+		return advisedBy;
+	}
+
+	private static Assignment getAssignment(final ASTNode node) {
+		if (node == null)
+			return null;
+
+		if (node.getNodeType() == ASTNode.ASSIGNMENT)
+			return (Assignment) node;
+
+		else
+			return ASTCrawler.getAssignment(node.getParent());
+	}
+
 	/**
 	 * Standard logging behavior
 	 */
-	private static void log(String pMessage) {
+	private static void log(final String pMessage) {
 		System.out.println(pMessage);
 	}
 
 	private ClassElement aCurrType;
+
 	private MethodElement aCurrMethod;
+
 	private MethodElement aTempMethod; // for field initializations
 
 	private Stack<MethodElement> aTempMethodReminder;
@@ -283,17 +296,17 @@ public class ASTCrawler extends ASTVisitor {
 
 	private Stack<MethodElement> aCurrMethodReminder; // for anonymous/inner class situations and <clinit> method situations
 
-	private Stack<ArrayList<MethodElement>> aCurrConstructorListReminder; // for all constructor methods
-
-	private ArrayList<MethodElement> aCurrConstructorList;
-
 	//private boolean			aHasConstructor = false;
 
 	//private BooleanStack	aHaaConstructorReminder;
 
-	private ProgramDatabase aDB;
+	private Stack<ArrayList<MethodElement>> aCurrConstructorListReminder; // for all constructor methods
 
-	private FastConverter aConverter;
+	private ArrayList<MethodElement> aCurrConstructorList;
+
+	private final ProgramDatabase aDB;
+
+	private final FastConverter aConverter;
 
 	/**
 	 * Constructor of ASTSpider working on a given database. A new DBManager is
@@ -302,99 +315,9 @@ public class ASTCrawler extends ASTVisitor {
 	 * @param pDatabase
 	 *            Can be empty or can contain data
 	 */
-	public ASTCrawler(ProgramDatabase pDB, FastConverter pConverter) {
-		aDB = pDB;
-		aConverter = pConverter;
-	}
-
-	/**
-	 * Add an ACCESS relation and its transpose between aCurrentMethod and the
-	 * field described by pBinding. If any problem is detected the relation is
-	 * not added and the error is logged.
-	 * 
-	 * @param pBinding
-	 *            The field to add a relation to.
-	 * @pre aCurrMethod is not null
-	 * @pre aCurrMethod is in the database
-	 * @pre pBinding is not null
-	 */
-	private void addAccessRelation(IVariableBinding pBinding) {
-		//assert (pBinding != null);
-		//assert (aDB.contains(aCurrMethod));
-		//assert (aCurrMethod != null);
-
-		if (pBinding.getDeclaringClass() == null) {
-			// This is most likely an access to the length
-			// field of an array.
-			return;
-		}
-		IElement lField = convertBinding(pBinding);
-		aDB.addElement(lField, pBinding.getModifiers());
-		aDB.addRelationAndTranspose(aCurrMethod, Relation.ACCESSES, lField);
-	}
-
-	private void addSetsRelation(IVariableBinding pBinding) {
-//		assert (pBinding != null);
-//		assert (aDB.contains(aCurrMethod));
-//		assert (aCurrMethod != null);
-
-		if (pBinding.getDeclaringClass() == null) {
-			// This is most likely an access to the length
-			// field of an array.
-			return;
-		}
-		IElement lField = convertBinding(pBinding);
-		aDB.addElement(lField, pBinding.getModifiers());
-		aDB.addRelationAndTranspose(aCurrMethod, Relation.SETS, lField);
-	}
-
-	private void addGetsRelation(IVariableBinding pBinding) {
-//		assert (pBinding != null);
-//		assert (aDB.contains(aCurrMethod));
-//		assert (aCurrMethod != null);
-
-		if (pBinding.getDeclaringClass() == null) {
-			// This is most likely an access to the length
-			// field of an array.
-			return;
-		}
-		IElement lField = convertBinding(pBinding);
-		aDB.addElement(lField, pBinding.getModifiers());
-		aDB.addRelationAndTranspose(aCurrMethod, Relation.GETS, lField);
-	}
-
-	private void addCallRelation(ASTNode pNode, IMethodBinding pBinding,
-			boolean pStatic) {
-		//assert( pBinding != null ); TODO
-
-		if (aCurrMethod == null) {
-			//constructors calling itself. Ignore it.
-			return;
-		}
-
-		//lAcceptor could be a Java.util method
-		if (pBinding == null)
-			return;
-		IElement lAcceptor = convertBinding(pBinding);
-		IElement lCaller = aCurrMethod;
-
-		// lCaller instanceof IClassElement
-		// lAcceptor instanceof IMethodElement
-		int lModifiers = pBinding.getModifiers();
-		if ((pBinding.getDeclaringClass().isInterface())
-				|| (Modifier.isAbstract(lModifiers))) {
-			lModifiers = lModifiers | ABSTRACT_FLAG;
-		}
-
-		aDB.addElement(lAcceptor, lModifiers);
-
-		if (pStatic) {
-			aDB.addRelationAndTranspose(lCaller, Relation.STATIC_CALLS,
-					lAcceptor);
-		}
-		else {
-			aDB.addRelationAndTranspose(lCaller, Relation.CALLS, lAcceptor);
-		}
+	public ASTCrawler(final ProgramDatabase pDB, final FastConverter pConverter) {
+		this.aDB = pDB;
+		this.aConverter = pConverter;
 	}
 
 	/**
@@ -403,334 +326,190 @@ public class ASTCrawler extends ASTVisitor {
 	 * @param pCU
 	 */
 	@SuppressWarnings( { "restriction", "unchecked" })
-	public void analyze(ICompilationUnit pCU) {
-		resetSpider();
+	public void analyze(final ICompilationUnit pCU) {
+		this.resetSpider();
 
-		extractTypes(pCU);
-		ASTParser lParser = ASTParser.newParser(AST.JLS3); // handles JLS3 (J2SE 1.5)
+		this.extractTypes(pCU);
+		final ASTParser lParser = ASTParser.newParser(AST.JLS3); // handles JLS3 (J2SE 1.5)
 		lParser.setSource(pCU);
 		lParser.setResolveBindings(true);
-		CompilationUnit lResult = (CompilationUnit) lParser.createAST(null);
+		final CompilationUnit lResult = (CompilationUnit) lParser
+				.createAST(null);
 		lResult.accept(this);
 	}
 
-	public void endVisit(AnonymousClassDeclaration pNode) {
-		aCurrType = aCurrTypeReminder.pop();
+	@Override
+	public void endVisit(final AnonymousClassDeclaration pNode) {
+		this.aCurrType = this.aCurrTypeReminder.pop();
 	}
 
-	public void endVisit(EnumConstantDeclaration pNode) {
-		restoreMethodRelation();
+	@Override
+	public void endVisit(final EnumConstantDeclaration pNode) {
+		this.restoreMethodRelation();
 	}
 
-	public void endVisit(EnumDeclaration pNode) {
-		restoreTypeRelation();
+	@Override
+	public void endVisit(final EnumDeclaration pNode) {
+		this.restoreTypeRelation();
 	}
 
-	public void endVisit(FieldDeclaration pNode) {
-		aCurrMethod = aCurrMethodReminder.pop();
+	@Override
+	public void endVisit(final FieldDeclaration pNode) {
+		this.aCurrMethod = this.aCurrMethodReminder.pop();
 	}
 
-	public void endVisit(Initializer pNode) {
-		if (!aCurrMethodReminder.isEmpty()) {
-			aCurrMethod = aCurrMethodReminder.pop();
-		}
-		else {
-			aCurrMethod = null;
-		}
+	@Override
+	public void endVisit(final Initializer pNode) {
+		if (!this.aCurrMethodReminder.isEmpty())
+			this.aCurrMethod = this.aCurrMethodReminder.pop();
+		else
+			this.aCurrMethod = null;
 	}
 
-	public void endVisit(MethodDeclaration pNode) {
-		restoreMethodRelation();
+	@Override
+	public void endVisit(final MethodDeclaration pNode) {
+		this.restoreMethodRelation();
 	}
 
 	//
-	public void endVisit(TypeDeclaration pNode) {
-		restoreTypeRelation();
+	@Override
+	public void endVisit(final TypeDeclaration pNode) {
+		this.restoreTypeRelation();
 	}
 
-	// Extracts types and loads them into the converter
-	private void extractTypes(ICompilationUnit pCU) {
-		try {
-			IType[] lTypes = pCU.getAllTypes();
+	@Override
+	public boolean visit(final AnonymousClassDeclaration pNode) {
+		final ITypeBinding lBinding = pNode.resolveBinding();
 
-			for (int i = 0; i < lTypes.length; i++) {
-				aConverter.addMapping(lTypes[i]);
-			}
-		}
-		catch (JavaModelException pException) {
-			pException.printStackTrace();
-		}
-	}
-
-	private boolean isNonPrimitive(ITypeBinding pBinding) {
-		//As long as it's not of primitive type or primitive type array
-		if (pBinding.isPrimitive()) {
+		if (ASTCrawler.checkForNull(lBinding))
 			return false;
-		}
-		else if (pBinding.isArray()) {
-			ITypeBinding lBinding = pBinding.getElementType();
-			return !lBinding.isPrimitive();
-		}
-
-		return true;
-	}
-
-	/**
-	 * Clear class fields and be ready to work on a different compilation unit.
-	 */
-	private void resetSpider() {
-		//		aHasConstructor = false;
-		//		aHasConstructorReminder = new BooleanStack();
-		aCurrConstructorList = null;
-		aCurrConstructorListReminder = new Stack<ArrayList<MethodElement>>();
-		aCurrType = null;
-		aCurrTypeReminder = new Stack<ClassElement>();
-		aCurrMethod = null;
-		aCurrMethodReminder = new Stack<MethodElement>();
-		aTempMethod = null;
-		aTempMethodReminder = new Stack<MethodElement>();
-	}
-
-	private void restoreMethodRelation() {
-		if (!aCurrMethodReminder.isEmpty()) {
-			aCurrMethod = aCurrMethodReminder.pop();
-		}
-		else {
-			aCurrMethod = null;
-		}
-	}
-
-	/**
-	 * Conclusion method for the visit on this Type Declaration and Enum
-	 * Declaration. This type could be an inner class. This method checks to see
-	 * if there is an actual (non-empty) <clinit>() method. If the method does
-	 * exist and has relations in it, a DECLARES relations is added to the
-	 * current type for this method. Then it removes current <temp> method
-	 * completely from database And restore backup <temp>, if there is one.
-	 * Should only be called by endVisit( EnumDeclaration ) and endVisit(
-	 * TypeDeclaration ).
-	 * 
-	 */
-	private void restoreTypeRelation() {
-		//		if this <clinit> method has relations in it, the relation DECLARES is added to the current type
-		MethodElement lMethod = (MethodElement) FlyweightElementFactory
-				.getElement(ICategories.METHOD, aCurrType.getId() + "."
-						+ aCLINIT_METHOD_NAME, null);
-		if (aDB.contains(lMethod) && aDB.hasRelations(lMethod)) {
-			aDB.addRelation(aCurrType, Relation.DECLARES_METHOD, lMethod);
-		}
-
-		if (aDB.hasRelations(aTempMethod)) {
-			if (aCurrConstructorList.size() == 0) {
-				IElement lDefaultConstructor = FlyweightElementFactory
-						.getElement(ICategories.METHOD, aCurrType.getId() + "."
-								+ aINIT_METHOD_NAME, null);
-				aDB.addElement(lDefaultConstructor, aINIT_METHOD_MODIFIERS);
-				aDB.copyRelations(aTempMethod, lDefaultConstructor);
-				aDB.addRelation(aCurrType, Relation.DECLARES_METHOD,
-						lDefaultConstructor);
-			}
-			else {
-				for (MethodElement lConstructor : aCurrConstructorList) {
-					aDB.copyRelations(aTempMethod, lConstructor);
-				}
-			}
-		}
-		//Remove temp method, and any relations associated with it, from memory database
-		aDB.removeElement(aTempMethod);
-
-		//restore current type and temp method
-		if (!aCurrTypeReminder.isEmpty()) {
-			aCurrType = aCurrTypeReminder.pop();
-		}
-		else {
-			aCurrType = null;
-		}
-
-		if (!aTempMethodReminder.isEmpty()) {
-			aTempMethod = aTempMethodReminder.pop();
-		}
-		else {
-			aTempMethod = null;
-		}
-
-		if (!aCurrConstructorListReminder.empty()) {
-			aCurrConstructorList = aCurrConstructorListReminder.pop();
-		}
-		else {
-			aCurrConstructorList = null;
-		}
-	}
-
-	private void saveMethodRelation(IMethodBinding pMBinding) {
-
-		if (aCurrMethod != null) {
-			aCurrMethodReminder.push(aCurrMethod);
-		}
-		aCurrMethod = (MethodElement) convertBinding(pMBinding);
-
-		int lModifiers = pMBinding.getModifiers();
-		if ((pMBinding.getDeclaringClass().isInterface())
-				|| (Modifier.isAbstract(lModifiers))) {
-			lModifiers = lModifiers | ABSTRACT_FLAG;
-		}
-		aDB.addElement(aCurrMethod, lModifiers);
-	}
-
-	private void saveTypeRelation(ITypeBinding pBinding) {
-		if (pBinding.isTopLevel()) { //Assume both reminder stacks are empty
-
-		}
-		else //other wise, backup current type.
-		{
-			aCurrTypeReminder.push(aCurrType);
-			aTempMethodReminder.push(aTempMethod);
-			aCurrConstructorListReminder.push(aCurrConstructorList);
-		}
-
-		// Initialize the list for storing constructor declaration
-		aCurrConstructorList = new ArrayList<MethodElement>(
-				aINIT_CONSTRUCTOR_LIST_SIZE); // 
-
-		//Insert this type
-		aCurrType = (ClassElement) convertBinding(pBinding);
-		aDB.addElement(aCurrType, pBinding.getModifiers()
-				| (pBinding.isInterface() ? ABSTRACT_FLAG : 0));
-
-		//Insert temp method for field initializers
-		aTempMethod = (MethodElement) FlyweightElementFactory.getElement(
-				ICategories.METHOD,
-				aCurrType.getId() + "." + aTEMP_METHOD_NAME, pBinding
-						.getJavaElement());
-		aDB.addElement(aTempMethod, pBinding.getModifiers());
-	}
-
-	public boolean visit(ImportDeclaration node) {
-		return false;
-	}
-
-	public boolean visit(AnonymousClassDeclaration pNode) {
-		ITypeBinding lBinding = pNode.resolveBinding();
-
-		if (checkForNull(lBinding))
-			return false;
-		if (checkForNull(aCurrType))
+		if (ASTCrawler.checkForNull(this.aCurrType))
 			return false;
 
-		IElement lAnonymousClass = convertBinding(lBinding);
-		aCurrTypeReminder.push(aCurrType);
-		aCurrType = (ClassElement) lAnonymousClass;
-		aDB.addElement(aCurrType, pNode.resolveBinding().getModifiers());
-		aDB.addRelation((IElement) aCurrMethod, Relation.DECLARES_TYPE,
-				aCurrType);
+		final IElement lAnonymousClass = ASTCrawler.convertBinding(lBinding);
+		this.aCurrTypeReminder.push(this.aCurrType);
+		this.aCurrType = (ClassElement) lAnonymousClass;
+		this.aDB.addElement(this.aCurrType, pNode.resolveBinding()
+				.getModifiers());
+		this.aDB.addRelation(this.aCurrMethod, Relation.DECLARES_TYPE,
+				this.aCurrType);
 
-		ITypeBinding lSuperBinding = lBinding.getSuperclass();
+		final ITypeBinding lSuperBinding = lBinding.getSuperclass();
 		if (lSuperBinding != null) {
-			IElement lSuperClass = convertBinding(lSuperBinding);
-			aDB.addElement(lSuperClass, lSuperBinding.getModifiers());
-			aDB.addRelationAndTranspose(aCurrType, Relation.EXTENDS_CLASS,
-					lSuperClass);
+			final IElement lSuperClass = ASTCrawler
+					.convertBinding(lSuperBinding);
+			this.aDB.addElement(lSuperClass, lSuperBinding.getModifiers());
+			this.aDB.addRelationAndTranspose(this.aCurrType,
+					Relation.EXTENDS_CLASS, lSuperClass);
 		}
 
-		ITypeBinding lInterfaceBindings[] = lBinding.getInterfaces();
-		for (int i = 0; i < lInterfaceBindings.length; i++) {
-			IElement lInterface = convertBinding(lInterfaceBindings[i]);
-			aDB.addElement(lInterface, lInterfaceBindings[i].getModifiers()
-					| ABSTRACT_FLAG);
-			aDB.addRelationAndTranspose(aCurrType,
+		final ITypeBinding lInterfaceBindings[] = lBinding.getInterfaces();
+		for (final ITypeBinding element : lInterfaceBindings) {
+			final IElement lInterface = ASTCrawler.convertBinding(element);
+			this.aDB.addElement(lInterface, element.getModifiers()
+					| ASTCrawler.ABSTRACT_FLAG);
+			this.aDB.addRelationAndTranspose(this.aCurrType,
 					Relation.IMPLEMENTS_INTERFACE, lInterface);
 		}
 		return true;
 	}
 
-	public boolean visit(CastExpression pNode) {
-//		assert (aCurrMethod != null);
+	@Override
+	public boolean visit(final CastExpression pNode) {
+		//		assert (aCurrMethod != null);
 
-		ITypeBinding lBinding = pNode.resolveTypeBinding();
+		final ITypeBinding lBinding = pNode.resolveTypeBinding();
 
 		if (lBinding != null) {
-			IElement lClass = convertBinding(lBinding);
-			aDB.addElement(lClass, lBinding.getModifiers()
-					| (lBinding.isInterface() ? ABSTRACT_FLAG : 0));
-			aDB.addRelationAndTranspose(aCurrMethod, Relation.CHECKS, lClass);
+			final IElement lClass = ASTCrawler.convertBinding(lBinding);
+			this.aDB.addElement(lClass, lBinding.getModifiers()
+					| (lBinding.isInterface() ? ASTCrawler.ABSTRACT_FLAG : 0));
+			this.aDB.addRelationAndTranspose(this.aCurrMethod, Relation.CHECKS,
+					lClass);
 		}
 
 		return true;
 	}
 
-	public boolean visit(ClassInstanceCreation pNode) {
-		if (checkForNull(aCurrMethod))
+	@Override
+	public boolean visit(final ClassInstanceCreation pNode) {
+		if (ASTCrawler.checkForNull(this.aCurrMethod))
 			return false;
 
-		IMethodBinding lCBinding = pNode.resolveConstructorBinding();
-		ITypeBinding lTBinding = pNode.resolveTypeBinding();
+		final IMethodBinding lCBinding = pNode.resolveConstructorBinding();
+		final ITypeBinding lTBinding = pNode.resolveTypeBinding();
 
-		if (checkForNull(lCBinding))
+		if (ASTCrawler.checkForNull(lCBinding))
 			return false;
-		if (checkForNull(lTBinding))
+		if (ASTCrawler.checkForNull(lTBinding))
 			return false;
 
 		MethodElement lConstructor = null;
 
 		if (lTBinding.isAnonymous()) {
-			IElement lDeclaringClass = convertBinding(lTBinding);
+			final IElement lDeclaringClass = ASTCrawler
+					.convertBinding(lTBinding);
 			// TODO HACK A bug in Eclipse occasionally causes binary names to crap out.
 			if (lDeclaringClass == null || lDeclaringClass.getId() == null)
 				return false;
 
 			lConstructor = (MethodElement) FlyweightElementFactory.getElement(
 					ICategories.METHOD, lDeclaringClass.getId() + "."
-							+ aINIT_METHOD_NAME, lTBinding.getJavaElement());
-			aDB.addElement(lConstructor, aINIT_METHOD_MODIFIERS);
+							+ ASTCrawler.aINIT_METHOD_NAME, lTBinding
+							.getJavaElement());
+			this.aDB
+					.addElement(lConstructor, ASTCrawler.aINIT_METHOD_MODIFIERS);
 		}
-		else {
-			lConstructor = (MethodElement) convertBinding(lCBinding);
-		}
+		else
+			lConstructor = (MethodElement) ASTCrawler.convertBinding(lCBinding);
 
-		IElement lClass = lConstructor.getDeclaringClass();
+		final IElement lClass = lConstructor.getDeclaringClass();
 
 		//Register CALLS relationship to constructor
-		addCallRelation(pNode, lCBinding, true);
+		this.addCallRelation(pNode, lCBinding, true);
 
 		try {
-			aDB.contains(lClass);
+			this.aDB.contains(lClass);
 		}
-		catch (RuntimeException pException) {
+		catch (final RuntimeException pException) {
 			System.out.println(lClass.getId());
 			System.out.println(lConstructor.getId());
 			throw pException;
 		}
 
-		if (!aDB.contains(lClass)) {
-			ITypeBinding lType = lCBinding.getDeclaringClass();
-			aDB.addElement(lClass, lType.getModifiers());
+		if (!this.aDB.contains(lClass)) {
+			final ITypeBinding lType = lCBinding.getDeclaringClass();
+			this.aDB.addElement(lClass, lType.getModifiers());
 		}
 
 		//Register CREATES relationship
-		aDB.addRelationAndTranspose(aCurrMethod, Relation.CREATES, lClass);
+		this.aDB.addRelationAndTranspose(this.aCurrMethod, Relation.CREATES,
+				lClass);
 
 		return true;
 	}
 
-	public boolean visit(ConstructorInvocation pNode) {
-		addCallRelation(pNode, pNode.resolveConstructorBinding(), true);
+	@Override
+	public boolean visit(final ConstructorInvocation pNode) {
+		this.addCallRelation(pNode, pNode.resolveConstructorBinding(), true);
 		return true;
 	}
 
-	public boolean visit(EnumConstantDeclaration pNode) {
+	@Override
+	public boolean visit(final EnumConstantDeclaration pNode) {
 		// JLS3(§8.9): It is impossible to define a local (§14.3) enum, or to define an enum in an inner class (§8.1.3).
-//		assert (aCurrMethodReminder.empty());
+		//		assert (aCurrMethodReminder.empty());
 
-		String lSimpleName = pNode.getName().getIdentifier();
+		final String lSimpleName = pNode.getName().getIdentifier();
 		if (lSimpleName == null)
 			return false;
 
 		IElement lField;
 		lField = FlyweightElementFactory.getElement(ICategories.FIELD,
-				aCurrType.getId() + "." + lSimpleName, pNode.resolveVariable()
-						.getJavaElement());
-		aDB.addElement(lField, pNode.getModifiers());
-		aDB.addRelation(aCurrType, Relation.DECLARES_FIELD, lField);
+				this.aCurrType.getId() + "." + lSimpleName, pNode
+						.resolveVariable().getJavaElement());
+		this.aDB.addElement(lField, pNode.getModifiers());
+		this.aDB.addRelation(this.aCurrType, Relation.DECLARES_FIELD, lField);
 
 		//	Register CALLS relationship to constructor
 		//		IMethodBinding lCBinding = pNode.resolveConstructorBinding();
@@ -743,59 +522,60 @@ public class ASTCrawler extends ASTVisitor {
 	/**
 	 * Generated the DECLARES relations between a enum and and nested types.
 	 */
-	public boolean visit(EnumDeclaration pNode) {
-		ITypeBinding lBinding = pNode.resolveBinding();
-//		assert (lBinding.isEnum());
+	@Override
+	public boolean visit(final EnumDeclaration pNode) {
+		final ITypeBinding lBinding = pNode.resolveBinding();
+		//		assert (lBinding.isEnum());
 
-		if (checkForNull(lBinding))
+		if (ASTCrawler.checkForNull(lBinding))
 			return false;
 
 		try {
-			saveTypeRelation(lBinding);
+			this.saveTypeRelation(lBinding);
 
 			// JLS3(§8.9): It is impossible to define a local (§14.3) enum, or to define an enum in an inner class (§8.1.3).
 			// TODO: check if enum type is always a member class of an closing class
-			if (lBinding.isMember()) {
-				aDB.addRelation(aCurrTypeReminder.peek(),
-						Relation.DECLARES_TYPE, aCurrType);
-			}
+			if (lBinding.isMember())
+				this.aDB.addRelation(this.aCurrTypeReminder.peek(),
+						Relation.DECLARES_TYPE, this.aCurrType);
 
 			// Find interfaces.
-			ITypeBinding lInterfaceBindings[] = lBinding.getInterfaces();
-			for (int i = 0; i < lInterfaceBindings.length; i++) {
-				IElement lInterface = convertBinding(lInterfaceBindings[i]);
-				aDB.addElement(lInterface, lInterfaceBindings[i].getModifiers()
-						| ABSTRACT_FLAG);
-				aDB.addRelationAndTranspose(aCurrType,
+			final ITypeBinding lInterfaceBindings[] = lBinding.getInterfaces();
+			for (final ITypeBinding element : lInterfaceBindings) {
+				final IElement lInterface = ASTCrawler.convertBinding(element);
+				this.aDB.addElement(lInterface, element.getModifiers()
+						| ASTCrawler.ABSTRACT_FLAG);
+				this.aDB.addRelationAndTranspose(this.aCurrType,
 						Relation.IMPLEMENTS_INTERFACE, lInterface);
 			}
 		}
-		catch (Exception pException) {
+		catch (final Exception pException) {
 			ProblemManager.reportException(pException);
 		}
 
 		return true;
 	}
 
-	public boolean visit(FieldAccess pNode) {
-		IVariableBinding lBinding = (IVariableBinding) pNode.getName()
+	@Override
+	public boolean visit(final FieldAccess pNode) {
+		final IVariableBinding lBinding = (IVariableBinding) pNode.getName()
 				.resolveBinding();
 
 		if (lBinding == null) {
-			log("Null binding 1 for " + pNode.toString());
+			ASTCrawler.log("Null binding 1 for " + pNode.toString());
 			return false;
 		}
 
-		addAccessRelation(lBinding);
-		Assignment assignment = getAssignment(pNode);
+		this.addAccessRelation(lBinding);
+		final Assignment assignment = ASTCrawler.getAssignment(pNode);
 		if (assignment != null) {
-			addSetsRelation((IVariableBinding) lBinding);
+			this.addSetsRelation(lBinding);
 
 			if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
-				addGetsRelation((IVariableBinding) lBinding);
+				this.addGetsRelation(lBinding);
 		}
 		else
-			addGetsRelation((IVariableBinding) lBinding);
+			this.addGetsRelation(lBinding);
 		return true;
 	}
 
@@ -805,47 +585,48 @@ public class ASTCrawler extends ASTVisitor {
 	 * Constructor depending on if the method is static or not, and if it's initalized
 	 * with a value or not.
 	 */
-	public boolean visit(FieldDeclaration pNode) {
-		List fragments = pNode.fragments();
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean visit(final FieldDeclaration pNode) {
+		final List fragments = pNode.fragments();
 		IElement lField;
 
-		aCurrMethodReminder.push(aCurrMethod);
+		this.aCurrMethodReminder.push(this.aCurrMethod);
 
 		if (Modifier.isStatic(pNode.getModifiers())) {
-			aCurrMethod = (MethodElement) FlyweightElementFactory.getElement(
-					ICategories.METHOD, aCurrType.getId() + "."
-							+ aCLINIT_METHOD_NAME, null);
-			if (!aDB.contains(aCurrMethod)) {
+			this.aCurrMethod = (MethodElement) FlyweightElementFactory
+					.getElement(ICategories.METHOD, this.aCurrType.getId()
+							+ "." + ASTCrawler.aCLINIT_METHOD_NAME, null);
+			if (!this.aDB.contains(this.aCurrMethod))
 				//This <clinit>() method will be in any class that has a static field with initialization
 				//But the DECLARES relation will be linked only if this method has at least one sub relations
 				//The linkage is done at the end of traversing each compilations unit while end visiting type Declaration
-				aDB.addElement(aCurrMethod, pNode.getModifiers());
-			}
+				this.aDB.addElement(this.aCurrMethod, pNode.getModifiers());
 		}
-		else {
-			aCurrMethod = aTempMethod;
-		}
+		else
+			this.aCurrMethod = this.aTempMethod;
 
 		// Consider multiple declaration in one statment
-		for (Iterator itr = fragments.iterator(); itr.hasNext();) {
-			VariableDeclarationFragment fragment = (VariableDeclarationFragment) itr
+		for (final Iterator itr = fragments.iterator(); itr.hasNext();) {
+			final VariableDeclarationFragment fragment = (VariableDeclarationFragment) itr
 					.next();
-			String lSimpleName = fragment.getName().getIdentifier();
-			Expression lInit = fragment.getInitializer();
+			final String lSimpleName = fragment.getName().getIdentifier();
+			final Expression lInit = fragment.getInitializer();
 
 			if (lSimpleName != null) {
 				lField = FlyweightElementFactory.getElement(ICategories.FIELD,
-						aCurrType.getId() + "." + lSimpleName, null);
-				aDB.addElement(lField, pNode.getModifiers());
+						this.aCurrType.getId() + "." + lSimpleName, null);
+				this.aDB.addElement(lField, pNode.getModifiers());
 
-				aDB.addRelation(aCurrType, Relation.DECLARES_FIELD, lField);
+				this.aDB.addRelation(this.aCurrType, Relation.DECLARES_FIELD,
+						lField);
 
 				//If there is any initialization to this field then we write them as an access by <init> or <clinit>
 				if (lInit != null) {
-					aDB.addRelationAndTranspose(aCurrMethod, Relation.ACCESSES,
-							lField);
-					aDB.addRelationAndTranspose(aCurrMethod, Relation.SETS,
-							lField);
+					this.aDB.addRelationAndTranspose(this.aCurrMethod,
+							Relation.ACCESSES, lField);
+					this.aDB.addRelationAndTranspose(this.aCurrMethod,
+							Relation.SETS, lField);
 
 					// Want to go into the right side of assignment operator
 					lInit.accept(this);
@@ -859,63 +640,137 @@ public class ASTCrawler extends ASTVisitor {
 		return true;
 	}
 
-	public boolean visit(Initializer pNode) {
-		if (aCurrMethod != null) {
-			aCurrMethodReminder.push(aCurrMethod);
-		}
+	@Override
+	public boolean visit(final ImportDeclaration node) {
+		return false;
+	}
 
-		if (Flags.isStatic(pNode.getModifiers())) {
-			aCurrMethod = (MethodElement) FlyweightElementFactory.getElement(
-					ICategories.METHOD, aCurrType.getId() + "."
-							+ aCLINIT_METHOD_NAME, null);
-		}
+	@Override
+	public boolean visit(final Initializer pNode) {
+		if (this.aCurrMethod != null)
+			this.aCurrMethodReminder.push(this.aCurrMethod);
+
+		if (Flags.isStatic(pNode.getModifiers()))
+			this.aCurrMethod = (MethodElement) FlyweightElementFactory
+					.getElement(ICategories.METHOD, this.aCurrType.getId()
+							+ "." + ASTCrawler.aCLINIT_METHOD_NAME, null);
 		else {
-			aCurrMethod = (MethodElement) FlyweightElementFactory.getElement(
-					ICategories.METHOD, aCurrType.getId() + "."
-							+ aINIT_METHOD_NAME, null);
-			aCurrConstructorList.add(aCurrMethod);
+			this.aCurrMethod = (MethodElement) FlyweightElementFactory
+					.getElement(ICategories.METHOD, this.aCurrType.getId()
+							+ "." + ASTCrawler.aINIT_METHOD_NAME, null);
+			this.aCurrConstructorList.add(this.aCurrMethod);
 		}
 
-		aDB.addElement(aCurrMethod, pNode.getModifiers());
-		aDB.addRelation(aCurrType, Relation.DECLARES_METHOD, aCurrMethod);
+		this.aDB.addElement(this.aCurrMethod, pNode.getModifiers());
+		this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
+				this.aCurrMethod);
 		return true;
 	}
 
-	public boolean visit(InstanceofExpression pNode) {
-		if (checkForNull(aCurrMethod))
+	@Override
+	public boolean visit(final InstanceofExpression pNode) {
+		if (ASTCrawler.checkForNull(this.aCurrMethod))
 			return false;
 
-		ITypeBinding lBinding = pNode.getRightOperand().resolveBinding();
+		final ITypeBinding lBinding = pNode.getRightOperand().resolveBinding();
 		if (lBinding != null) {
-			IElement lClass = convertBinding(lBinding);
-			aDB.addElement(lClass, lBinding.getModifiers()
-					| (lBinding.isInterface() ? ABSTRACT_FLAG : 0));
-			aDB.addRelationAndTranspose(aCurrMethod, Relation.CHECKS, lClass);
+			final IElement lClass = ASTCrawler.convertBinding(lBinding);
+			this.aDB.addElement(lClass, lBinding.getModifiers()
+					| (lBinding.isInterface() ? ASTCrawler.ABSTRACT_FLAG : 0));
+			this.aDB.addRelationAndTranspose(this.aCurrMethod, Relation.CHECKS,
+					lClass);
 		}
 		return true;
+	}
+
+	@Override
+	public boolean visit(final MarkerAnnotation node) {
+		final ITypeBinding binding = node.resolveTypeBinding();
+		if (ASTCrawler.checkForNull(binding))
+			return false;
+		final IElement annoteElem = ASTCrawler.convertBinding(binding);
+		this.aDB.addElement(annoteElem, binding.getModifiers());
+
+		final ASTNode annotatedNode = node.getParent();
+		switch (annotatedNode.getNodeType()) {
+			case ASTNode.METHOD_DECLARATION: {
+				final MethodDeclaration annotatedMethod = (MethodDeclaration) annotatedNode;
+				final IMethodBinding mBinding = annotatedMethod
+						.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, mBinding);
+
+			}
+			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+				final AnnotationTypeDeclaration annotatedAnnotation = (AnnotationTypeDeclaration) annotatedNode;
+				final ITypeBinding tBinding = annotatedAnnotation
+						.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
+			}
+
+			case ASTNode.VARIABLE_DECLARATION_FRAGMENT: {
+				final VariableDeclarationFragment varDeclFrag = (VariableDeclarationFragment) annotatedNode;
+				final IVariableBinding vBinding = varDeclFrag.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, vBinding);
+			}
+
+			case ASTNode.PACKAGE_DECLARATION: {
+				final PackageDeclaration packDecl = (PackageDeclaration) annotatedNode;
+				final IPackageBinding pBinding = packDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, pBinding);
+			}
+
+			case ASTNode.SINGLE_VARIABLE_DECLARATION: {
+				final SingleVariableDeclaration svd = (SingleVariableDeclaration) annotatedNode;
+				final IVariableBinding vBinding = svd.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, vBinding);
+			}
+			case ASTNode.TYPE_DECLARATION: {
+				final TypeDeclaration tDecl = (TypeDeclaration) annotatedNode;
+				final ITypeBinding tBinding = tDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
+			}
+			case ASTNode.ENUM_DECLARATION: {
+				final EnumDeclaration eDecl = (EnumDeclaration) annotatedNode;
+				final ITypeBinding tBinding = eDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
+			}
+
+			case ASTNode.FIELD_DECLARATION: {
+				final FieldDeclaration fieldDecl = (FieldDeclaration) annotatedNode;
+				for (final Object obj : fieldDecl.fragments()) {
+					final VariableDeclarationFragment vdf = (VariableDeclarationFragment) obj;
+					final IVariableBinding vBinding = vdf.resolveBinding();
+					return this.addAnnotationRelation(annoteElem, vBinding);
+				}
+			}
+
+			default: {
+				throw new IllegalStateException("Illegal annotated node type: "
+						+ annotatedNode);
+			}
+		}
 	}
 
 	/*
 	 * Add the method to database. Add "Declares" relation to Class.
 	 * If it's a constructor, copy all relations in temp method
 	 */
+	@Override
 	@SuppressWarnings("restriction")
-	public boolean visit(MethodDeclaration pNode) {
-		IMethodBinding lMBinding = pNode.resolveBinding();
+	public boolean visit(final MethodDeclaration pNode) {
+		final IMethodBinding lMBinding = pNode.resolveBinding();
 
-		if (checkForNull(lMBinding))
+		if (ASTCrawler.checkForNull(lMBinding))
 			return false;
-		saveMethodRelation(lMBinding);
+		this.saveMethodRelation(lMBinding);
 
-		aDB.addRelation(aCurrType, Relation.DECLARES_METHOD, aCurrMethod);
+		this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
+				this.aCurrMethod);
 
 		//If this is a constructor, we dump the class initilization relations into the constructor
-		if (lMBinding.isConstructor()) {
-			aCurrConstructorList.add(aCurrMethod);
-			//			aDB.copyRelations( aTempMethod, aCurrMethod ); // TODO: But what if there're fields that have not yet be parsed?
-
-			// Note: Now the relation copying occurs at the end of type declaration 
-		}
+		if (lMBinding.isConstructor())
+			this.aCurrConstructorList.add(this.aCurrMethod);
+		//			aDB.copyRelations( aTempMethod, aCurrMethod ); // TODO: But what if there're fields that have not yet be parsed?
 
 		//		System.out.println(this.aCurrMethod);
 		//		IJavaElement elem = lMBinding.getJavaElement();
@@ -938,162 +793,77 @@ public class ASTCrawler extends ASTVisitor {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static List<AdviceElement> getApplicableAdvice(IJavaElement je) {
-		List<AdviceElement> advisedBy = new ArrayList<AdviceElement>();
-		List<AdviceElement> direct = AJModel.getInstance().getRelatedElements(
-				AJRelationshipManager.ADVISED_BY, je);
-		if (direct != null)
-			advisedBy.addAll(direct);
+	@Override
+	public boolean visit(final MethodInvocation pNode) {
+		final SimpleName lName = pNode.getName();
+		final IBinding lBinding = lName.resolveBinding();
 
-		// check for advised code elements
-		List extras = AJModel.getInstance().getExtraChildren(je);
-		if (extras != null) {
-			for (Iterator iter = extras.iterator(); iter.hasNext();) {
-				IJavaElement element = (IJavaElement) iter.next();
-				List<AdviceElement> indirect = AJModel.getInstance()
-						.getRelatedElements(AJRelationshipManager.ADVISED_BY,
-								element);
-				if (indirect != null) {
-					advisedBy.addAll(indirect);
-				}
-			}
-		}
-		return advisedBy;
-	}
-
-	public boolean visit(MethodInvocation pNode) {
-		SimpleName lName = pNode.getName();
-		IBinding lBinding = lName.resolveBinding();
-
-		if (checkForNull(lBinding))
+		if (ASTCrawler.checkForNull(lBinding))
 			return false;
 
-		IMethodBinding lMethod = (IMethodBinding) lBinding;
-		addCallRelation(pNode, lMethod, Modifier.isStatic(lMethod
+		final IMethodBinding lMethod = (IMethodBinding) lBinding;
+		this.addCallRelation(pNode, lMethod, Modifier.isStatic(lMethod
 				.getModifiers()));
 		return true;
 	}
 
-	public boolean visit(MarkerAnnotation node) {
-		ITypeBinding binding = node.resolveTypeBinding();
-		if (checkForNull(binding))
+	@Override
+	public boolean visit(final NormalAnnotation node) {
+		final ITypeBinding binding = node.resolveTypeBinding();
+		if (ASTCrawler.checkForNull(binding))
 			return false;
-		IElement annoteElem = convertBinding(binding);
-		aDB.addElement(annoteElem, binding.getModifiers());
+		final IElement annoteElem = ASTCrawler.convertBinding(binding);
+		this.aDB.addElement(annoteElem, binding.getModifiers());
 
-		ASTNode annotatedNode = node.getParent();
+		final ASTNode annotatedNode = node.getParent();
 		switch (annotatedNode.getNodeType()) {
 			case ASTNode.METHOD_DECLARATION: {
-				MethodDeclaration annotatedMethod = (MethodDeclaration) annotatedNode;
-				IMethodBinding mBinding = annotatedMethod.resolveBinding();
-				return addAnnotationRelation(annoteElem, mBinding);
+				final MethodDeclaration annotatedMethod = (MethodDeclaration) annotatedNode;
+				final IMethodBinding mBinding = annotatedMethod
+						.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, mBinding);
 
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-				AnnotationTypeDeclaration annotatedAnnotation = (AnnotationTypeDeclaration) annotatedNode;
-				ITypeBinding tBinding = annotatedAnnotation.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
+				final AnnotationTypeDeclaration annotatedAnnotation = (AnnotationTypeDeclaration) annotatedNode;
+				final ITypeBinding tBinding = annotatedAnnotation
+						.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
 			}
 
 			case ASTNode.VARIABLE_DECLARATION_FRAGMENT: {
-				VariableDeclarationFragment varDeclFrag = (VariableDeclarationFragment) annotatedNode;
-				IVariableBinding vBinding = varDeclFrag.resolveBinding();
-				return addAnnotationRelation(annoteElem, vBinding);
+				final VariableDeclarationFragment varDeclFrag = (VariableDeclarationFragment) annotatedNode;
+				final IVariableBinding vBinding = varDeclFrag.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, vBinding);
 			}
 
 			case ASTNode.PACKAGE_DECLARATION: {
-				PackageDeclaration packDecl = (PackageDeclaration) annotatedNode;
-				IPackageBinding pBinding = packDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, pBinding);
+				final PackageDeclaration packDecl = (PackageDeclaration) annotatedNode;
+				final IPackageBinding pBinding = packDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, pBinding);
 			}
 
 			case ASTNode.SINGLE_VARIABLE_DECLARATION: {
-				SingleVariableDeclaration svd = (SingleVariableDeclaration) annotatedNode;
-				IVariableBinding vBinding = svd.resolveBinding();
-				return addAnnotationRelation(annoteElem, vBinding);
+				final SingleVariableDeclaration svd = (SingleVariableDeclaration) annotatedNode;
+				final IVariableBinding vBinding = svd.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, vBinding);
 			}
 			case ASTNode.TYPE_DECLARATION: {
-				TypeDeclaration tDecl = (TypeDeclaration) annotatedNode;
-				ITypeBinding tBinding = tDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
+				final TypeDeclaration tDecl = (TypeDeclaration) annotatedNode;
+				final ITypeBinding tBinding = tDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
 			}
 			case ASTNode.ENUM_DECLARATION: {
-				EnumDeclaration eDecl = (EnumDeclaration) annotatedNode;
-				ITypeBinding tBinding = eDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
-			}
-
-			case ASTNode.FIELD_DECLARATION: {
-				FieldDeclaration fieldDecl = (FieldDeclaration) annotatedNode;
-				for (Object obj : fieldDecl.fragments()) {
-					VariableDeclarationFragment vdf = (VariableDeclarationFragment) obj;
-					IVariableBinding vBinding = vdf.resolveBinding();
-					return addAnnotationRelation(annoteElem, vBinding);
-				}
-			}
-
-			default: {
-				throw new IllegalStateException("Illegal annotated node type: "
-						+ annotatedNode);
-			}
-		}
-	}
-
-	public boolean visit(NormalAnnotation node) {
-		ITypeBinding binding = node.resolveTypeBinding();
-		if (checkForNull(binding))
-			return false;
-		IElement annoteElem = convertBinding(binding);
-		aDB.addElement(annoteElem, binding.getModifiers());
-
-		ASTNode annotatedNode = node.getParent();
-		switch (annotatedNode.getNodeType()) {
-			case ASTNode.METHOD_DECLARATION: {
-				MethodDeclaration annotatedMethod = (MethodDeclaration) annotatedNode;
-				IMethodBinding mBinding = annotatedMethod.resolveBinding();
-				return addAnnotationRelation(annoteElem, mBinding);
-
-			}
-			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-				AnnotationTypeDeclaration annotatedAnnotation = (AnnotationTypeDeclaration) annotatedNode;
-				ITypeBinding tBinding = annotatedAnnotation.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
-			}
-
-			case ASTNode.VARIABLE_DECLARATION_FRAGMENT: {
-				VariableDeclarationFragment varDeclFrag = (VariableDeclarationFragment) annotatedNode;
-				IVariableBinding vBinding = varDeclFrag.resolveBinding();
-				return addAnnotationRelation(annoteElem, vBinding);
-			}
-
-			case ASTNode.PACKAGE_DECLARATION: {
-				PackageDeclaration packDecl = (PackageDeclaration) annotatedNode;
-				IPackageBinding pBinding = packDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, pBinding);
-			}
-
-			case ASTNode.SINGLE_VARIABLE_DECLARATION: {
-				SingleVariableDeclaration svd = (SingleVariableDeclaration) annotatedNode;
-				IVariableBinding vBinding = svd.resolveBinding();
-				return addAnnotationRelation(annoteElem, vBinding);
-			}
-			case ASTNode.TYPE_DECLARATION: {
-				TypeDeclaration tDecl = (TypeDeclaration) annotatedNode;
-				ITypeBinding tBinding = tDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
-			}
-			case ASTNode.ENUM_DECLARATION: {
-				EnumDeclaration eDecl = (EnumDeclaration) annotatedNode;
-				ITypeBinding tBinding = eDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
+				final EnumDeclaration eDecl = (EnumDeclaration) annotatedNode;
+				final ITypeBinding tBinding = eDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
 			}
 			case ASTNode.FIELD_DECLARATION: {
-				FieldDeclaration fieldDecl = (FieldDeclaration) annotatedNode;
-				for (Object obj : fieldDecl.fragments()) {
-					VariableDeclarationFragment vdf = (VariableDeclarationFragment) obj;
-					IVariableBinding vBinding = vdf.resolveBinding();
-					return addAnnotationRelation(annoteElem, vBinding);
+				final FieldDeclaration fieldDecl = (FieldDeclaration) annotatedNode;
+				for (final Object obj : fieldDecl.fragments()) {
+					final VariableDeclarationFragment vdf = (VariableDeclarationFragment) obj;
+					final IVariableBinding vBinding = vdf.resolveBinding();
+					return this.addAnnotationRelation(annoteElem, vBinding);
 				}
 			}
 			default: {
@@ -1103,249 +873,23 @@ public class ASTCrawler extends ASTVisitor {
 		}
 	}
 
-	public boolean visit(SingleMemberAnnotation node) {
-		ITypeBinding binding = node.resolveTypeBinding();
-		if (checkForNull(binding))
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean visit(final PackageDeclaration pNode) {
+		final IPackageBinding binding = pNode.resolveBinding();
+		if (ASTCrawler.checkForNull(binding))
 			return false;
-		IElement annoteElem = convertBinding(binding);
-		aDB.addElement(annoteElem, binding.getModifiers());
+		final IElement packageElem = this.convertBinding(binding);
 
-		ASTNode annotatedNode = node.getParent();
-		switch (annotatedNode.getNodeType()) {
-			case ASTNode.METHOD_DECLARATION: {
-				MethodDeclaration annotatedMethod = (MethodDeclaration) annotatedNode;
-				IMethodBinding mBinding = annotatedMethod.resolveBinding();
-				return addAnnotationRelation(annoteElem, mBinding);
+		this.aDB.addElement(packageElem, binding.getModifiers());
 
-			}
-			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-				AnnotationTypeDeclaration annotatedAnnotation = (AnnotationTypeDeclaration) annotatedNode;
-				ITypeBinding tBinding = annotatedAnnotation.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
-			}
-
-			case ASTNode.VARIABLE_DECLARATION_FRAGMENT: {
-				VariableDeclarationFragment varDeclFrag = (VariableDeclarationFragment) annotatedNode;
-				IVariableBinding vBinding = varDeclFrag.resolveBinding();
-				return addAnnotationRelation(annoteElem, vBinding);
-			}
-
-			case ASTNode.PACKAGE_DECLARATION: {
-				PackageDeclaration packDecl = (PackageDeclaration) annotatedNode;
-				IPackageBinding pBinding = packDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, pBinding);
-			}
-
-			case ASTNode.SINGLE_VARIABLE_DECLARATION: {
-				SingleVariableDeclaration svd = (SingleVariableDeclaration) annotatedNode;
-				IVariableBinding vBinding = svd.resolveBinding();
-				return addAnnotationRelation(annoteElem, vBinding);
-			}
-			case ASTNode.TYPE_DECLARATION: {
-				TypeDeclaration tDecl = (TypeDeclaration) annotatedNode;
-				ITypeBinding tBinding = tDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
-			}
-			case ASTNode.ENUM_DECLARATION: {
-				EnumDeclaration eDecl = (EnumDeclaration) annotatedNode;
-				ITypeBinding tBinding = eDecl.resolveBinding();
-				return addAnnotationRelation(annoteElem, tBinding);
-			}
-			case ASTNode.FIELD_DECLARATION: {
-				FieldDeclaration fieldDecl = (FieldDeclaration) annotatedNode;
-				for (Object obj : fieldDecl.fragments()) {
-					VariableDeclarationFragment vdf = (VariableDeclarationFragment) obj;
-					IVariableBinding vBinding = vdf.resolveBinding();
-					return addAnnotationRelation(annoteElem, vBinding);
-				}
-			}
-			default: {
-				throw new IllegalStateException("Illegal annotated node type: "
-						+ annotatedNode);
-			}
-		}
-	}
-
-	/**
-	 * @param annoteElem
-	 * @param binding
-	 * @return
-	 */
-	private boolean addAnnotationRelation(IElement annoteElem,
-			IPackageBinding binding) {
-		if (checkForNull(binding))
-			return false;
-		IElement annotatedElement = convertBinding(binding);
-		addAnnotationRelation(annoteElem, binding, annotatedElement);
-		return true;
-	}
-
-	/**
-	 * @param annoteElem
-	 * @param binding
-	 * @return
-	 */
-	private boolean addAnnotationRelation(IElement annoteElem,
-			IVariableBinding binding) {
-		if (checkForNull(binding))
-			return false;
-		IElement annotatedElement = convertBinding(binding);
-		addAnnotationRelation(annoteElem, binding, annotatedElement);
-		return true;
-	}
-
-	/**
-	 * @param annoteElem
-	 * @param annotatedAnnotation
-	 */
-	private boolean addAnnotationRelation(IElement annoteElem,
-			ITypeBinding tBinding) {
-		if (checkForNull(tBinding))
-			return false;
-		IElement annotatedElement = convertBinding(tBinding);
-		addAnnotationRelation(annoteElem, tBinding, annotatedElement);
-		return true;
-	}
-
-	/**
-	 * @param annoteElem
-	 * @param tBinding
-	 * @param annotatedElement
-	 */
-	private void addAnnotationRelation(IElement annoteElem, IBinding binding,
-			IElement annotatedElement) {
-		aDB.addElement(annotatedElement, binding.getModifiers());
-		aDB.addRelation(annoteElem, Relation.ANNOTATES, annotatedElement);
-	}
-
-	/**
-	 * @param annoteElem
-	 * @param annotatedAnnotation
-	 */
-	private boolean addAnnotationRelation(IElement annoteElem,
-			IMethodBinding mBinding) {
-		if (checkForNull(mBinding))
-			return false;
-		IElement annotatedElement = convertBinding(mBinding);
-		this.addAnnotationRelation(annoteElem, mBinding, annotatedElement);
-		return true;
-	}
-
-	public boolean visit(QualifiedName pNode) {
-		IBinding lBinding = pNode.resolveBinding();
-
-		if (lBinding == null) {
-			log("Null binding 3 for " + pNode);
-			return false;
-		}
-
-		if (lBinding.getKind() == IBinding.VARIABLE) {
-			if (((IVariableBinding) lBinding).isField() && this.aCurrMethod != null) {
-				addAccessRelation((IVariableBinding) lBinding);
-				
-				Assignment assignment = getAssignment(pNode);
-				if (assignment != null) {
-					addSetsRelation((IVariableBinding) lBinding);
-
-					if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
-						addGetsRelation((IVariableBinding) lBinding);
-				}
-				else
-					addGetsRelation((IVariableBinding) lBinding);
-			}
-		}
-		return false;
-	}
-
-	public boolean visit(SimpleName pNode) {
-		IBinding lBinding = pNode.resolveBinding();
-
-		if (lBinding == null) {
-			// Occurs for all labels (e.g., loop labels)
-			//log( "Null binding 4 for " + pNode );
-			return false;
-		}
-		if (lBinding.getKind() == IBinding.VARIABLE) {
-			if (((IVariableBinding) lBinding).isField()) {
-				addAccessRelation((IVariableBinding) lBinding);
-
-				Assignment assignment = getAssignment(pNode);
-				if (assignment != null) {
-					addSetsRelation((IVariableBinding) lBinding);
-
-					if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
-						addGetsRelation((IVariableBinding) lBinding);
-				}
-				else
-					addGetsRelation((IVariableBinding) lBinding);
-			}
-		}
-
-		return false;
-	}
-
-	public boolean visit(SuperConstructorInvocation pNode) {
-		Object obj = pNode.resolveConstructorBinding();
-		if (obj == null) {
-			System.out.println("uh oh");
-			return true;
-		}
-		addCallRelation(pNode, pNode.resolveConstructorBinding(), true);
-		return true;
-	}
-
-	public boolean visit(SuperFieldAccess pNode) {
-		IVariableBinding lBinding = (IVariableBinding) pNode.getName()
-				.resolveBinding();
-
-		if (lBinding == null) {
-			log("Null binding 2 for" + pNode);
-			return false;
-		}
-		addAccessRelation(lBinding);
-		
-		Assignment assignment = getAssignment(pNode);
-		if (assignment != null) {
-			addSetsRelation((IVariableBinding) lBinding);
-
-			if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
-				addGetsRelation((IVariableBinding) lBinding);
-		}
-		else
-			addGetsRelation((IVariableBinding) lBinding);
-		return true;
-	}
-	
-	private static Assignment getAssignment(ASTNode node) {
-		if ( node == null )
-			return null;
-		
-		if ( node.getNodeType() == ASTNode.ASSIGNMENT )
-			return (Assignment)node;
-		
-		else
-			return getAssignment(node.getParent());
-	}
-
-	public boolean visit(SuperMethodInvocation pNode) {
-		addCallRelation(pNode, pNode.resolveMethodBinding(), true);
-		return true;
-	}
-
-	public boolean visit(PackageDeclaration pNode) {
-		IPackageBinding binding = pNode.resolveBinding();
-		if (checkForNull(binding))
-			return false;
-		IElement packageElem = convertBinding(binding);
-
-		aDB.addElement(packageElem, binding.getModifiers());
-
-		CompilationUnit parent = (CompilationUnit) pNode.getParent();
-		List containedTypes = parent.types();
-		for (Iterator it = containedTypes.iterator(); it.hasNext();) {
-			AbstractTypeDeclaration type = (AbstractTypeDeclaration) it.next();
-			ITypeBinding typeBinding = type.resolveBinding();
-			IElement typeElem = convertBinding(typeBinding);
+		final CompilationUnit parent = (CompilationUnit) pNode.getParent();
+		final List containedTypes = parent.types();
+		for (final Iterator it = containedTypes.iterator(); it.hasNext();) {
+			final AbstractTypeDeclaration type = (AbstractTypeDeclaration) it
+					.next();
+			final ITypeBinding typeBinding = type.resolveBinding();
+			final IElement typeElem = ASTCrawler.convertBinding(typeBinding);
 			this.aDB.addElement(typeElem, typeBinding.getModifiers());
 			this.aDB.addRelation(packageElem, Relation.CONTAINS, typeElem);
 		}
@@ -1353,71 +897,525 @@ public class ASTCrawler extends ASTVisitor {
 		return true;
 	}
 
-	/**
-	 * @param binding
-	 * @return
-	 */
-	private IElement convertBinding(IPackageBinding binding) {
-		checkForNull(binding);
-		return FlyweightElementFactory.getElement(ICategories.PACKAGE, binding
-				.getName(), binding.getJavaElement());
+	@Override
+	public boolean visit(final QualifiedName pNode) {
+		final IBinding lBinding = pNode.resolveBinding();
+
+		if (lBinding == null) {
+			ASTCrawler.log("Null binding 3 for " + pNode);
+			return false;
+		}
+
+		if (lBinding.getKind() == IBinding.VARIABLE)
+			if (((IVariableBinding) lBinding).isField()
+					&& this.aCurrMethod != null) {
+				this.addAccessRelation((IVariableBinding) lBinding);
+
+				final Assignment assignment = ASTCrawler.getAssignment(pNode);
+				if (assignment != null) {
+					this.addSetsRelation((IVariableBinding) lBinding);
+
+					if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
+						this.addGetsRelation((IVariableBinding) lBinding);
+				}
+				else
+					this.addGetsRelation((IVariableBinding) lBinding);
+			}
+		return false;
+	}
+
+	@Override
+	public boolean visit(final SimpleName pNode) {
+		final IBinding lBinding = pNode.resolveBinding();
+
+		if (lBinding == null)
+			// Occurs for all labels (e.g., loop labels)
+			//log( "Null binding 4 for " + pNode );
+			return false;
+		if (lBinding.getKind() == IBinding.VARIABLE)
+			if (((IVariableBinding) lBinding).isField()) {
+				this.addAccessRelation((IVariableBinding) lBinding);
+
+				final Assignment assignment = ASTCrawler.getAssignment(pNode);
+				if (assignment != null) {
+					this.addSetsRelation((IVariableBinding) lBinding);
+
+					if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
+						this.addGetsRelation((IVariableBinding) lBinding);
+				}
+				else
+					this.addGetsRelation((IVariableBinding) lBinding);
+			}
+
+		return false;
+	}
+
+	@Override
+	public boolean visit(final SingleMemberAnnotation node) {
+		final ITypeBinding binding = node.resolveTypeBinding();
+		if (ASTCrawler.checkForNull(binding))
+			return false;
+		final IElement annoteElem = ASTCrawler.convertBinding(binding);
+		this.aDB.addElement(annoteElem, binding.getModifiers());
+
+		final ASTNode annotatedNode = node.getParent();
+		switch (annotatedNode.getNodeType()) {
+			case ASTNode.METHOD_DECLARATION: {
+				final MethodDeclaration annotatedMethod = (MethodDeclaration) annotatedNode;
+				final IMethodBinding mBinding = annotatedMethod
+						.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, mBinding);
+
+			}
+			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+				final AnnotationTypeDeclaration annotatedAnnotation = (AnnotationTypeDeclaration) annotatedNode;
+				final ITypeBinding tBinding = annotatedAnnotation
+						.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
+			}
+
+			case ASTNode.VARIABLE_DECLARATION_FRAGMENT: {
+				final VariableDeclarationFragment varDeclFrag = (VariableDeclarationFragment) annotatedNode;
+				final IVariableBinding vBinding = varDeclFrag.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, vBinding);
+			}
+
+			case ASTNode.PACKAGE_DECLARATION: {
+				final PackageDeclaration packDecl = (PackageDeclaration) annotatedNode;
+				final IPackageBinding pBinding = packDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, pBinding);
+			}
+
+			case ASTNode.SINGLE_VARIABLE_DECLARATION: {
+				final SingleVariableDeclaration svd = (SingleVariableDeclaration) annotatedNode;
+				final IVariableBinding vBinding = svd.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, vBinding);
+			}
+			case ASTNode.TYPE_DECLARATION: {
+				final TypeDeclaration tDecl = (TypeDeclaration) annotatedNode;
+				final ITypeBinding tBinding = tDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
+			}
+			case ASTNode.ENUM_DECLARATION: {
+				final EnumDeclaration eDecl = (EnumDeclaration) annotatedNode;
+				final ITypeBinding tBinding = eDecl.resolveBinding();
+				return this.addAnnotationRelation(annoteElem, tBinding);
+			}
+			case ASTNode.FIELD_DECLARATION: {
+				final FieldDeclaration fieldDecl = (FieldDeclaration) annotatedNode;
+				for (final Object obj : fieldDecl.fragments()) {
+					final VariableDeclarationFragment vdf = (VariableDeclarationFragment) obj;
+					final IVariableBinding vBinding = vdf.resolveBinding();
+					return this.addAnnotationRelation(annoteElem, vBinding);
+				}
+			}
+			default: {
+				throw new IllegalStateException("Illegal annotated node type: "
+						+ annotatedNode);
+			}
+		}
+	}
+
+	@Override
+	public boolean visit(final SuperConstructorInvocation pNode) {
+		final Object obj = pNode.resolveConstructorBinding();
+		if (obj == null) {
+			System.out.println("uh oh");
+			return true;
+		}
+		this.addCallRelation(pNode, pNode.resolveConstructorBinding(), true);
+		return true;
+	}
+
+	@Override
+	public boolean visit(final SuperFieldAccess pNode) {
+		final IVariableBinding lBinding = (IVariableBinding) pNode.getName()
+				.resolveBinding();
+
+		if (lBinding == null) {
+			ASTCrawler.log("Null binding 2 for" + pNode);
+			return false;
+		}
+		this.addAccessRelation(lBinding);
+
+		final Assignment assignment = ASTCrawler.getAssignment(pNode);
+		if (assignment != null) {
+			this.addSetsRelation(lBinding);
+
+			if (!(assignment.getOperator() == Assignment.Operator.ASSIGN))
+				this.addGetsRelation(lBinding);
+		}
+		else
+			this.addGetsRelation(lBinding);
+		return true;
+	}
+
+	@Override
+	public boolean visit(final SuperMethodInvocation pNode) {
+		this.addCallRelation(pNode, pNode.resolveMethodBinding(), true);
+		return true;
 	}
 
 	/**
 	 * Generated the DECLARES relations between a type and and nested types, the
 	 * EXTENDS relations, and the IMPLEMENTS relation
 	 */
-	public boolean visit(TypeDeclaration pNode) {
-		ITypeBinding lBinding = pNode.resolveBinding();
+	@Override
+	public boolean visit(final TypeDeclaration pNode) {
+		final ITypeBinding lBinding = pNode.resolveBinding();
 
-		if (checkForNull(lBinding))
+		if (ASTCrawler.checkForNull(lBinding))
 			return false;
 
 		try {
-			saveTypeRelation(lBinding);
+			this.saveTypeRelation(lBinding);
 
 			//Add Declaration relations if this is a local or nested class
-			if (lBinding.isLocal() || lBinding.isAnonymous()) {
-				aDB.addRelation((IElement) aCurrMethod, Relation.DECLARES_TYPE,
-						aCurrType);
-			}
-			else if (lBinding.isNested()) {
-				aDB.addRelation(aCurrTypeReminder.peek(),
-						Relation.DECLARES_TYPE, aCurrType);
-			}
+			if (lBinding.isLocal() || lBinding.isAnonymous())
+				this.aDB.addRelation(this.aCurrMethod, Relation.DECLARES_TYPE,
+						this.aCurrType);
+			else if (lBinding.isNested())
+				this.aDB.addRelation(this.aCurrTypeReminder.peek(),
+						Relation.DECLARES_TYPE, this.aCurrType);
 
 			//Find superclass
 			if (!pNode.isInterface()) {
-				ITypeBinding lSuperBinding = lBinding.getSuperclass();
+				final ITypeBinding lSuperBinding = lBinding.getSuperclass();
 				if (lSuperBinding != null) {
-					IElement lSuperClass = convertBinding(lSuperBinding);
-					aDB.addElement(lSuperClass, lSuperBinding.getModifiers());
-					aDB.addRelationAndTranspose(aCurrType,
+					final IElement lSuperClass = ASTCrawler
+							.convertBinding(lSuperBinding);
+					this.aDB.addElement(lSuperClass, lSuperBinding
+							.getModifiers());
+					this.aDB.addRelationAndTranspose(this.aCurrType,
 							Relation.EXTENDS_CLASS, lSuperClass);
 				}
 			}
 
 			// Find interfaces.
-			ITypeBinding lInterfaceBindings[] = lBinding.getInterfaces();
-			for (int i = 0; i < lInterfaceBindings.length; i++) {
-				IElement lInterface = convertBinding(lInterfaceBindings[i]);
-				aDB.addElement(lInterface, lInterfaceBindings[i].getModifiers()
-						| ABSTRACT_FLAG);
-				if (pNode.isInterface()) {
-					aDB.addRelationAndTranspose(aCurrType,
+			final ITypeBinding lInterfaceBindings[] = lBinding.getInterfaces();
+			for (final ITypeBinding element : lInterfaceBindings) {
+				final IElement lInterface = ASTCrawler.convertBinding(element);
+				this.aDB.addElement(lInterface, element.getModifiers()
+						| ASTCrawler.ABSTRACT_FLAG);
+				if (pNode.isInterface())
+					this.aDB.addRelationAndTranspose(this.aCurrType,
 							Relation.EXTENDS_INTERFACES, lInterface);
-				}
-				else {
-					aDB.addRelationAndTranspose(aCurrType,
+				else
+					this.aDB.addRelationAndTranspose(this.aCurrType,
 							Relation.IMPLEMENTS_INTERFACE, lInterface);
-				}
 			}
 		}
-		catch (Exception pException) {
+		catch (final Exception pException) {
 			ProblemManager.reportException(pException);
 		}
 
 		return true;
+	}
+
+	/**
+	 * Add an ACCESS relation and its transpose between aCurrentMethod and the
+	 * field described by pBinding. If any problem is detected the relation is
+	 * not added and the error is logged.
+	 * 
+	 * @param pBinding
+	 *            The field to add a relation to.
+	 * @pre aCurrMethod is not null
+	 * @pre aCurrMethod is in the database
+	 * @pre pBinding is not null
+	 */
+	private void addAccessRelation(final IVariableBinding pBinding) {
+		//assert (pBinding != null);
+		//assert (aDB.contains(aCurrMethod));
+		//assert (aCurrMethod != null);
+
+		if (pBinding.getDeclaringClass() == null)
+			// This is most likely an access to the length
+			// field of an array.
+			return;
+		final IElement lField = ASTCrawler.convertBinding(pBinding);
+		this.aDB.addElement(lField, pBinding.getModifiers());
+		this.aDB.addRelationAndTranspose(this.aCurrMethod, Relation.ACCESSES,
+				lField);
+	}
+
+	/**
+	 * @param annoteElem
+	 * @param tBinding
+	 * @param annotatedElement
+	 */
+	private void addAnnotationRelation(final IElement annoteElem,
+			final IBinding binding, final IElement annotatedElement) {
+		this.aDB.addElement(annotatedElement, binding.getModifiers());
+		this.aDB.addRelation(annoteElem, Relation.ANNOTATES, annotatedElement);
+	}
+
+	/**
+	 * @param annoteElem
+	 * @param annotatedAnnotation
+	 */
+	private boolean addAnnotationRelation(final IElement annoteElem,
+			final IMethodBinding mBinding) {
+		if (ASTCrawler.checkForNull(mBinding))
+			return false;
+		final IElement annotatedElement = ASTCrawler.convertBinding(mBinding);
+		this.addAnnotationRelation(annoteElem, mBinding, annotatedElement);
+		return true;
+	}
+
+	/**
+	 * @param annoteElem
+	 * @param binding
+	 * @return
+	 */
+	private boolean addAnnotationRelation(final IElement annoteElem,
+			final IPackageBinding binding) {
+		if (ASTCrawler.checkForNull(binding))
+			return false;
+		final IElement annotatedElement = this.convertBinding(binding);
+		this.addAnnotationRelation(annoteElem, binding, annotatedElement);
+		return true;
+	}
+
+	/**
+	 * @param annoteElem
+	 * @param annotatedAnnotation
+	 */
+	private boolean addAnnotationRelation(final IElement annoteElem,
+			final ITypeBinding tBinding) {
+		if (ASTCrawler.checkForNull(tBinding))
+			return false;
+		final IElement annotatedElement = ASTCrawler.convertBinding(tBinding);
+		this.addAnnotationRelation(annoteElem, tBinding, annotatedElement);
+		return true;
+	}
+
+	/**
+	 * @param annoteElem
+	 * @param binding
+	 * @return
+	 */
+	private boolean addAnnotationRelation(final IElement annoteElem,
+			final IVariableBinding binding) {
+		if (ASTCrawler.checkForNull(binding))
+			return false;
+		final IElement annotatedElement = ASTCrawler.convertBinding(binding);
+		this.addAnnotationRelation(annoteElem, binding, annotatedElement);
+		return true;
+	}
+
+	private void addCallRelation(final ASTNode pNode,
+			final IMethodBinding pBinding, final boolean pStatic) {
+		//assert( pBinding != null ); TODO
+
+		if (this.aCurrMethod == null)
+			//constructors calling itself. Ignore it.
+			return;
+
+		//lAcceptor could be a Java.util method
+		if (pBinding == null)
+			return;
+		final IElement lAcceptor = ASTCrawler.convertBinding(pBinding);
+		final IElement lCaller = this.aCurrMethod;
+
+		// lCaller instanceof IClassElement
+		// lAcceptor instanceof IMethodElement
+		int lModifiers = pBinding.getModifiers();
+		if (pBinding.getDeclaringClass().isInterface()
+				|| Modifier.isAbstract(lModifiers))
+			lModifiers = lModifiers | ASTCrawler.ABSTRACT_FLAG;
+
+		this.aDB.addElement(lAcceptor, lModifiers);
+
+		if (pStatic)
+			this.aDB.addRelationAndTranspose(lCaller, Relation.STATIC_CALLS,
+					lAcceptor);
+		else
+			this.aDB
+					.addRelationAndTranspose(lCaller, Relation.CALLS, lAcceptor);
+	}
+
+	private void addGetsRelation(final IVariableBinding pBinding) {
+		//		assert (pBinding != null);
+		//		assert (aDB.contains(aCurrMethod));
+		//		assert (aCurrMethod != null);
+
+		if (pBinding.getDeclaringClass() == null)
+			// This is most likely an access to the length
+			// field of an array.
+			return;
+		final IElement lField = ASTCrawler.convertBinding(pBinding);
+		this.aDB.addElement(lField, pBinding.getModifiers());
+		this.aDB.addRelationAndTranspose(this.aCurrMethod, Relation.GETS,
+				lField);
+	}
+
+	private void addSetsRelation(final IVariableBinding pBinding) {
+		//		assert (pBinding != null);
+		//		assert (aDB.contains(aCurrMethod));
+		//		assert (aCurrMethod != null);
+
+		if (pBinding.getDeclaringClass() == null)
+			// This is most likely an access to the length
+			// field of an array.
+			return;
+		final IElement lField = ASTCrawler.convertBinding(pBinding);
+		this.aDB.addElement(lField, pBinding.getModifiers());
+		this.aDB.addRelationAndTranspose(this.aCurrMethod, Relation.SETS,
+				lField);
+	}
+
+	/**
+	 * @param binding
+	 * @return
+	 */
+	private IElement convertBinding(final IPackageBinding binding) {
+		ASTCrawler.checkForNull(binding);
+		return FlyweightElementFactory.getElement(ICategories.PACKAGE, binding
+				.getName(), binding.getJavaElement());
+	}
+
+	// Extracts types and loads them into the converter
+	private void extractTypes(final ICompilationUnit pCU) {
+		try {
+			final IType[] lTypes = pCU.getAllTypes();
+
+			for (final IType element : lTypes)
+				this.aConverter.addMapping(element);
+		}
+		catch (final JavaModelException pException) {
+			pException.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private boolean isNonPrimitive(final ITypeBinding pBinding) {
+		//As long as it's not of primitive type or primitive type array
+		if (pBinding.isPrimitive())
+			return false;
+		else if (pBinding.isArray()) {
+			final ITypeBinding lBinding = pBinding.getElementType();
+			return !lBinding.isPrimitive();
+		}
+
+		return true;
+	}
+
+	/**
+	 * Clear class fields and be ready to work on a different compilation unit.
+	 */
+	private void resetSpider() {
+		//		aHasConstructor = false;
+		//		aHasConstructorReminder = new BooleanStack();
+		this.aCurrConstructorList = null;
+		this.aCurrConstructorListReminder = new Stack<ArrayList<MethodElement>>();
+		this.aCurrType = null;
+		this.aCurrTypeReminder = new Stack<ClassElement>();
+		this.aCurrMethod = null;
+		this.aCurrMethodReminder = new Stack<MethodElement>();
+		this.aTempMethod = null;
+		this.aTempMethodReminder = new Stack<MethodElement>();
+	}
+
+	private void restoreMethodRelation() {
+		if (!this.aCurrMethodReminder.isEmpty())
+			this.aCurrMethod = this.aCurrMethodReminder.pop();
+		else
+			this.aCurrMethod = null;
+	}
+
+	/**
+	 * Conclusion method for the visit on this Type Declaration and Enum
+	 * Declaration. This type could be an inner class. This method checks to see
+	 * if there is an actual (non-empty) <clinit>() method. If the method does
+	 * exist and has relations in it, a DECLARES relations is added to the
+	 * current type for this method. Then it removes current <temp> method
+	 * completely from database And restore backup <temp>, if there is one.
+	 * Should only be called by endVisit( EnumDeclaration ) and endVisit(
+	 * TypeDeclaration ).
+	 * 
+	 */
+	private void restoreTypeRelation() {
+		//		if this <clinit> method has relations in it, the relation DECLARES is added to the current type
+		final MethodElement lMethod = (MethodElement) FlyweightElementFactory
+				.getElement(ICategories.METHOD, this.aCurrType.getId() + "."
+						+ ASTCrawler.aCLINIT_METHOD_NAME, null);
+		if (this.aDB.contains(lMethod) && this.aDB.hasRelations(lMethod))
+			this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
+					lMethod);
+
+		if (this.aDB.hasRelations(this.aTempMethod))
+			if (this.aCurrConstructorList.size() == 0) {
+				final IElement lDefaultConstructor = FlyweightElementFactory
+						.getElement(ICategories.METHOD, this.aCurrType.getId()
+								+ "." + ASTCrawler.aINIT_METHOD_NAME, null);
+				this.aDB.addElement(lDefaultConstructor,
+						ASTCrawler.aINIT_METHOD_MODIFIERS);
+				this.aDB.copyRelations(this.aTempMethod, lDefaultConstructor);
+				this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
+						lDefaultConstructor);
+			}
+			else
+				for (final MethodElement lConstructor : this.aCurrConstructorList)
+					this.aDB.copyRelations(this.aTempMethod, lConstructor);
+		//Remove temp method, and any relations associated with it, from memory database
+		this.aDB.removeElement(this.aTempMethod);
+
+		//restore current type and temp method
+		if (!this.aCurrTypeReminder.isEmpty())
+			this.aCurrType = this.aCurrTypeReminder.pop();
+		else
+			this.aCurrType = null;
+
+		if (!this.aTempMethodReminder.isEmpty())
+			this.aTempMethod = this.aTempMethodReminder.pop();
+		else
+			this.aTempMethod = null;
+
+		if (!this.aCurrConstructorListReminder.empty())
+			this.aCurrConstructorList = this.aCurrConstructorListReminder.pop();
+		else
+			this.aCurrConstructorList = null;
+	}
+
+	private void saveMethodRelation(final IMethodBinding pMBinding) {
+
+		if (this.aCurrMethod != null)
+			this.aCurrMethodReminder.push(this.aCurrMethod);
+		this.aCurrMethod = (MethodElement) ASTCrawler.convertBinding(pMBinding);
+
+		int lModifiers = pMBinding.getModifiers();
+		if (pMBinding.getDeclaringClass().isInterface()
+				|| Modifier.isAbstract(lModifiers))
+			lModifiers = lModifiers | ASTCrawler.ABSTRACT_FLAG;
+		this.aDB.addElement(this.aCurrMethod, lModifiers);
+	}
+
+	private void saveTypeRelation(final ITypeBinding pBinding) {
+		if (pBinding.isTopLevel()) { //Assume both reminder stacks are empty
+
+		}
+		else //other wise, backup current type.
+		{
+			this.aCurrTypeReminder.push(this.aCurrType);
+			this.aTempMethodReminder.push(this.aTempMethod);
+			this.aCurrConstructorListReminder.push(this.aCurrConstructorList);
+		}
+
+		// Initialize the list for storing constructor declaration
+		this.aCurrConstructorList = new ArrayList<MethodElement>(
+				ASTCrawler.aINIT_CONSTRUCTOR_LIST_SIZE); // 
+
+		//Insert this type
+		this.aCurrType = (ClassElement) ASTCrawler.convertBinding(pBinding);
+		this.aDB.addElement(this.aCurrType, pBinding.getModifiers()
+				| (pBinding.isInterface() ? ASTCrawler.ABSTRACT_FLAG : 0));
+
+		//Insert temp method for field initializers
+		this.aTempMethod = (MethodElement) FlyweightElementFactory.getElement(
+				ICategories.METHOD, this.aCurrType.getId() + "."
+						+ ASTCrawler.aTEMP_METHOD_NAME, pBinding
+						.getJavaElement());
+		this.aDB.addElement(this.aTempMethod, pBinding.getModifiers());
 	}
 
 }

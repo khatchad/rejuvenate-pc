@@ -9,43 +9,49 @@
  */
 
 package ca.mcgill.cs.swevo.jayfx;
+
 /**
- * Represents problems converting a element from the model
- * to the Eclipse workspace, and vice versa.
+ * Represents problems converting a element from the model to the Eclipse
+ * workspace, and vice versa.
  */
-public class ConversionException extends Exception
-{
+public class ConversionException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8368932097709884552L;
+
 	/**
 	 * Constructor for ConversionException.
 	 */
-	public ConversionException()
-	{
+	public ConversionException() {
 		super();
 	}
+
 	/**
 	 * Constructor for ConversionException.
+	 * 
 	 * @param arg0
 	 */
-	public ConversionException(String arg0)
-	{
+	public ConversionException(final String arg0) {
 		super(arg0);
 	}
+
 	/**
 	 * Constructor for ConversionException.
+	 * 
 	 * @param arg0
 	 * @param arg1
 	 */
-	public ConversionException(String arg0, Throwable arg1)
-	{
+	public ConversionException(final String arg0, final Throwable arg1) {
 		super(arg0, arg1);
 	}
+
 	/**
 	 * Constructor for ConversionException.
+	 * 
 	 * @param arg0
 	 */
-	public ConversionException(Throwable arg0)
-	{
+	public ConversionException(final Throwable arg0) {
 		super(arg0);
 	}
 }
-

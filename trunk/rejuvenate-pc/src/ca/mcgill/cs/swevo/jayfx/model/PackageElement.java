@@ -18,120 +18,23 @@ import org.eclipse.jdt.core.IJavaElement;
 /**
  * Represents a class program element.
  */
-public class PackageElement extends AbstractElement
-{
-	private IJavaElement elem;
-	
-	/** Initialize a class element with its fully qualified name 
-	 * Class elements should only be created by a FlyweightElementFactory.
-	 * @param pId The fully qualified name of the class.
-	 */
-	protected PackageElement(String pId, IJavaElement elem)
-	{
-		super( pId );
-		this.elem = elem;
-	}
-	
-	/** Returns the category of this element, which always a class.
-	 * @return the keyword "class".
-	 */
-	public ICategories getCategory()
-	{
-		return ICategories.PACKAGE;
-	}
-	
-	/**
-	 * @param pObject The object to compare the class to.
-	 * @return Whether pObject has the same ID as this element.
-	 */
-	public boolean equals( Object pObject )
-	{
-		if( !(pObject instanceof PackageElement))
-			return false;
-		else
-			return getId().equals(((PackageElement)pObject).getId() );
-	}
-	
-	/** 
-	 * @return A hash code for this element.
-	 */
-	public int hashCode()
-	{
-		return getId().hashCode();
-	}
-	
-	/** 
-	 * @return The declaring class of this class.  null is the
-	 * element is a top-level class.
-	 */
-	public ClassElement getDeclaringClass()
-	{
-		return null;
-	}
-	
-	/** 
-	 * @return The name of the package in which this class is defined.
-	 */
-	public String getPackageName()
-	{
-		return this.getId();
-//		int lIndex = getId().lastIndexOf( "." );
-//		if( lIndex >= 0 )
-//			return getId().substring(0, getId().lastIndexOf("."));
-//		else
-//			return "";
-	}
-	
-	/**
-	 * @return The name of the class without the package prefix.
-	 */
-	public String getShortName()
-	{
-//		String lPackageName = getPackageName();
-//		if( lPackageName.length() > 0 )
-//			return getId().substring( lPackageName.length() +1, getId().length() );
-//		else
-			return getId();
-	}
+public class PackageElement extends AbstractElement {
+	private final IJavaElement elem;
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.AbstractElement#getJavaElement()
-	 */
-	@Override
-	public IJavaElement getJavaElement() {
-		return this.elem;
-	}
-	
 	private boolean enabled;
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
-	}
-	
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public boolean hasEnabledRelationFor(Relation relation) {
-		return this.enabledIncommingRelations.contains(relation);
-	}
-	
 	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
+	/**
+	 * Initialize a class element with its fully qualified name Class elements
+	 * should only be created by a FlyweightElementFactory.
+	 * 
+	 * @param pId
+	 *            The fully qualified name of the class.
 	 */
-	public void enableIncommingRelationsFor(Relation relation) {
-		this.enabledIncommingRelations.add(relation);
+	protected PackageElement(final String pId, final IJavaElement elem) {
+		super(pId);
+		this.elem = elem;
 	}
 
 	/* (non-Javadoc)
@@ -146,5 +49,104 @@ public class PackageElement extends AbstractElement
 	 */
 	public void disableAllIncommingRelations() {
 		this.enabledIncommingRelations.clear();
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
+	 */
+	public void enable() {
+		this.enabled = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
+	 */
+	public void enableIncommingRelationsFor(final Relation relation) {
+		this.enabledIncommingRelations.add(relation);
+	}
+
+	/**
+	 * @param pObject
+	 *            The object to compare the class to.
+	 * @return Whether pObject has the same ID as this element.
+	 */
+	@Override
+	public boolean equals(final Object pObject) {
+		if (!(pObject instanceof PackageElement))
+			return false;
+		else
+			return this.getId().equals(((PackageElement) pObject).getId());
+	}
+
+	/**
+	 * Returns the category of this element, which always a class.
+	 * 
+	 * @return the keyword "class".
+	 */
+	@Override
+	public ICategories getCategory() {
+		return ICategories.PACKAGE;
+	}
+
+	/**
+	 * @return The declaring class of this class. null is the element is a
+	 *         top-level class.
+	 */
+	public ClassElement getDeclaringClass() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.AbstractElement#getJavaElement()
+	 */
+	@Override
+	public IJavaElement getJavaElement() {
+		return this.elem;
+	}
+
+	/**
+	 * @return The name of the package in which this class is defined.
+	 */
+	public String getPackageName() {
+		return this.getId();
+		//		int lIndex = getId().lastIndexOf( "." );
+		//		if( lIndex >= 0 )
+		//			return getId().substring(0, getId().lastIndexOf("."));
+		//		else
+		//			return "";
+	}
+
+	/**
+	 * @return The name of the class without the package prefix.
+	 */
+	@Override
+	public String getShortName() {
+		//		String lPackageName = getPackageName();
+		//		if( lPackageName.length() > 0 )
+		//			return getId().substring( lPackageName.length() +1, getId().length() );
+		//		else
+		return this.getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
+	 */
+	public boolean hasEnabledRelationFor(final Relation relation) {
+		return this.enabledIncommingRelations.contains(relation);
+	}
+
+	/**
+	 * @return A hash code for this element.
+	 */
+	@Override
+	public int hashCode() {
+		return this.getId().hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 }

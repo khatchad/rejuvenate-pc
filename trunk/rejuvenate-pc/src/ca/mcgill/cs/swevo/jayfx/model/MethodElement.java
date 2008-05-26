@@ -31,7 +31,7 @@ public class MethodElement extends AbstractElement {
 	 *            qualified name of the declaring class, followed by the name of
 	 *            the method (or init for constructors), and the parameter list.
 	 */
-	protected MethodElement(String pId) {
+	protected MethodElement(final String pId) {
 		super(pId);
 	}
 
@@ -42,6 +42,13 @@ public class MethodElement extends AbstractElement {
 	 */
 	public void disable() {
 		this.enabled = false;
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
+	 */
+	public void disableAllIncommingRelations() {
+		this.enabledIncommingRelations.clear();
 	}
 
 	/*
@@ -59,7 +66,7 @@ public class MethodElement extends AbstractElement {
 	 * 
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
 	 */
-	public void enableIncommingRelationsFor(Relation relation) {
+	public void enableIncommingRelationsFor(final Relation relation) {
 		this.enabledIncommingRelations.add(relation);
 	}
 
@@ -73,7 +80,7 @@ public class MethodElement extends AbstractElement {
 	 * @see java.lang.Object#equals(Object)
 	 */
 	@Override
-	public boolean equals(Object pObject) {
+	public boolean equals(final Object pObject) {
 		if (!(pObject instanceof MethodElement))
 			return false;
 		else
@@ -164,7 +171,7 @@ public class MethodElement extends AbstractElement {
 	 * 
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
 	 */
-	public boolean hasEnabledRelationFor(Relation relation) {
+	public boolean hasEnabledRelationFor(final Relation relation) {
 		return this.enabledIncommingRelations.contains(relation);
 	}
 
@@ -194,12 +201,5 @@ public class MethodElement extends AbstractElement {
 	private String getFirstParticle() {
 		final int lIndex = this.getId().indexOf("(");
 		return this.getId().substring(0, lIndex);
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
-		this.enabledIncommingRelations.clear();
 	}
 }

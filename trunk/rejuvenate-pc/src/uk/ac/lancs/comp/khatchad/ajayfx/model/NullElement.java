@@ -12,7 +12,7 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
 /**
  * @author raffi
- *
+ * 
  */
 public class NullElement implements IElement {
 
@@ -20,6 +20,12 @@ public class NullElement implements IElement {
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
 	 */
 	public void disable() {
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
+	 */
+	public void disableAllIncommingRelations() {
 	}
 
 	/* (non-Javadoc)
@@ -31,7 +37,7 @@ public class NullElement implements IElement {
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
 	 */
-	public void enableIncommingRelationsFor(Relation calls) {
+	public void enableIncommingRelationsFor(final Relation calls) {
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +85,7 @@ public class NullElement implements IElement {
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
 	 */
-	public boolean hasEnabledRelationFor(Relation relation) {
+	public boolean hasEnabledRelationFor(final Relation relation) {
 		return false;
 	}
 
@@ -88,11 +94,5 @@ public class NullElement implements IElement {
 	 */
 	public boolean isEnabled() {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
 	}
 }

@@ -9,7 +9,7 @@ import java.io.*;
 
 /**
  * @author raffi
- *
+ * 
  */
 public aspect TimeColletor {
 	private long collectedTime;
@@ -24,9 +24,9 @@ public aspect TimeColletor {
 		call(* getTotalNumberOfShadows(..));
 	
 	Object around() : toRemove() {
-		long start = System.currentTimeMillis();
-		Object ret = proceed();
-		long elapsed = System.currentTimeMillis() - start;
+		final long start = System.currentTimeMillis();
+		final Object ret = proceed();
+		final long elapsed = System.currentTimeMillis() - start;
 		this.collectedTime += elapsed;
 		return ret;
 	}

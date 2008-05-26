@@ -16,13 +16,12 @@ import junit.framework.TestSuite;
 /**
  * Tests the WordQuizz application
  */
-public class JayFXTestSuite extends TestSuite
-{
-    public static Test suite()
-	{
-		TestSuite lSuite = new TestSuite( "Test suite for JayFX" );
-		lSuite.addTestSuite( TestProgramDatabase.class );
-		lSuite.addTestSuite( TestRelation.class);
+public class JayFXTestSuite extends TestSuite {
+	public static Test suite() {
+		final TestSuite lSuite = new TestSuite(
+				"AnalyzePointcut suite for JayFX");
+		lSuite.addTestSuite(TestProgramDatabase.class);
+		lSuite.addTestSuite(TestRelation.class);
 		return lSuite;
-  	}
+	}
 }

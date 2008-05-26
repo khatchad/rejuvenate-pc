@@ -10,61 +10,55 @@
 
 package ca.mcgill.cs.swevo.jayfx.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMethod;
 
-/** 
+/**
  * A program element in the Java model.
  */
-public interface IElement
-{
-	/**
-	 * @return The category for this element.
-	 */
-	public ICategories getCategory();
-	
-	/**
-	 * @return The ID for this element.
-	 */
-	public String getId();
-	
-	/**
-	 * @return The declaring class of the element.
-	 * Null if the element is a top-level class (i.e., not
-	 * an inner class.
-	 */
-	public ClassElement getDeclaringClass();
-	
-	/** 
-	 * @return The id of this element without the package.
-	 */
-	public String getShortName();
-	
-	/**
-	 * @return String Name of the package this element belongs to.
-	 */
-	public String getPackageName();
-	
-	public IJavaElement getJavaElement();
+public interface IElement {
+	public void disable();
+
+	public void disableAllIncommingRelations();
 
 	/**
 	 * 
 	 */
 	public void enable();
-	
-	public void disable();
-	
-	public boolean isEnabled();
-	
-	public boolean hasEnabledRelationFor(Relation relation);
 
 	/**
 	 * @param calls
 	 */
 	public void enableIncommingRelationsFor(Relation calls);
-	
-	public void disableAllIncommingRelations();
+
+	/**
+	 * @return The category for this element.
+	 */
+	public ICategories getCategory();
+
+	/**
+	 * @return The declaring class of the element. Null if the element is a
+	 *         top-level class (i.e., not an inner class.
+	 */
+	public ClassElement getDeclaringClass();
+
+	/**
+	 * @return The ID for this element.
+	 */
+	public String getId();
+
+	public IJavaElement getJavaElement();
+
+	/**
+	 * @return String Name of the package this element belongs to.
+	 */
+	public String getPackageName();
+
+	/**
+	 * @return The id of this element without the package.
+	 */
+	public String getShortName();
+
+	public boolean hasEnabledRelationFor(Relation relation);
+
+	public boolean isEnabled();
 }
