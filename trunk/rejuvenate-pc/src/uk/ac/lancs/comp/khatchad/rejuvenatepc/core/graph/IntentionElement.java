@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.lancs.khatchad;
+package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

@@ -9,7 +9,7 @@
             label="Rejuvinate Pointcut"
             visible="true">
          <action
-               class="ca.mcgill.cs.swevo.jayfx.test.Test"
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.Test"
                definitionId="uk.ac.lancs.comp.khatchad.analyze.pointcut"
                enablesFor="+"
                helpContextId="uk.ac.lancs.comp.khatchad.AnalyzePointcut.help"
@@ -29,7 +29,7 @@
             id="uk.ac.lancs.comp.khatchad.analyze.pointcut.object.contribution">
          <action
                label="Analyze Pointcut..."
-               class="ca.mcgill.cs.swevo.jayfx.test.Test"
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.Test"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.popup">
@@ -41,7 +41,7 @@
             id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.contribution">
          <action
                label="Analyze Pointcut..."
-               class="ca.mcgill.cs.swevo.jayfx.test.Test"
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.Test"
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.popup">

@@ -1,15 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JayFX Plug-in
-Bundle-SymbolicName: ca.mcgill.cs.swevo.jayfx;singleton:=true
-Bundle-Version: 0.0.3
-Bundle-Vendor: McGill University
+Bundle-Name: Rejuvenate Pointcut
+Bundle-SymbolicName: uk.ac.lancs.comp.khatchad.rejuvenatepc;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Vendor: Lancaster University
 Bundle-Localization: plugin
-Export-Package: ca.mcgill.cs.swevo.jayfx,
- ca.mcgill.cs.swevo.jayfx.model,
- ca.mcgill.cs.swevo.jayfx.test,
- rules,
- uk.ac.lancs.khatchad
 Require-Bundle: org.eclipse.jdt.core,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
