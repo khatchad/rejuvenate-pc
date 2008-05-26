@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.lancs.khatchad;
+package uk.ac.lancs.comp.khatchad.ajayfx;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +37,8 @@ import org.eclipse.ajdt.core.javaelements.PointcutUtilities;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.ui.AspectJUIPlugin;
+
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 
 import ca.mcgill.cs.swevo.jayfx.FastConverter;

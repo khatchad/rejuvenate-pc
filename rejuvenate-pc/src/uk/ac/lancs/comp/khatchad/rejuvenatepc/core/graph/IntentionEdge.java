@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.lancs.khatchad;
+package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;

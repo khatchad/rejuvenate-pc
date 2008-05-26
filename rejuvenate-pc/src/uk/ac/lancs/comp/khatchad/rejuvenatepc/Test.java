@@ -1,4 +1,4 @@
-package ca.mcgill.cs.swevo.jayfx.test;
+package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 
 import java.io.File;
 import uk.ac.lancs.comp.khatchad.core.*;
@@ -49,15 +49,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
-import uk.ac.lancs.comp.khatchad.core.Path;
-import uk.ac.lancs.comp.khatchad.core.WildcardElement;
-import uk.ac.lancs.khatchad.IntentionEdge;
-import uk.ac.lancs.khatchad.IntentionElement;
-import uk.ac.lancs.khatchad.IntentionGraph;
-import uk.ac.lancs.khatchad.IntentionNode;
-import uk.ac.lancs.khatchad.IntentionPath;
-import uk.ac.lancs.khatchad.IntentionPattern;
-import uk.ac.lancs.khatchad.Util;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Path;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.WildcardElement;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.TimeColletor;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;

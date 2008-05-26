@@ -1,23 +1,17 @@
-package uk.ac.lancs.khatchad;
+package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
-import org.aspectj.ajdt.core.AspectJCore;
 import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
-import org.drools.compiler.DroolsParserException;
 import org.drools.compiler.PackageBuilder;
 import org.eclipse.ajdt.core.AspectJPlugin;
 import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
@@ -32,7 +26,6 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -60,6 +53,16 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class Util {
 
+	public static void assertExpression(boolean exp) {
+		if (exp == false)
+			throw new AssertionError("Failed assertion");
+	}
+
+	public static IElement convertBinding(ICategories category,
+			String readableName) {
+		return FlyweightElementFactory.getElement(category, readableName, null);
+	}
+
 	public static Collection<InfixExpression> extractLegalInfixExpressionsInNeedOfTransformation(
 			Collection col) {
 		final Collection<InfixExpression> ret = new LinkedHashSet<InfixExpression>();
@@ -83,6 +86,33 @@ public class Util {
 				((Collection) ret.get(elem)).retainAll(validExp);
 		}
 
+		return ret;
+	}
+
+	/**
+	 * @param proj
+	 * @return
+	 * @throws JavaModelException
+	 */
+	public static Collection<? extends AdviceElement> extractValidAdviceElements(
+			IJavaProject proj) throws JavaModelException {
+		final Collection<AdviceElement> ret = new LinkedHashSet<AdviceElement>();
+
+		if (AspectJPlugin.isAJProject(proj.getProject()))
+			for (final IPackageFragment frag : proj.getPackageFragments())
+				for (final ICompilationUnit unit : frag.getCompilationUnits()) {
+					final ICompilationUnit mappedUnit = AJCompilationUnitManager
+							.mapToAJCompilationUnit(unit);
+					if (mappedUnit instanceof AJCompilationUnit) {
+						final AJCompilationUnit ajUnit = (AJCompilationUnit) mappedUnit;
+						for (final IType type : ajUnit.getAllTypes())
+							if (type instanceof AspectElement) {
+								final AspectElement aspectElem = (AspectElement) type;
+								ret.addAll(Arrays
+										.asList(aspectElem.getAdvice()));
+							}
+					}
+				}
 		return ret;
 	}
 
@@ -186,24 +216,10 @@ public class Util {
 	}
 
 	public static ASTNode getExactASTNode(CompilationUnit root,
-			final SearchMatch match) {
-		final ArrayList<ASTNode> ret = new ArrayList<ASTNode>(1);
-		final ASTVisitor visitor = new ASTVisitor() {
-			public void preVisit(ASTNode node) {
-				if (node.getStartPosition() == match.getOffset()) {
-					ret.clear();
-					ret.add(node);
-				}
-			}
-		};
-		root.accept(visitor);
-		return ret.get(0);
-	}
-
-	public static ASTNode getExactASTNode(CompilationUnit root,
 			final ISourceRange range) {
 		final ArrayList<ASTNode> ret = new ArrayList<ASTNode>(1);
 		final ASTVisitor visitor = new ASTVisitor() {
+			@Override
 			public void preVisit(ASTNode node) {
 				if (node.getStartPosition() == range.getOffset()) {
 					ret.clear();
@@ -215,12 +231,20 @@ public class Util {
 		return ret.get(0);
 	}
 
-	public static ASTNode getExactASTNode(IJavaElement elem,
-			final SearchMatch match, IProgressMonitor monitor) {
-		final IMember mem = getIMember(elem);
-		final CompilationUnit root = Util.getCompilationUnit(mem
-				.getCompilationUnit(), monitor);
-		return getExactASTNode(root, match);
+	public static ASTNode getExactASTNode(CompilationUnit root,
+			final SearchMatch match) {
+		final ArrayList<ASTNode> ret = new ArrayList<ASTNode>(1);
+		final ASTVisitor visitor = new ASTVisitor() {
+			@Override
+			public void preVisit(ASTNode node) {
+				if (node.getStartPosition() == match.getOffset()) {
+					ret.clear();
+					ret.add(node);
+				}
+			}
+		};
+		root.accept(visitor);
+		return ret.get(0);
 	}
 
 	public static ASTNode getExactASTNode(IJavaElement elem,
@@ -229,6 +253,14 @@ public class Util {
 		final CompilationUnit root = Util.getCompilationUnit(mem
 				.getCompilationUnit(), monitor);
 		return getExactASTNode(root, nameRange);
+	}
+
+	public static ASTNode getExactASTNode(IJavaElement elem,
+			final SearchMatch match, IProgressMonitor monitor) {
+		final IMember mem = getIMember(elem);
+		final CompilationUnit root = Util.getCompilationUnit(mem
+				.getCompilationUnit(), monitor);
+		return getExactASTNode(root, match);
 	}
 
 	public static ASTNode getExactASTNode(SearchMatch match,
@@ -278,6 +310,19 @@ public class Util {
 		while (trav.getNodeType() != ASTNode.METHOD_DECLARATION)
 			trav = trav.getParent();
 		return (MethodDeclaration) trav;
+	}
+
+	/**
+	 * @param adviceCol
+	 * @return
+	 */
+	@SuppressWarnings("restriction")
+	public static Set<IProject> getProjects(
+			Collection<? extends AdviceElement> adviceCol) {
+		final Set<IProject> ret = new LinkedHashSet<IProject>();
+		for (final AdviceElement elem : adviceCol)
+			ret.add(elem.getJavaProject().getProject());
+		return ret;
 	}
 
 	public static SingleVariableDeclaration getSingleVariableDeclaration(
@@ -385,41 +430,7 @@ public class Util {
 		 */
 	}
 
-	public static String stripQualifiedName(String qualifiedName) {
-		if (!qualifiedName.contains("."))
-			return qualifiedName;
-
-		final int pos = qualifiedName.lastIndexOf('.');
-		return qualifiedName.substring(pos + 1);
-	}
-
-	private static boolean distinct(Collection<Object> col) {
-		final Comparable[] objs = new Comparable[col.size()];
-		col.toArray(objs);
-		try {
-			Arrays.sort(objs);
-		}
-		catch (final ClassCastException E) {
-			for (int i = 0; i < objs.length; i++)
-				for (int j = i + 1; j < objs.length; j++)
-					if (objs[i].equals(objs[j]))
-						return false;
-			return true;
-		}
-		for (int i = 1; i < objs.length; i++)
-			if (objs[i].equals(objs[i - 1]))
-				return false;
-		return true;
-	}
-
-	private Util() {
-	}
-
-	public static IElement convertBinding(ICategories category,
-			String readableName) {
-		return FlyweightElementFactory.getElement(category, readableName, null);
-	}
-
+	/*
 	public static Set<IntentionPath> enumeratePaths(
 			IntentionNode<IElement> startingFrom, int length) {
 
@@ -455,7 +466,9 @@ public class Util {
 
 		return ret;
 	}
+	*/
 
+	/*
 	public static Set<IntentionPath> enumeratePaths(
 			IntentionGraph<IntentionNode<IElement>> graph) {
 		Set<IntentionPath> ret = new LinkedHashSet<IntentionPath>();
@@ -464,52 +477,7 @@ public class Util {
 				ret.addAll(enumeratePaths(node, i));
 		return ret;
 	}
-
-	/**
-	 * @param proj
-	 * @return
-	 * @throws JavaModelException
-	 */
-	public static Collection<? extends AdviceElement> extractValidAdviceElements(
-			IJavaProject proj) throws JavaModelException {
-		Collection<AdviceElement> ret = new LinkedHashSet<AdviceElement>();
-
-		if (AspectJPlugin.isAJProject(proj.getProject())) {
-			for (IPackageFragment frag : proj.getPackageFragments())
-				for (ICompilationUnit unit : frag.getCompilationUnits()) {
-					ICompilationUnit mappedUnit = AJCompilationUnitManager
-							.mapToAJCompilationUnit(unit);
-					if (mappedUnit instanceof AJCompilationUnit) {
-						AJCompilationUnit ajUnit = (AJCompilationUnit) mappedUnit;
-						for (IType type : ajUnit.getAllTypes())
-							if (type instanceof AspectElement) {
-								AspectElement aspectElem = (AspectElement) type;
-								ret.addAll(Arrays
-										.asList(aspectElem.getAdvice()));
-							}
-					}
-				}
-		}
-		return ret;
-	}
-
-	/**
-	 * @param adviceCol
-	 * @return
-	 */
-	@SuppressWarnings("restriction")
-	public static Set<IProject> getProjects(
-			Collection<? extends AdviceElement> adviceCol) {
-		Set<IProject> ret = new LinkedHashSet<IProject>();
-		for (AdviceElement elem : adviceCol)
-			ret.add(elem.getJavaProject().getProject());
-		return ret;
-	}
-
-	public static void assertExpression(boolean exp) {
-		if (exp == false)
-			throw new AssertionError("Failed assertion");
-	}
+	*/
 
 	/**
 	 * @return
@@ -519,18 +487,48 @@ public class Util {
 		//Use package builder to build up a rule package.
 		//An alternative lower level class called "DrlParser" can also be used...
 
-		PackageBuilder builder = new PackageBuilder();
+		final PackageBuilder builder = new PackageBuilder();
 
 		//this wil parse and compile in one step
 		//NOTE: There are 2 methods here, the one argument one is for normal DRL.
 		builder.addPackageFromDrl(source);
 
 		//get the compiled package (which is serializable)
-		org.drools.rule.Package pkg = builder.getPackage();
+		final org.drools.rule.Package pkg = builder.getPackage();
 
 		//add the package to a rulebase (deploy the rule package).
-		RuleBase ruleBase = RuleBaseFactory.newRuleBase();
+		final RuleBase ruleBase = RuleBaseFactory.newRuleBase();
 		ruleBase.addPackage(pkg);
 		return ruleBase;
+	}
+
+	public static String stripQualifiedName(String qualifiedName) {
+		if (!qualifiedName.contains("."))
+			return qualifiedName;
+
+		final int pos = qualifiedName.lastIndexOf('.');
+		return qualifiedName.substring(pos + 1);
+	}
+
+	private static boolean distinct(Collection<Object> col) {
+		final Comparable[] objs = new Comparable[col.size()];
+		col.toArray(objs);
+		try {
+			Arrays.sort(objs);
+		}
+		catch (final ClassCastException E) {
+			for (int i = 0; i < objs.length; i++)
+				for (int j = i + 1; j < objs.length; j++)
+					if (objs[i].equals(objs[j]))
+						return false;
+			return true;
+		}
+		for (int i = 1; i < objs.length; i++)
+			if (objs[i].equals(objs[i - 1]))
+				return false;
+		return true;
+	}
+
+	private Util() {
 	}
 }

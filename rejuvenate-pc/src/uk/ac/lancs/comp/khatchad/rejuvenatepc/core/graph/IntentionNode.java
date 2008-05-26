@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.ac.lancs.khatchad;
+package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,8 +10,7 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-import uk.ac.lancs.comp.khatchad.core.NullElement;
-import uk.ac.lancs.comp.khatchad.core.WildcardElement;
+import uk.ac.lancs.comp.khatchad.ajayfx.model.NullElement;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;

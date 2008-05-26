@@ -1,7 +1,8 @@
 /**
  * 
  */
-package uk.ac.lancs.khatchad;
+package uk.ac.lancs.comp.khatchad.ajayfx.model;
+
 
 /**
  * @author raffi

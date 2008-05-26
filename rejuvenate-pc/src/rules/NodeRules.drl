@@ -2,20 +2,8 @@
 package NodeRules
 
 #list any import classes here.
-import uk.ac.lancs.khatchad.IntentionSequence;
-import uk.ac.lancs.khatchad.IntentionEdge;
-import uk.ac.lancs.khatchad.IntentionNode;
-import uk.ac.lancs.khatchad.IntentionGraph;
-import uk.ac.lancs.khatchad.IntentionElement;
-import ca.mcgill.cs.swevo.jayfx.model.IElement;
-import ca.mcgill.cs.swevo.jayfx.model.Relation;
-import java.util.LinkedHashSet;
-import uk.ac.lancs.khatchad.IntentionPath;
-import uk.ac.lancs.khatchad.IntentionElement;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
-import uk.ac.lancs.comp.khatchad.core.*;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.*;
+import ca.mcgill.cs.swevo.jayfx.model.*;
 
 #declare any global variables here
 

@@ -15,9 +15,9 @@ import java.util.Hashtable;
 import org.aspectj.org.eclipse.jdt.internal.compiler.lookup.SourceTypeBinding;
 import org.eclipse.jdt.core.IJavaElement;
 
-import uk.ac.lancs.khatchad.AJCodeElement;
-import uk.ac.lancs.khatchad.AdviceElement;
-import uk.ac.lancs.khatchad.AspectElement;
+import uk.ac.lancs.comp.khatchad.ajayfx.model.AJCodeElement;
+import uk.ac.lancs.comp.khatchad.ajayfx.model.AdviceElement;
+import uk.ac.lancs.comp.khatchad.ajayfx.model.AspectElement;
 
 /**
  * Factory participant in the Flyweight design pattern.  Produces unique
