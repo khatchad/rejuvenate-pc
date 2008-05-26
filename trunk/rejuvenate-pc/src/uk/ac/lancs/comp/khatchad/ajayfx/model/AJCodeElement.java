@@ -9,6 +9,8 @@ package uk.ac.lancs.comp.khatchad.ajayfx.model;
  */
 public class AJCodeElement extends AspectElement {
 
+	private static final long serialVersionUID = 9155662579169836373L;
+
 	/**
 	 * @param id
 	 */

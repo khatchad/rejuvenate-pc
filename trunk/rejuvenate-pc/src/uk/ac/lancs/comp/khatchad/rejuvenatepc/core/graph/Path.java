@@ -3,6 +3,7 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  * @author raffi
  * 
  */
-public class Path<E extends IntentionEdge<IElement>> extends Stack<E> {
+public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements Serializable {
 
 	public static class PathObjectFilter implements ObjectFilter {
 

@@ -18,6 +18,9 @@ import java.util.StringTokenizer;
  * Represents a method element in the model.
  */
 public class MethodElement extends AbstractElement {
+	
+	private static final long serialVersionUID = -6347203303128369543L;
+
 	private boolean enabled;
 
 	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();

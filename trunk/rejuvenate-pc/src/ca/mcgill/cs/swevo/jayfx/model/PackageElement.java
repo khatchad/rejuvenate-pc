@@ -19,6 +19,12 @@ import org.eclipse.jdt.core.IJavaElement;
  * Represents a class program element.
  */
 public class PackageElement extends AbstractElement {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3606792222309273813L;
+
 	private final IJavaElement elem;
 
 	private boolean enabled;

@@ -16,6 +16,8 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public class NullElement implements IElement {
 
+	private static final long serialVersionUID = -1625327486370728384L;
+
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
 	 */
