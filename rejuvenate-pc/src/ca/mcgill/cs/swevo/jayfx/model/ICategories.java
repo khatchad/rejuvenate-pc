@@ -11,17 +11,9 @@
 package ca.mcgill.cs.swevo.jayfx.model;
 
 /**
- * The various categories of elements supported by the
- * Concern Graph model for the Java language.
+ * The various categories of elements supported by the Concern Graph model for
+ * the Java language.
  */
-public enum ICategories
-{
-	CLASS,
-	FIELD,
-	METHOD,
-	PACKAGE,
-	ASPECT,
-	ADVICE,
-	AJCODE, WILDCARD, NULL
+public enum ICategories {
+	CLASS, FIELD, METHOD, PACKAGE, ASPECT, ADVICE, AJCODE, WILDCARD, NULL
 }
-

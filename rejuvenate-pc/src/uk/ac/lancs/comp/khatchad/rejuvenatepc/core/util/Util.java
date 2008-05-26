@@ -1,13 +1,14 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.drools.RuleBase;
@@ -20,7 +21,6 @@ import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -34,7 +34,6 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -44,6 +43,8 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.search.SearchMatch;
 
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
 import ca.mcgill.cs.swevo.jayfx.model.ICategories;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -53,40 +54,14 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class Util {
 
-	public static void assertExpression(boolean exp) {
+	public static void assertExpression(final boolean exp) {
 		if (exp == false)
 			throw new AssertionError("Failed assertion");
 	}
 
-	public static IElement convertBinding(ICategories category,
-			String readableName) {
+	public static IElement convertBinding(final ICategories category,
+			final String readableName) {
 		return FlyweightElementFactory.getElement(category, readableName, null);
-	}
-
-	public static Collection<InfixExpression> extractLegalInfixExpressionsInNeedOfTransformation(
-			Collection col) {
-		final Collection<InfixExpression> ret = new LinkedHashSet<InfixExpression>();
-		for (final Iterator it = col.iterator(); it.hasNext();) {
-			final InfixExpression ie = (InfixExpression) it.next();
-			if (inNeedOfTransformation(ie.getOperator()))
-				ret.add(ie);
-		}
-		return ret;
-	}
-
-	public static Map extractLegalInfixExpressionsInNeedOfTransformation(Map map) {
-		final Map ret = new LinkedHashMap(map);
-		for (final Iterator it = ret.keySet().iterator(); it.hasNext();) {
-			final IJavaElement elem = (IJavaElement) it.next();
-			final Collection<InfixExpression> validExp = extractLegalInfixExpressionsInNeedOfTransformation((Collection) ret
-					.get(elem));
-			if (validExp.isEmpty())
-				it.remove();
-			else
-				((Collection) ret.get(elem)).retainAll(validExp);
-		}
-
-		return ret;
 	}
 
 	/**
@@ -95,7 +70,7 @@ public class Util {
 	 * @throws JavaModelException
 	 */
 	public static Collection<? extends AdviceElement> extractValidAdviceElements(
-			IJavaProject proj) throws JavaModelException {
+			final IJavaProject proj) throws JavaModelException {
 		final Collection<AdviceElement> ret = new LinkedHashSet<AdviceElement>();
 
 		if (AspectJPlugin.isAJProject(proj.getProject()))
@@ -116,17 +91,9 @@ public class Util {
 		return ret;
 	}
 
-	public static Collection flattenForest(Collection forest) {
-		final Collection ret = new LinkedHashSet();
-		for (final Iterator it = forest.iterator(); it.hasNext();) {
-			final Collection set = (Collection) it.next();
-			ret.addAll(set);
-		}
-		return ret;
-	}
-
-	public static ASTNode getASTNode(IJavaElement elem, IProgressMonitor monitor) {
-		final IMember mem = getIMember(elem);
+	public static ASTNode getASTNode(final IJavaElement elem,
+			final IProgressMonitor monitor) {
+		final IMember mem = Util.getIMember(elem);
 		final ICompilationUnit icu = mem.getCompilationUnit();
 		if (icu == null)
 			throw new IllegalStateException("Source not present.");
@@ -134,8 +101,8 @@ public class Util {
 		return root;
 	}
 
-	public static CompilationUnit getCompilationUnit(ICompilationUnit icu,
-			IProgressMonitor monitor) {
+	public static CompilationUnit getCompilationUnit(
+			final ICompilationUnit icu, final IProgressMonitor monitor) {
 		final ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(icu);
 		parser.setResolveBindings(true);
@@ -143,79 +110,7 @@ public class Util {
 		return ret;
 	}
 
-	public static Collection getConsistentlyVisibleSets(Collection elementSets)
-			throws JavaModelException {
-		final Collection ret = new LinkedHashSet(elementSets);
-		for (final Iterator it = elementSets.iterator(); it.hasNext();) {
-			final Collection set = (Collection) it.next();
-
-			boolean allPublic = true;
-			boolean allPrivate = true;
-			boolean allPackage = true;
-			boolean allProtected = true;
-
-			for (final Iterator jit = set.iterator(); jit.hasNext();) {
-				final IJavaElement elem = (IJavaElement) jit.next();
-				if (elem.getElementType() == IJavaElement.FIELD) {
-					final IField field = (IField) elem;
-					final Object constValue = field.getConstant();
-					if (constValue != null) {
-						allPublic &= Flags.isPublic(field.getFlags());
-						allPrivate &= Flags.isPrivate(field.getFlags());
-						allProtected &= Flags.isProtected(field.getFlags());
-						allPackage &= Flags.isPackageDefault(field.getFlags());
-					}
-				}
-			}
-			if (!(allPublic || allPrivate || allPackage || allProtected))
-				ret.remove(set);
-		}
-		return ret;
-	}
-
-	public static int getConsistentVisibility(Collection col)
-			throws JavaModelException {
-		if (col.isEmpty())
-			return -1;
-
-		// They should already be consistent.
-		final IMember firstElem = (IMember) col.iterator().next();
-		if (Flags.isPublic(firstElem.getFlags()))
-			return Flags.AccPublic;
-		else if (Flags.isPackageDefault(firstElem.getFlags()))
-			return Flags.AccDefault;
-		else if (Flags.isPrivate(firstElem.getFlags()))
-			return Flags.AccPrivate;
-		else if (Flags.isProtected(firstElem.getFlags()))
-			return Flags.AccProtected;
-		else
-			throw new IllegalArgumentException(
-					"Members are not of a valid visibility.");
-	}
-
-	public static Collection getDistinctSets(Collection elementSets)
-			throws JavaModelException {
-		final Collection ret = new LinkedHashSet(elementSets);
-		for (final Iterator it = elementSets.iterator(); it.hasNext();) {
-			final Collection set = (Collection) it.next();
-			final Collection<Object> constValues = new ArrayList<Object>();
-			for (final Iterator jit = set.iterator(); jit.hasNext();) {
-				final IJavaElement elem = (IJavaElement) jit.next();
-				if (elem.getElementType() == IJavaElement.FIELD) {
-					final IField field = (IField) elem;
-					final Object constValue = field.getConstant();
-					if (constValue != null)
-						constValues.add(constValue);
-				}
-			}
-
-			if (!distinct(constValues))
-				ret.remove(set);
-		}
-		return ret;
-	}
-
-	public static ASTNode getExactASTNode(CompilationUnit root,
+	public static ASTNode getExactASTNode(final CompilationUnit root,
 			final ISourceRange range) {
 		final ArrayList<ASTNode> ret = new ArrayList<ASTNode>(1);
 		final ASTVisitor visitor = new ASTVisitor() {
@@ -231,7 +126,7 @@ public class Util {
 		return ret.get(0);
 	}
 
-	public static ASTNode getExactASTNode(CompilationUnit root,
+	public static ASTNode getExactASTNode(final CompilationUnit root,
 			final SearchMatch match) {
 		final ArrayList<ASTNode> ret = new ArrayList<ASTNode>(1);
 		final ASTVisitor visitor = new ASTVisitor() {
@@ -247,38 +142,38 @@ public class Util {
 		return ret.get(0);
 	}
 
-	public static ASTNode getExactASTNode(IJavaElement elem,
-			ISourceRange nameRange, IProgressMonitor monitor) {
-		final IMember mem = getIMember(elem);
+	public static ASTNode getExactASTNode(final IJavaElement elem,
+			final ISourceRange nameRange, final IProgressMonitor monitor) {
+		final IMember mem = Util.getIMember(elem);
 		final CompilationUnit root = Util.getCompilationUnit(mem
 				.getCompilationUnit(), monitor);
-		return getExactASTNode(root, nameRange);
+		return Util.getExactASTNode(root, nameRange);
 	}
 
-	public static ASTNode getExactASTNode(IJavaElement elem,
-			final SearchMatch match, IProgressMonitor monitor) {
-		final IMember mem = getIMember(elem);
+	public static ASTNode getExactASTNode(final IJavaElement elem,
+			final SearchMatch match, final IProgressMonitor monitor) {
+		final IMember mem = Util.getIMember(elem);
 		final CompilationUnit root = Util.getCompilationUnit(mem
 				.getCompilationUnit(), monitor);
-		return getExactASTNode(root, match);
+		return Util.getExactASTNode(root, match);
 	}
 
-	public static ASTNode getExactASTNode(SearchMatch match,
-			IProgressMonitor monitor) {
+	public static ASTNode getExactASTNode(final SearchMatch match,
+			final IProgressMonitor monitor) {
 		final IJavaElement elem = (IJavaElement) match.getElement();
 		return Util.getExactASTNode(elem, match, monitor);
 	}
 
-	public static FieldDeclaration getFieldDeclaration(ASTNode node) {
+	public static FieldDeclaration getFieldDeclaration(final ASTNode node) {
 		if (node == null)
 			return null;
 		else if (node instanceof FieldDeclaration)
 			return (FieldDeclaration) node;
 		else
-			return getFieldDeclaration(node.getParent());
+			return Util.getFieldDeclaration(node.getParent());
 	}
 
-	public static IMember getIMember(IJavaElement elem) {
+	public static IMember getIMember(final IJavaElement elem) {
 
 		if (elem == null)
 			throw new IllegalArgumentException(
@@ -293,19 +188,19 @@ public class Util {
 			}
 		}
 
-		return getIMember(elem.getParent());
+		return Util.getIMember(elem.getParent());
 	}
 
-	public static InfixExpression getInfixExpression(ASTNode node) {
+	public static InfixExpression getInfixExpression(final ASTNode node) {
 		if (node == null)
 			return null;
 		else if (node instanceof InfixExpression)
 			return (InfixExpression) node;
 		else
-			return getInfixExpression(node.getParent());
+			return Util.getInfixExpression(node.getParent());
 	}
 
-	public static MethodDeclaration getMethodDeclaration(ASTNode node) {
+	public static MethodDeclaration getMethodDeclaration(final ASTNode node) {
 		ASTNode trav = node;
 		while (trav.getNodeType() != ASTNode.METHOD_DECLARATION)
 			trav = trav.getParent();
@@ -318,7 +213,7 @@ public class Util {
 	 */
 	@SuppressWarnings("restriction")
 	public static Set<IProject> getProjects(
-			Collection<? extends AdviceElement> adviceCol) {
+			final Collection<? extends AdviceElement> adviceCol) {
 		final Set<IProject> ret = new LinkedHashSet<IProject>();
 		for (final AdviceElement elem : adviceCol)
 			ret.add(elem.getJavaProject().getProject());
@@ -326,164 +221,56 @@ public class Util {
 	}
 
 	public static SingleVariableDeclaration getSingleVariableDeclaration(
-			ASTNode node) {
+			final ASTNode node) {
 		if (node == null)
 			return null;
 		else if (node instanceof SingleVariableDeclaration)
 			return (SingleVariableDeclaration) node;
 		else
-			return getSingleVariableDeclaration(node.getParent());
+			return Util.getSingleVariableDeclaration(node.getParent());
 	}
 
-	public static Name getTopmostName(ASTNode node) {
+	public static Name getTopmostName(final ASTNode node) {
 		if (node == null)
 			return null;
 		else if (node.getParent() == null
 				|| node.getParent().getNodeType() != ASTNode.QUALIFIED_NAME)
 			return (Name) node;
 		else
-			return getTopmostName(node.getParent());
-	}
-
-	public static Collection getUniquelyNamedSets(Collection elementSets)
-			throws JavaModelException {
-		final Collection ret = new LinkedHashSet(elementSets);
-		for (final Iterator it = elementSets.iterator(); it.hasNext();) {
-			final Collection set = (Collection) it.next();
-			final Collection<Object> constNames = new ArrayList<Object>();
-			for (final Iterator jit = set.iterator(); jit.hasNext();) {
-				final IJavaElement elem = (IJavaElement) jit.next();
-				if (elem.getElementType() == IJavaElement.FIELD) {
-					final IField field = (IField) elem;
-					final Object constValue = field.getConstant();
-					if (constValue != null)
-						constNames.add(field.getElementName());
-				}
-			}
-			if (!distinct(constNames))
-				ret.remove(set);
-		}
-		return ret;
+			return Util.getTopmostName(node.getParent());
 	}
 
 	public static VariableDeclarationStatement getVariableDeclarationStatement(
-			ASTNode node) {
+			final ASTNode node) {
 		if (node == null)
 			return null;
 		else if (node instanceof VariableDeclarationStatement)
 			return (VariableDeclarationStatement) node;
 		else
-			return getVariableDeclarationStatement(node.getParent());
+			return Util.getVariableDeclarationStatement(node.getParent());
 	}
 
-	public static boolean inNeedOfTransformation(InfixExpression.Operator op) {
-		return op == InfixExpression.Operator.GREATER
-				|| op == InfixExpression.Operator.LESS
-				|| op == InfixExpression.Operator.GREATER_EQUALS
-				|| op == InfixExpression.Operator.LESS_EQUALS;
-	}
-
-	public static boolean isConstantField(IField field)
+	public static boolean isConstantField(final IField field)
 			throws JavaModelException {
 		if (field.getConstant() == null)
 			return false;
 		return true;
 	}
 
-	public static boolean isContainedInCaseLabel(ASTNode node) {
+	public static boolean isContainedInCaseLabel(final ASTNode node) {
 		if (node == null)
 			return false;
 		else if (node.getNodeType() == ASTNode.SWITCH_CASE)
 			return true;
 		else
-			return isContainedInCaseLabel(node.getParent());
+			return Util.isContainedInCaseLabel(node.getParent());
 	}
-
-	public static boolean isLegalInfixOperator(InfixExpression.Operator op) {
-		return op == InfixExpression.Operator.EQUALS
-				|| op == InfixExpression.Operator.NOT_EQUALS
-				|| op == InfixExpression.Operator.GREATER
-				|| op == InfixExpression.Operator.LESS
-				|| op == InfixExpression.Operator.GREATER_EQUALS
-				|| op == InfixExpression.Operator.LESS_EQUALS;
-	}
-
-	public static boolean isSuspiciousAssignmentOperator(Assignment.Operator op) {
-		return false;
-		// op == Assignment.Operator.BIT_AND_ASSIGN ||
-		// op == Assignment.Operator.BIT_OR_ASSIGN ||
-		// op == Assignment.Operator.BIT_XOR_ASSIGN;
-	}
-
-	public static boolean isSuspiciousInfixOperator(InfixExpression.Operator op) {
-		return false;
-		// op == InfixExpression.Operator.AND ||
-		// op == InfixExpression.Operator.OR ;
-		// commented for version 1
-
-		/*
-		 * || op == InfixExpression.Operator.GREATER || op ==
-		 * InfixExpression.Operator.GREATER_EQUALS || op ==
-		 * InfixExpression.Operator.LESS || op ==
-		 * InfixExpression.Operator.LESS_EQUALS || op ==
-		 * InfixExpression.Operator.XOR;
-		 */
-	}
-
-	/*
-	public static Set<IntentionPath> enumeratePaths(
-			IntentionNode<IElement> startingFrom, int length) {
-
-		Set<IntentionPath> ret = new LinkedHashSet<IntentionPath>();
-		if (length <= 0)
-			return ret;
-
-		if (length == 1) {
-			IntentionPath path = new IntentionPath();
-			try {
-				path.push(startingFrom);
-			}
-			catch (CycleDetectedException E) {
-				return ret;
-			}
-			ret.add(path);
-			return ret;
-		}
-
-		for (IntentionEdge<IElement> edge : startingFrom.getEdges()) {
-			for (IntentionPath path : enumeratePaths(edge.getToNode(),
-					length - 1)) {
-				try {
-					path.push(edge);
-					path.push(startingFrom);
-				}
-				catch (CycleDetectedException E) {
-					return ret;
-				}
-				ret.add(path);
-			}
-		}
-
-		return ret;
-	}
-	*/
-
-	/*
-	public static Set<IntentionPath> enumeratePaths(
-			IntentionGraph<IntentionNode<IElement>> graph) {
-		Set<IntentionPath> ret = new LinkedHashSet<IntentionPath>();
-		for (int i = 2; i < 5; i++)
-			for (IntentionNode<IElement> node : graph.getNodes())
-				ret.addAll(enumeratePaths(node, i));
-		return ret;
-	}
-	*/
 
 	/**
 	 * @return
 	 * @throws Exception
 	 */
-	public static RuleBase readRule(Reader source) throws Exception {
+	public static RuleBase readRule(final Reader source) throws Exception {
 		//Use package builder to build up a rule package.
 		//An alternative lower level class called "DrlParser" can also be used...
 
@@ -502,7 +289,7 @@ public class Util {
 		return ruleBase;
 	}
 
-	public static String stripQualifiedName(String qualifiedName) {
+	public static String stripQualifiedName(final String qualifiedName) {
 		if (!qualifiedName.contains("."))
 			return qualifiedName;
 
@@ -510,7 +297,8 @@ public class Util {
 		return qualifiedName.substring(pos + 1);
 	}
 
-	private static boolean distinct(Collection<Object> col) {
+	@SuppressWarnings( { "unchecked", "unused" })
+	private static boolean distinct(final Collection<Object> col) {
 		final Comparable[] objs = new Comparable[col.size()];
 		col.toArray(objs);
 		try {
@@ -527,6 +315,35 @@ public class Util {
 			if (objs[i].equals(objs[i - 1]))
 				return false;
 		return true;
+	}
+
+	private static void makeDotFile(
+			final IntentionGraph<IntentionNode<IElement>> graph,
+			final File aFile) throws IOException {
+		final FileWriter resFileOut = new FileWriter(aFile, false);
+		final PrintWriter resOut = new PrintWriter(resFileOut);
+		resOut.println(graph.toDotFormat());
+		resOut.close();
+	}
+
+	/**
+	 * @param graph
+	 * @throws IOException
+	 */
+	@SuppressWarnings("unused")
+	private static void makeDotFile(
+			final IntentionGraph<IntentionNode<IElement>> graph,
+			final int adviceNumer, final String resultPath) throws IOException {
+		final File file = new File(resultPath + "adv" + adviceNumer + ".dot");
+		Util.makeDotFile(graph, file);
+	}
+
+	@SuppressWarnings("unused")
+	private static void makeDotFile(
+			final IntentionGraph<IntentionNode<IElement>> graph,
+			final String resultPath) throws IOException {
+		final File file = new File(resultPath + "intention_graph.dot");
+		Util.makeDotFile(graph, file);
 	}
 
 	private Util() {

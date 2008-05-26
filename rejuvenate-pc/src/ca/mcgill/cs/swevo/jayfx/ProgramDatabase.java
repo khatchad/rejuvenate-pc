@@ -10,7 +10,6 @@
 
 package ca.mcgill.cs.swevo.jayfx;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,32 +23,13 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * A database storing all the relations between different program elements.
  */
 public class ProgramDatabase {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder ret = new StringBuilder();
-		for (IElement elem : this.getAllElements()) {
-			ret.append(elem + "\n");
-			for (Relation relation : Relation.values()) {
-				ret.append("\t" + relation + "\n");
-				for (IElement toElem : this.getRange(elem, relation))
-					ret.append("\t" + toElem + "\n");
-			}
-		}
-		return ret.toString();
-	}
-
 	/**
 	 * Data bundle associated with an element. Contains modifier flags and a map
 	 * linking relations to their ranges. an IElement instance.
 	 */
 	class Bundle {
-		private Map<Relation, Set<IElement>> aRelations;
-		private int aModifier;
+		private final Map<Relation, Set<IElement>> aRelations;
+		private final int aModifier;
 
 		/**
 		 * Creates a new, empty information bundle.
@@ -57,49 +37,28 @@ public class ProgramDatabase {
 		 * @param pModifier
 		 *            A modifier flag.
 		 */
-		public Bundle(int pModifier) {
-			aRelations = new HashMap<Relation, Set<IElement>>();
-			aModifier = pModifier;
+		public Bundle(final int pModifier) {
+			this.aRelations = new HashMap<Relation, Set<IElement>>();
+			this.aModifier = pModifier;
 		}
 
 		/**
 		 * @return The Map of relations to range. never null.
 		 */
 		public Map<Relation, Set<IElement>> getRelationMap() {
-			return aRelations;
+			return this.aRelations;
 		}
 	}
 
 	// Maps IElements (unique because of the Flyweight pattern
 	// to bundles containing modifiers and relations
-	private Map<IElement, Bundle> aElements;
+	private final Map<IElement, Bundle> aElements;
 
 	/**
 	 * Creates an empty program database.
 	 */
 	public ProgramDatabase() {
-		aElements = new HashMap<IElement, Bundle>();
-	}
-
-	/**
-	 * Returns all the elements indexed in the database.
-	 * 
-	 * @return A Set of IElement objects
-	 */
-	public Set<IElement> getAllElements() {
-		return aElements.keySet();
-	}
-
-	/**
-	 * Returns whether an element is indexed in the database.
-	 * 
-	 * @param pElement
-	 *            An element to check for. Should not be null.
-	 * @return Whether the database has information about pElement.
-	 */
-	public boolean contains(IElement pElement) {
-//		assert (pElement != null);
-		return aElements.containsKey(pElement);
+		this.aElements = new HashMap<IElement, Bundle>();
 	}
 
 	/**
@@ -111,11 +70,10 @@ public class ProgramDatabase {
 	 * @param pModifier
 	 *            The modifier flags for this element.
 	 */
-	public void addElement(IElement pElement, int pModifier) {
-//		assert (pElement != null);
-		if (!aElements.containsKey(pElement)) {
-			aElements.put(pElement, new Bundle(pModifier));
-		}
+	public void addElement(final IElement pElement, final int pModifier) {
+		//		assert (pElement != null);
+		if (!this.aElements.containsKey(pElement))
+			this.aElements.put(pElement, new Bundle(pModifier));
 	}
 
 	/**
@@ -132,20 +90,20 @@ public class ProgramDatabase {
 	 * @throws ElementNotFoundException
 	 *             If pElement1 or pElement2 is not found in the database.
 	 */
-	public void addRelation(IElement pElement1, Relation pRelation,
-			IElement pElement2) throws ElementNotFoundException {
-//		assert (pElement1 != null);
-//		assert (pElement2 != null);
-//		assert (pRelation != null);
+	public void addRelation(final IElement pElement1, final Relation pRelation,
+			final IElement pElement2) throws ElementNotFoundException {
+		//		assert (pElement1 != null);
+		//		assert (pElement2 != null);
+		//		assert (pRelation != null);
 
-		if (!contains(pElement1))
+		if (!this.contains(pElement1))
 			throw new ElementNotFoundException(pElement1.getId());
-		if (!contains(pElement2))
+		if (!this.contains(pElement2))
 			throw new ElementNotFoundException(pElement2.getId());
 
-		Map<Relation, Set<IElement>> lRelations = (aElements.get(pElement1))
-				.getRelationMap();
-//		assert (lRelations != null);
+		final Map<Relation, Set<IElement>> lRelations = this.aElements.get(
+				pElement1).getRelationMap();
+		//		assert (lRelations != null);
 
 		Set<IElement> lElements = lRelations.get(pRelation);
 		if (lElements == null) {
@@ -153,35 +111,6 @@ public class ProgramDatabase {
 			lRelations.put(pRelation, lElements);
 		}
 		lElements.add(pElement2);
-	}
-
-	/**
-	 * Returns the set of elements related to the domain element through the
-	 * specified relation.
-	 * 
-	 * @param pElement
-	 *            The domain element. Cannot be null.
-	 * @param pRelation
-	 *            The target relation. Cannot be null.
-	 * @return A Set of IElement representing the desired range. Never null.
-	 * @throws ElementNotFoundException
-	 *             If pElement is not indexed in the database
-	 */
-	public Set<IElement> getRange(IElement pElement, Relation pRelation)
-			throws ElementNotFoundException {
-//		assert (pElement != null);
-//		assert (pRelation != null);
-		if (!contains(pElement))
-			throw new ElementNotFoundException(pElement.getId());
-
-		Set<IElement> lReturn = new HashSet<IElement>();
-		Map<Relation, Set<IElement>> lRelations = (aElements.get(pElement))
-				.getRelationMap();
-
-		if (lRelations.containsKey(pRelation)) {
-			lReturn.addAll(lRelations.get(pRelation));
-		}
-		return lReturn;
 	}
 
 	/**
@@ -198,39 +127,32 @@ public class ProgramDatabase {
 	 *             if either of pElement1 or pElement2 are not indexed in the
 	 *             database.
 	 */
-	public void addRelationAndTranspose(IElement pElement1, Relation pRelation,
-			IElement pElement2) throws ElementNotFoundException {
-//		assert (pElement1 != null);
-//		assert (pElement2 != null);
-//		assert (pRelation != null);
+	public void addRelationAndTranspose(final IElement pElement1,
+			final Relation pRelation, final IElement pElement2)
+			throws ElementNotFoundException {
+		//		assert (pElement1 != null);
+		//		assert (pElement2 != null);
+		//		assert (pRelation != null);
 
-		if (!contains(pElement1))
+		if (!this.contains(pElement1))
 			throw new ElementNotFoundException(pElement1.getId());
-		if (!contains(pElement2))
+		if (!this.contains(pElement2))
 			throw new ElementNotFoundException(pElement2.getId());
 
-		addRelation(pElement1, pRelation, pElement2);
-		addRelation(pElement2, pRelation.getInverseRelation(), pElement1);
+		this.addRelation(pElement1, pRelation, pElement2);
+		this.addRelation(pElement2, pRelation.getInverseRelation(), pElement1);
 	}
 
 	/**
-	 * Returns whether pElements has any associated relations.
+	 * Returns whether an element is indexed in the database.
 	 * 
 	 * @param pElement
-	 *            The element to check. Must not be null and exist in the
-	 *            database.
-	 * @return True if pElement has any associated relations.
-	 * @throws ElementNotFoundException
-	 *             If either pFrom or pTo is not indexed in the database.
+	 *            An element to check for. Should not be null.
+	 * @return Whether the database has information about pElement.
 	 */
-	public boolean hasRelations(IElement pElement)
-			throws ElementNotFoundException {
-//		assert (pElement != null);
-		if (!contains(pElement))
-			throw new ElementNotFoundException(pElement.getId());
-
-		Map lRelations = ((Bundle) aElements.get(pElement)).getRelationMap();
-		return !lRelations.isEmpty();
+	public boolean contains(final IElement pElement) {
+		//		assert (pElement != null);
+		return this.aElements.containsKey(pElement);
 	}
 
 	/**
@@ -246,24 +168,166 @@ public class ProgramDatabase {
 	 * @throws ElementNotFoundException
 	 *             If either pFrom or pTo is not indexed in the database.
 	 */
-	public void copyRelations(IElement pFrom, IElement pTo)
+	@SuppressWarnings("unchecked")
+	public void copyRelations(final IElement pFrom, final IElement pTo)
 			throws ElementNotFoundException {
-//		assert (pFrom != null);
-//		assert (pTo != null);
+		//		assert (pFrom != null);
+		//		assert (pTo != null);
 
-		if (!contains(pFrom))
+		if (!this.contains(pFrom))
 			throw new ElementNotFoundException(pFrom.getId());
-		if (!contains(pTo))
+		if (!this.contains(pTo))
 			throw new ElementNotFoundException(pTo.getId());
 
-		Map lRelations = ((Bundle) aElements.get(pFrom)).getRelationMap();
-		for (Iterator i = lRelations.keySet().iterator(); i.hasNext();) {
-			Relation lNext = (Relation) i.next();
-			Set lElements = (Set) lRelations.get(lNext);
-			for (Iterator j = lElements.iterator(); j.hasNext();) {
-				addRelationAndTranspose(pTo, lNext, (IElement) j.next());
+		final Map lRelations = this.aElements.get(pFrom).getRelationMap();
+		for (final Iterator i = lRelations.keySet().iterator(); i.hasNext();) {
+			final Relation lNext = (Relation) i.next();
+			final Set lElements = (Set) lRelations.get(lNext);
+			for (final Iterator j = lElements.iterator(); j.hasNext();)
+				this.addRelationAndTranspose(pTo, lNext, (IElement) j.next());
+		}
+	}
+
+	/**
+	 * Dumps an image of the database to System.out. For testing purposes. Can
+	 * be removed from stable releases.
+	 */
+	@SuppressWarnings("unchecked")
+	public String dump() {
+		final StringBuilder ret = new StringBuilder();
+		for (final IElement lElement1 : this.aElements.keySet()) {
+			ret.append(lElement1);
+			final Bundle lRelations = this.aElements.get(lElement1);
+			for (final Object element : lRelations.getRelationMap().keySet()) {
+				final Relation lRelation = (Relation) element;
+				System.out.println("    " + lRelation);
+				for (final Iterator k = ((Set) lRelations.getRelationMap().get(
+						lRelation)).iterator(); k.hasNext();)
+					ret.append("        " + k.next());
 			}
 		}
+		return ret.toString();
+	}
+
+	/**
+	 * Returns all the elements indexed in the database.
+	 * 
+	 * @return A Set of IElement objects
+	 */
+	public Set<IElement> getAllElements() {
+		return this.aElements.keySet();
+	}
+
+	/**
+	 * Returns the modifier flag for the element
+	 * 
+	 * @return An integer representing the modifier. 0 if the element cannot be
+	 *         found.
+	 */
+	public int getModifiers(final IElement pElement) {
+		int lReturn = 0;
+		if (this.aElements.containsKey(pElement)) {
+			final Bundle lBundle = this.aElements.get(pElement);
+			lReturn = lBundle.aModifier;
+		}
+		return lReturn;
+	}
+
+	/**
+	 * Returns the set of elements related to the domain element through the
+	 * specified relation.
+	 * 
+	 * @param pElement
+	 *            The domain element. Cannot be null.
+	 * @param pRelation
+	 *            The target relation. Cannot be null.
+	 * @return A Set of IElement representing the desired range. Never null.
+	 * @throws ElementNotFoundException
+	 *             If pElement is not indexed in the database
+	 */
+	public Set<IElement> getRange(final IElement pElement,
+			final Relation pRelation) throws ElementNotFoundException {
+		//		assert (pElement != null);
+		//		assert (pRelation != null);
+		if (!this.contains(pElement))
+			throw new ElementNotFoundException(pElement.getId());
+
+		final Set<IElement> lReturn = new HashSet<IElement>();
+		final Map<Relation, Set<IElement>> lRelations = this.aElements.get(
+				pElement).getRelationMap();
+
+		if (lRelations.containsKey(pRelation))
+			lReturn.addAll(lRelations.get(pRelation));
+		return lReturn;
+	}
+
+	/**
+	 * Returns whether pElements has any associated relations.
+	 * 
+	 * @param pElement
+	 *            The element to check. Must not be null and exist in the
+	 *            database.
+	 * @return True if pElement has any associated relations.
+	 * @throws ElementNotFoundException
+	 *             If either pFrom or pTo is not indexed in the database.
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean hasRelations(final IElement pElement)
+			throws ElementNotFoundException {
+		//		assert (pElement != null);
+		if (!this.contains(pElement))
+			throw new ElementNotFoundException(pElement.getId());
+
+		final Map lRelations = this.aElements.get(pElement).getRelationMap();
+		return !lRelations.isEmpty();
+	}
+
+	/**
+	 * Remove an element and all its direct and transpose relations.
+	 * 
+	 * @param pElement
+	 *            The element to remove. Must not be null and must exist in the
+	 *            database.
+	 * @throws ElementNotFoundException
+	 *             If pElement is not indexed in the database.
+	 */
+	@SuppressWarnings("unchecked")
+	public void removeElement(final IElement pElement)
+			throws ElementNotFoundException {
+		//		assert (pElement != null);
+		if (!this.contains(pElement))
+			throw new ElementNotFoundException(pElement.getId());
+
+		final Map lRelations = this.aElements.get(pElement).getRelationMap();
+		for (final Iterator i = lRelations.keySet().iterator(); i.hasNext();) {
+			final Relation lNext = (Relation) i.next();
+			final Set lElements = (Set) lRelations.get(lNext);
+			for (final Iterator j = lElements.iterator(); j.hasNext();)
+				this.removeRelation((IElement) j.next(), lNext
+						.getInverseRelation(), pElement);
+		}
+
+		// Remove the element
+		this.aElements.remove(pElement);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder ret = new StringBuilder();
+		for (final IElement elem : this.getAllElements()) {
+			ret.append(elem + "\n");
+			for (final Relation relation : Relation.values()) {
+				ret.append("\t" + relation + "\n");
+				for (final IElement toElem : this.getRange(elem, relation))
+					ret.append("\t" + toElem + "\n");
+			}
+		}
+		return ret.toString();
 	}
 
 	/**
@@ -282,88 +346,23 @@ public class ProgramDatabase {
 	 * @throws ElementNotFoundException
 	 *             If either pFrom or pTo is not indexed in the database.
 	 */
-	private void removeRelation(IElement pElement1, Relation pRelation,
-			IElement pElement2) throws ElementNotFoundException {
-//		assert (pElement1 != null);
-//		assert (pElement2 != null);
-//		assert (pRelation != null);
+	@SuppressWarnings("unchecked")
+	private void removeRelation(final IElement pElement1,
+			final Relation pRelation, final IElement pElement2)
+			throws ElementNotFoundException {
+		//		assert (pElement1 != null);
+		//		assert (pElement2 != null);
+		//		assert (pRelation != null);
 
-		if (!contains(pElement1))
+		if (!this.contains(pElement1))
 			throw new ElementNotFoundException(pElement1.getId());
-		if (!contains(pElement2))
+		if (!this.contains(pElement2))
 			throw new ElementNotFoundException(pElement2.getId());
 
-		Map lRelations = ((Bundle) aElements.get(pElement1)).getRelationMap();
+		final Map lRelations = this.aElements.get(pElement1).getRelationMap();
 		if (!lRelations.containsKey(pRelation))
 			return;
-		Set lElements = (Set) lRelations.get(pRelation);
+		final Set lElements = (Set) lRelations.get(pRelation);
 		lElements.remove(pElement2);
-	}
-
-	/**
-	 * Remove an element and all its direct and transpose relations.
-	 * 
-	 * @param pElement
-	 *            The element to remove. Must not be null and must exist in the
-	 *            database.
-	 * @throws ElementNotFoundException
-	 *             If pElement is not indexed in the database.
-	 */
-	public void removeElement(IElement pElement)
-			throws ElementNotFoundException {
-//		assert (pElement != null);
-		if (!contains(pElement))
-			throw new ElementNotFoundException(pElement.getId());
-
-		Map lRelations = ((Bundle) aElements.get(pElement)).getRelationMap();
-		for (Iterator i = lRelations.keySet().iterator(); i.hasNext();) {
-			Relation lNext = (Relation) i.next();
-			Set lElements = (Set) lRelations.get(lNext);
-			for (Iterator j = lElements.iterator(); j.hasNext();) {
-				removeRelation((IElement) j.next(), lNext.getInverseRelation(),
-						pElement);
-			}
-		}
-
-		// Remove the element
-		aElements.remove(pElement);
-	}
-
-	/**
-	 * Dumps an image of the database to System.out. For testing purposes. Can
-	 * be removed from stable releases.
-	 */
-	public String dump() {
-		StringBuilder ret = new StringBuilder();
-		for (Iterator i = aElements.keySet().iterator(); i.hasNext();) {
-			IElement lElement1 = (IElement) i.next();
-			ret.append(lElement1);
-			Bundle lRelations = (Bundle) aElements.get(lElement1);
-			for (Iterator j = lRelations.getRelationMap().keySet().iterator(); j
-					.hasNext();) {
-				Relation lRelation = (Relation) j.next();
-				System.out.println("    " + lRelation);
-				for (Iterator k = ((Set) lRelations.getRelationMap().get(
-						lRelation)).iterator(); k.hasNext();) {
-					ret.append("        " + k.next());
-				}
-			}
-		}
-		return ret.toString();
-	}
-
-	/**
-	 * Returns the modifier flag for the element
-	 * 
-	 * @return An integer representing the modifier. 0 if the element cannot be
-	 *         found.
-	 */
-	public int getModifiers(IElement pElement) {
-		int lReturn = 0;
-		if (aElements.containsKey(pElement)) {
-			Bundle lBundle = (Bundle) aElements.get(pElement);
-			lReturn = lBundle.aModifier;
-		}
-		return lReturn;
 	}
 }

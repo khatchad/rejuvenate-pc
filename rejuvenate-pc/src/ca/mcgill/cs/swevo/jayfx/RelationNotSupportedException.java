@@ -10,14 +10,22 @@
 
 package ca.mcgill.cs.swevo.jayfx;
 
-public class RelationNotSupportedException extends RuntimeException 
-{
-	public RelationNotSupportedException(String pMessage)
-	{ super(pMessage); }
+public class RelationNotSupportedException extends RuntimeException {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6904782827174823573L;
 
-	public RelationNotSupportedException(String pMessage, Throwable pException)
-	{ super(pMessage, pException); }
+	public RelationNotSupportedException(final String pMessage) {
+		super(pMessage);
+	}
 
-	public RelationNotSupportedException(Throwable pException )
-	{ super(pException); }
+	public RelationNotSupportedException(final String pMessage,
+			final Throwable pException) {
+		super(pMessage, pException);
+	}
+
+	public RelationNotSupportedException(final Throwable pException) {
+		super(pException);
+	}
 }

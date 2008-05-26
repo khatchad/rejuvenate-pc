@@ -13,117 +13,26 @@ package ca.mcgill.cs.swevo.jayfx.model;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Represents a field element in the Java program model.
+/**
+ * Represents a field element in the Java program model.
  */
-public class FieldElement extends AbstractElement
-{
-	/** 
-	 * Creates a field element.  This constructor should not
-	 * be used directly.  FieldElements should be obtained
-	 * through the FlyweightElementFactory.getElement method.
-	 * @param pId the Id representing the field, i.e., the fully
-	 * qualified name of the declaring class followed by the name of the
-	 * field, in dot notation.
-	 */
-	protected FieldElement( String pId )
-	{
-		super( pId );
-	}
-	
-	/** 
-	 * Returns the category of this element, i.e., a field.
-	 * @return ICategories.FIELD.
-	 */
-	public ICategories getCategory()
-	{
-		return ICategories.FIELD;
-	}
-	
-	/** 
-	 * Determines equality.
-	 * @param pObject the object to compare to this object.
-	 * @return true if pObject is a Field element with the  same
-	 * id as this element.
-	 */
-	public boolean equals( Object pObject )
-	{
-		if( !(pObject instanceof FieldElement))
-			return false;
-		else
-			return getId().equals(((FieldElement)pObject).getId() );
-	}
-	
-	/** 
-	 * @return a hash code for this object.
-	 */
-	public int hashCode()
-	{
-		return getId().hashCode();
-	}
-	
-	/** 
-	 * @return The fully-qualified name of the class declaring
-	 * this field.
-	 */
-	public ClassElement getDeclaringClass()
-	{
-		ClassElement lReturn = null;
-		lReturn = (ClassElement)FlyweightElementFactory.getElement( ICategories.CLASS, getId().substring(0, getId().lastIndexOf(".")), null);
-		return lReturn;
-	}
-	
-	/** 
-	 * @return The name of the package in which the declaring class of this
-	 * field is defined in.
-	 */
-	public String getPackageName()
-	{
-		return getDeclaringClass().getPackageName();
-	}
-	
-	/**
-	 * @return The simple name of the field.
-	 */
-	public String getSimpleName()
-	{
-		return getId().substring( getId().lastIndexOf( ".") + 1, getId().length() );
-	}
-	
-	public String getShortName()
-	{
-		return getDeclaringClass().getShortName() + "." + getSimpleName();
-	}
-
+public class FieldElement extends AbstractElement {
 	private boolean enabled;
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-		
-	}
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
-	}
-	
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public boolean hasEnabledRelationFor(Relation relation) {
-		return this.enabledIncommingRelations.contains(relation);
-	}
-	
 	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
+	/**
+	 * Creates a field element. This constructor should not be used directly.
+	 * FieldElements should be obtained through the
+	 * FlyweightElementFactory.getElement method.
+	 * 
+	 * @param pId
+	 *            the Id representing the field, i.e., the fully qualified name
+	 *            of the declaring class followed by the name of the field, in
+	 *            dot notation.
 	 */
-	public void enableIncommingRelationsFor(Relation relation) {
-		this.enabledIncommingRelations.add(relation);
+	protected FieldElement(final String pId) {
+		super(pId);
 	}
 
 	/* (non-Javadoc)
@@ -138,5 +47,101 @@ public class FieldElement extends AbstractElement
 	 */
 	public void disableAllIncommingRelations() {
 		this.enabledIncommingRelations.clear();
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
+	 */
+	public void enable() {
+		this.enabled = true;
+
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
+	 */
+	public void enableIncommingRelationsFor(final Relation relation) {
+		this.enabledIncommingRelations.add(relation);
+	}
+
+	/**
+	 * Determines equality.
+	 * 
+	 * @param pObject
+	 *            the object to compare to this object.
+	 * @return true if pObject is a Field element with the same id as this
+	 *         element.
+	 */
+	@Override
+	public boolean equals(final Object pObject) {
+		if (!(pObject instanceof FieldElement))
+			return false;
+		else
+			return this.getId().equals(((FieldElement) pObject).getId());
+	}
+
+	/**
+	 * Returns the category of this element, i.e., a field.
+	 * 
+	 * @return ICategories.FIELD.
+	 */
+	@Override
+	public ICategories getCategory() {
+		return ICategories.FIELD;
+	}
+
+	/**
+	 * @return The fully-qualified name of the class declaring this field.
+	 */
+	public ClassElement getDeclaringClass() {
+		ClassElement lReturn = null;
+		lReturn = (ClassElement) FlyweightElementFactory.getElement(
+				ICategories.CLASS, this.getId().substring(0,
+						this.getId().lastIndexOf(".")), null);
+		return lReturn;
+	}
+
+	/**
+	 * @return The name of the package in which the declaring class of this
+	 *         field is defined in.
+	 */
+	public String getPackageName() {
+		return this.getDeclaringClass().getPackageName();
+	}
+
+	@Override
+	public String getShortName() {
+		return this.getDeclaringClass().getShortName() + "."
+				+ this.getSimpleName();
+	}
+
+	/**
+	 * @return The simple name of the field.
+	 */
+	public String getSimpleName() {
+		return this.getId().substring(this.getId().lastIndexOf(".") + 1,
+				this.getId().length());
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
+	 */
+	public boolean hasEnabledRelationFor(final Relation relation) {
+		return this.enabledIncommingRelations.contains(relation);
+	}
+
+	/**
+	 * @return a hash code for this object.
+	 */
+	@Override
+	public int hashCode() {
+		return this.getId().hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 }

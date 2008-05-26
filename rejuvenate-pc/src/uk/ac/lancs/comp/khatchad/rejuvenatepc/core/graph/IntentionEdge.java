@@ -8,41 +8,14 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
 /**
  * @author raffi
- *
+ * 
  */
 public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	private IntentionNode<E> fromNode;
-	
+
 	private IntentionNode<E> toNode;
-	
+
 	private Relation type;
-	
-	/**
-	 * @param from
-	 * @param to
-	 * @param type
-	 */
-	public IntentionEdge(IntentionNode<E> from, IntentionNode<E> to, Relation type) {
-		this.fromNode = from;
-		this.toNode = to;
-		this.type = type;
-	}
-	
-	/**
-	 * @param node
-	 * @param toNode
-	 * @param relation
-	 * @param enableEdgesForIncommingRelation
-	 */
-	public IntentionEdge(IntentionNode<E> from,
-			IntentionNode<E> to, Relation type,
-			boolean enabled) {
-		this(from, to, type);
-		if ( enabled )
-			this.enable();
-		else
-			this.disable();
-	}
 
 	/**
 	 * 
@@ -50,44 +23,44 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	public IntentionEdge() {
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * @param from
+	 * @param to
+	 * @param type
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof IntentionEdge ? this.fromNode.equals(((IntentionEdge)obj).fromNode) &&
-				this.toNode.equals(((IntentionEdge)obj).toNode) && this.type.equals(((IntentionEdge)obj).type) : false;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return this.fromNode.hashCode() + this.toNode.hashCode() + this.type.hashCode();
-	}
-
-	public String toDotFormat() {
-		StringBuilder ret = new StringBuilder();
-		ret.append(fromNode.hashCode());
-		ret.append("->"); 
-		ret.append(toNode.hashCode()); 
-		ret.append(' ');
-		ret.append("[label=");
-		ret.append("\"");
-		ret.append(this.type);
-		ret.append("\"");
-		if ( this.isEnabled() )
-			ret.append(",style=bold,color=red,fontcolor=red");
-		ret.append("];");
-		return ret.toString();
+	public IntentionEdge(final IntentionNode<E> from,
+			final IntentionNode<E> to, final Relation type) {
+		this.fromNode = from;
+		this.toNode = to;
+		this.type = type;
 	}
 
 	/**
-	 * @return the type
+	 * @param node
+	 * @param toNode
+	 * @param relation
+	 * @param enableEdgesForIncommingRelation
 	 */
-	public Relation getType() {
-		return this.type;
+	public IntentionEdge(final IntentionNode<E> from,
+			final IntentionNode<E> to, final Relation type,
+			final boolean enabled) {
+		this(from, to, type);
+		if (enabled)
+			this.enable();
+		else
+			this.disable();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean equals(final Object obj) {
+		return obj instanceof IntentionEdge ? this.fromNode
+				.equals(((IntentionEdge) obj).fromNode)
+				&& this.toNode.equals(((IntentionEdge) obj).toNode)
+				&& this.type.equals(((IntentionEdge) obj).type) : false;
 	}
 
 	/**
@@ -103,39 +76,74 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	public IntentionNode<E> getToNode() {
 		return this.toNode;
 	}
-	
+
+	/**
+	 * @return the type
+	 */
+	public Relation getType() {
+		return this.type;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		StringBuilder ret = new StringBuilder();
-		ret.append(super.toString());
-//		ret.append('(');
-//		ret.append(from.getElem().getShortName());
-//		ret.append(',');
-//		ret.append(to.getElem().getShortName());
-//		ret.append(')');
-		ret.append(this.type);
-		return ret.toString();
+	public int hashCode() {
+		return this.fromNode.hashCode() + this.toNode.hashCode()
+				+ this.type.hashCode();
 	}
 
 	/**
-	 * @param fromNode the fromNode to set
+	 * @param fromNode
+	 *            the fromNode to set
 	 */
-	public void setFromNode(IntentionNode<E> fromNode) {
+	public void setFromNode(final IntentionNode<E> fromNode) {
 		this.fromNode = fromNode;
 	}
 
 	/**
-	 * @param toNode the toNode to set
+	 * @param toNode
+	 *            the toNode to set
 	 */
-	public void setToNode(IntentionNode<E> toNode) {
+	public void setToNode(final IntentionNode<E> toNode) {
 		this.toNode = toNode;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
-	public void setType(Relation type) {
+	public void setType(final Relation type) {
 		this.type = type;
+	}
+
+	public String toDotFormat() {
+		final StringBuilder ret = new StringBuilder();
+		ret.append(this.fromNode.hashCode());
+		ret.append("->");
+		ret.append(this.toNode.hashCode());
+		ret.append(' ');
+		ret.append("[label=");
+		ret.append("\"");
+		ret.append(this.type);
+		ret.append("\"");
+		if (this.isEnabled())
+			ret.append(",style=bold,color=red,fontcolor=red");
+		ret.append("];");
+		return ret.toString();
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder ret = new StringBuilder();
+		ret.append(super.toString());
+		//		ret.append('(');
+		//		ret.append(from.getElem().getShortName());
+		//		ret.append(',');
+		//		ret.append(to.getElem().getShortName());
+		//		ret.append(')');
+		ret.append(this.type);
+		return ret.toString();
 	}
 
 }

@@ -26,11 +26,16 @@ public abstract class IntentionElement<E> {
 		super();
 	}
 
-	/**
-	 * @return the enabled
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
+	public void addPropertyChangeListener(final PropertyChangeListener l) {
+		this.changes.addPropertyChangeListener(l);
+	}
+
+	public void disable() {
+		final boolean oldState = this.enabled;
+		this.enabled = false;
+		if (oldState != this.enabled)
+			this.changes.firePropertyChange(new PropertyChangeEvent(this,
+					"enabled", oldState, this.enabled));
 	}
 
 	/**
@@ -38,31 +43,26 @@ public abstract class IntentionElement<E> {
 	 *            the enabled to set
 	 */
 	public void enable() {
-		boolean oldState = this.enabled;
+		final boolean oldState = this.enabled;
 		this.enabled = true;
 		if (oldState != this.enabled)
 			this.changes.firePropertyChange(new PropertyChangeEvent(this,
 					"enabled", oldState, this.enabled));
 	}
 
-	public void disable() {
-		boolean oldState = this.enabled;
-		this.enabled = false;
-		if (oldState != this.enabled)
-			this.changes.firePropertyChange(new PropertyChangeEvent(this,
-					"enabled", oldState, this.enabled));
+	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public void removePropertyChangeListener(final PropertyChangeListener l) {
+		this.changes.removePropertyChangeListener(l);
 	}
 
 	@Override
 	public String toString() {
 		return this.enabled ? "*" : "";
-	}
-
-	public void addPropertyChangeListener(final PropertyChangeListener l) {
-		this.changes.addPropertyChangeListener(l);
-	}
-
-	public void removePropertyChangeListener(final PropertyChangeListener l) {
-		this.changes.removePropertyChangeListener(l);
 	}
 }
