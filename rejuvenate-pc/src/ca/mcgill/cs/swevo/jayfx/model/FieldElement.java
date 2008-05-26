@@ -17,6 +17,9 @@ import java.util.Set;
  * Represents a field element in the Java program model.
  */
 public class FieldElement extends AbstractElement {
+	
+	private static final long serialVersionUID = -7741801515115590408L;
+
 	private boolean enabled;
 
 	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();

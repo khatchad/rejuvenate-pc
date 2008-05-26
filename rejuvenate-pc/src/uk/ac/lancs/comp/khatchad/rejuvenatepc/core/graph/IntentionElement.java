@@ -6,13 +6,14 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
 /**
  * @author raffi
  * 
  * @param <E>
  */
-public abstract class IntentionElement<E> {
+public abstract class IntentionElement<E> implements Serializable {
 
 	private final PropertyChangeSupport changes = new PropertyChangeSupport(
 			this);

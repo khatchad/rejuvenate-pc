@@ -16,6 +16,8 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 
+	private static final long serialVersionUID = -5215134933494372784L;
+
 	public static final IntentionNode<IElement> DISABLED_WILDCARD = new IntentionNode<IElement>(
 			new WildcardElement());
 

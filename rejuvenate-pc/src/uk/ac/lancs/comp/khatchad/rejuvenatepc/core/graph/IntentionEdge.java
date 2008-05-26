@@ -11,6 +11,9 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * 
  */
 public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
+	
+	private static final long serialVersionUID = -4758844315757084370L;
+
 	private IntentionNode<E> fromNode;
 
 	private IntentionNode<E> toNode;

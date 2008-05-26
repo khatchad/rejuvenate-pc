@@ -10,12 +10,14 @@
 
 package ca.mcgill.cs.swevo.jayfx.model;
 
+import java.io.Serializable;
+
 import org.eclipse.jdt.core.IJavaElement;
 
 /**
  * A program element in the Java model.
  */
-public interface IElement {
+public interface IElement extends Serializable {
 	public void disable();
 
 	public void disableAllIncommingRelations();

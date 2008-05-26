@@ -1,9 +1,11 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.drools.FactHandle;
 import org.drools.QueryResult;
@@ -22,12 +25,14 @@ import org.drools.QueryResults;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -54,10 +59,19 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Where to store benchmark results.
 	 */
+
+	private static final File WORKSPACE_LOC = ResourcesPlugin.getWorkspace()
+			.getRoot().getLocation().toFile();
+
 	private static final String RESULT_PATH = new File(ResourcesPlugin
 			.getWorkspace().getRoot().getLocation().toOSString()
 			+ File.separator + "results").getPath()
 			+ File.separator;
+
+	/**
+	 * The weight assigned to precision, for confidence calculation.
+	 */
+	private static final double WEIGHT_PRECISION = 0.75;
 
 	/**
 	 * @param pattern
@@ -79,9 +93,9 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 	 */
 	@SuppressWarnings("unused")
 	private static double calculateConfidence(final double precision,
-			final double concreteness, final double weight) {
-		final double result = precision * weight + (1 - concreteness)
-				* (1 - weight);
+			final double concreteness, final double weight_precision) {
+		final double result = precision * weight_precision + (1 - concreteness)
+				* (1 - weight_precision);
 		return Math.max(result, precision);
 	}
 
@@ -379,11 +393,13 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 
 		final PrintWriter patternOut = AnalyzePointcut.getPatternStatsWriter();
 		patternOut
-				.println("Benchmark\tAdvice#\tAdvice\tPattern\tSize\tPrecision\tConcreteness");
+				.println("Benchmark\tAdvice#\tAdvice\tPattern\tSize\tPrecision\tConcreteness\tConfidence");
 
 		lMonitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
 		int pointcut_count = 0;
+
+		Map<AdviceElement, Map<Path, Double>> adviceElementToPatternConfidenceMap = new LinkedHashMap<AdviceElement, Map<Path, Double>>();
 
 		for (final AdviceElement advElem : adviceCol) {
 
@@ -441,6 +457,8 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
+			Map<Path, Double> patternToConfidenceMap = new LinkedHashMap<Path, Double>();
+
 			for (final Path pattern : patternToResultMap.keySet()) {
 				final double precision = AnalyzePointcut.calculatePrecision(
 						patternToEnabledElementMap.get(pattern),
@@ -448,6 +466,11 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 
 				final double concreteness = AnalyzePointcut
 						.calculateConcreteness(pattern);
+
+				double confidence = calculateConfidence(precision,
+						concreteness, WEIGHT_PRECISION);
+
+				patternToConfidenceMap.put(pattern, confidence);
 
 				patternOut.print(advElem.getJavaProject().getProject()
 						.getName()
@@ -458,12 +481,48 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 				patternOut.print(pattern.size() + "\t");
 				patternOut.print(precision + "\t");
 				patternOut.print(concreteness + "\t");
+				patternOut.print(confidence + "\t");
 				patternOut.println();
 			}
+			adviceElementToPatternConfidenceMap.put(advElem,
+					patternToConfidenceMap);
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
+
+		savePatterns(adviceElementToPatternConfidenceMap);
 		patternOut.close();
+	}
+
+	/**
+	 * @param adviceElementToPatternConfidenceMap
+	 * @throws IOException
+	 */
+	@SuppressWarnings("restriction")
+	private void savePatterns(
+			Map<AdviceElement, Map<Path, Double>> adviceElementToPatternConfidenceMap)
+			throws IOException {
+
+		for (AdviceElement advElem : adviceElementToPatternConfidenceMap
+				.keySet()) {
+			StringBuilder fileNameBuilder = new StringBuilder(advElem
+					.toDebugString());
+			fileNameBuilder.append(".rejuv-pc.dat");
+
+			AspectElement aspectElem = (AspectElement) advElem.getParent();
+			fileNameBuilder.insert(0, aspectElem.getPath().lastSegment() + "#");
+			fileNameBuilder.insert(0, '.');
+
+			IPath aspectPath = aspectElem.getPath().removeLastSegments(1);
+			fileNameBuilder.insert(0, aspectPath.toOSString() + File.separator);
+
+			File file = new File(WORKSPACE_LOC, fileNameBuilder.toString());
+
+			FileOutputStream fos = new FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(adviceElementToPatternConfidenceMap.get(advElem));
+			oos.close();
+		}
 	}
 
 	@SuppressWarnings("unchecked")

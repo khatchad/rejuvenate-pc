@@ -16,6 +16,8 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public class WildcardElement implements IElement {
 
+	private static final long serialVersionUID = -4175380054692252185L;
+	
 	private boolean enabled;
 
 	public WildcardElement() {

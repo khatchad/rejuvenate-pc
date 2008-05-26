@@ -17,6 +17,8 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public class AspectElement extends AbstractElement {
 
+	private static final long serialVersionUID = 6987988981321889202L;
+
 	private boolean enabled;
 
 	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();

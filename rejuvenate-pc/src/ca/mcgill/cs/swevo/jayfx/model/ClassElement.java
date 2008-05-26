@@ -17,6 +17,9 @@ import java.util.Set;
  * Represents a class program element.
  */
 public class ClassElement extends AbstractElement {
+	
+	private static final long serialVersionUID = 8565762363075921025L;
+
 	private boolean enabled;
 
 	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
