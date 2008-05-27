@@ -6,6 +6,8 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jdom.Element;
+
 import uk.ac.lancs.comp.khatchad.ajayfx.model.NullElement;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
@@ -124,4 +126,13 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 		return ret.toString();
 	}
 
+	/**
+	 * @return
+	 */
+	public Element getXML() {
+		Element ret = new Element(this.getClass().getSimpleName());
+		ret.setAttribute("enabled", String.valueOf(this.isEnabled()));
+		ret.setAttribute("id", this.elem.getId());
+		return ret;
+	}
 }

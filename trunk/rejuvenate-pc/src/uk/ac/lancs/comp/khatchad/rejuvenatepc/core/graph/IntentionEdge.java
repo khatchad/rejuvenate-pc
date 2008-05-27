@@ -3,6 +3,8 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
+import org.jdom.Element;
+
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -148,5 +150,11 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		ret.append(this.type);
 		return ret.toString();
 	}
-
+	
+	public Element getXML() {
+		Element ret = new Element(this.getClass().getSimpleName());
+		ret.setAttribute("enabled", String.valueOf(this.isEnabled()));
+		ret.addContent(this.type.getXML());
+		return ret;
+	}
 }

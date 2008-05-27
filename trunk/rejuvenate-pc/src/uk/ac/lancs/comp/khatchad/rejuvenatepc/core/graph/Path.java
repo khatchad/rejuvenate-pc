@@ -10,7 +10,9 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import org.drools.ObjectFilter;
+import org.jdom.Element;
 
+import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
 /**
@@ -43,9 +45,9 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 		return super.equals(o);
 	}
 
-	public Path<IntentionEdge<IElement>> extractPattern(
+	public Pattern<IntentionEdge<IElement>> extractPattern(
 			final IntentionNode<IElement> commonNode) {
-		final Path<IntentionEdge<IElement>> ret = new Path<IntentionEdge<IElement>>();
+		final Pattern<IntentionEdge<IElement>> ret = new Pattern<IntentionEdge<IElement>>();
 		for (final IntentionEdge<IElement> edge : this)
 			if (edge.getFromNode().equals(commonNode)) {
 				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
@@ -198,5 +200,24 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 			if (!this.get(i).getType().equals(rhs.get(i).getType()))
 				return false;
 		return true;
+	}
+	
+	public Element getXML() {
+		Element root = new Element(this.getClass().getSimpleName());
+
+		if (!this.isEmpty()) {
+			root.addContent(this.get(0).getFromNode().getXML());
+		}
+
+		final Iterator<E> i = this.iterator();
+		boolean hasNext = i.hasNext();
+		while (hasNext) {
+			final E o = i.next();
+			root.addContent(o.getXML());
+			root.addContent((o.getToNode().getXML()));
+			hasNext = i.hasNext();
+		}
+
+		return root;
 	}
 }

@@ -14,6 +14,8 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Vector;
 
+import org.jdom.Element;
+
 /**
  * Encapsulate various services related to relations.
  */
@@ -440,4 +442,12 @@ public enum Relation {
 		return this.aId;
 	}
 
+	/**
+	 * @return
+	 */
+	public Element getXML() {
+		Element ret = new Element(this.getClass().getSimpleName());
+		ret.setAttribute("type", this.toString());
+		return ret;
+	}
 }
