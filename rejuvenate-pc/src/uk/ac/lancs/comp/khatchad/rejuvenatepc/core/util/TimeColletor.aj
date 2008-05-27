@@ -23,7 +23,7 @@ public aspect TimeColletor {
 		call(* calculate*(..)) ||
 		call(* getTotalNumberOfShadows(..));
 	
-	Object around() : toRemove() {
+	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();
 		final Object ret = proceed();
 		final long elapsed = System.currentTimeMillis() - start;
