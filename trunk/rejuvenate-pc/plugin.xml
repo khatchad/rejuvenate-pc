@@ -13,12 +13,22 @@
                definitionId="uk.ac.lancs.comp.khatchad.analyze.pointcut"
                enablesFor="+"
                helpContextId="uk.ac.lancs.comp.khatchad.AnalyzePointcut.help"
-               id="uk.ac.lancs.comp.khatchad.RejuvinatePointcut.action"
+               id="uk.ac.lancs.comp.khatchad.AnalyzePointcut.action"
                label="&amp;Analyze Pointcut..."
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
                style="push"
 	           toolbarPath="Normal"
                tooltip="Analyze Pointcut"/>
+         <action
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin"
+               definitionId="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut"
+               helpContextId="uk.ac.lancs.comp.khatchad.RejuvenatePointcut.help"
+               id="uk.ac.lancs.comp.khatchad.RejuvinatePointcut.action"
+               label="&amp;Rejuvenate Pointcut..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/codingGroup2"
+               style="push"
+	           toolbarPath="Normal"
+               tooltip="Rejuvenate Pointcut"/>
       </actionSet>
    </extension>
       <extension
@@ -33,6 +43,12 @@
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.popup">
+         </action>
+         <action
+               label="Rejuvenate Pointcut..."
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               id="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut.popup">
          </action>
       </objectContribution>
       <objectContribution
