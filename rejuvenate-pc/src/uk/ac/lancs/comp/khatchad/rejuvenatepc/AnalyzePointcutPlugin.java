@@ -43,74 +43,31 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.jdom.DocType;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Path;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
-public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
-
-	/**
-	 * Where to store benchmark results.
-	 */
-
-	private static final File WORKSPACE_LOC = ResourcesPlugin.getWorkspace()
-			.getRoot().getLocation().toFile();
+public class AnalyzePointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 	private static final String RESULT_PATH = new File(ResourcesPlugin
 			.getWorkspace().getRoot().getLocation().toOSString()
 			+ File.separator + "results").getPath()
 			+ File.separator;
 
-	/**
-	 * The weight assigned to precision, for confidence calculation.
-	 */
-	private static final double WEIGHT_PRECISION = 0.75;
-
-	/**
-	 * @param pattern
-	 * @return
-	 */
-	private static double calculateConcreteness(
-			final Path<IntentionEdge<IElement>> pattern) {
-		final Collection<IntentionNode<IElement>> allNodes = pattern.getNodes();
-		final Collection<IntentionNode<IElement>> wildNodes = pattern
-				.getWildcardNodes();
-		return (double) (allNodes.size() - wildNodes.size()) / allNodes.size();
-	}
-
-	/**
-	 * @param precision
-	 * @param concreteness
-	 * @param d
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private static double calculateConfidence(final double precision,
-			final double concreteness, final double weight_precision) {
-		final double result = precision * weight_precision + (1 - concreteness)
-				* (1 - weight_precision);
-		return Math.max(result, precision);
-	}
-
-	/**
-	 * @param searchedFor
-	 * @param set
-	 * @return
-	 */
-	private static double calculatePrecision(
-			final Set<IntentionElement<IElement>> searchedFor,
-			final Set<IntentionElement<IElement>> found) {
-		final int totalElements = found.size();
-		final int lookingFor = searchedFor.size();
-		return (double) lookingFor / totalElements;
-	}
+	private static final String DATABASE_FILE_NAME = "rejuv-pc.dat";
 
 	/**
 	 * @param relation
@@ -125,8 +82,8 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 			final String queryString,
 			final Relation relation,
 			final WorkingMemory workingMemory,
-			final Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			final IProgressMonitor lMonitor) {
 
 		final QueryResults suggestedArcs = workingMemory.getQueryResults(
@@ -147,7 +104,7 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
-			final Path pattern = enabledPath.extractPattern(commonNode);
+			final Pattern pattern = enabledPath.extractPattern(commonNode);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
@@ -174,8 +131,8 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 	private static void executeNodeQuery(
 			final IProgressMonitor lMonitor,
 			final WorkingMemory workingMemory,
-			final Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			final String queryString) {
 
 		final QueryResults suggestedNodes = workingMemory
@@ -194,7 +151,7 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
-			final Path pattern = enabledPath.extractPattern(commonNode);
+			final Pattern pattern = enabledPath.extractPattern(commonNode);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
@@ -213,37 +170,44 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 
 	@SuppressWarnings("unused")
 	private static PrintWriter getAdviceStatusWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcut.RESULT_PATH + "advice.csv");
-		return AnalyzePointcut.getCSVWriter(aFile, true);
+		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
+				+ "advice.csv");
+		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
 	}
 
 	private static PrintWriter getBenchmarkStatsWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcut.RESULT_PATH
+		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
 				+ "benchmarks.csv");
-		return AnalyzePointcut.getCSVWriter(aFile, true);
+		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
 	}
 
 	/**
 	 * @return
 	 * @throws IOException
 	 */
-	private static PrintWriter getCSVWriter(final File aFile,
+	private static PrintWriter getPrintWriter(final File aFile,
 			final boolean append) throws IOException {
 		final FileWriter resFileOut = new FileWriter(aFile, append);
 		return new PrintWriter(resFileOut);
 	}
 
 	private static PrintWriter getPatternStatsWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcut.RESULT_PATH
+		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
 				+ "patterns.csv");
-		return AnalyzePointcut.getCSVWriter(aFile, true);
+		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
+	}
+	
+	private static PrintWriter getXMLFileWriter() throws IOException {
+		final File aFile = new File(Util.WORKSPACE_LOC,
+				AnalyzePointcutPlugin.class.getSimpleName() + ".xml");
+		return AnalyzePointcutPlugin.getPrintWriter(aFile, false);
 	}
 
 	@SuppressWarnings("unused")
 	private static PrintWriter getSuggestionWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcut.RESULT_PATH
+		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
 				+ "suggestion.csv");
-		return AnalyzePointcut.getCSVWriter(aFile, true);
+		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
 	}
 
 	/**
@@ -258,7 +222,7 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 	 * Make the result folder on startup.
 	 */
 	public void init(final IWorkbenchWindow lWindow) {
-		final File resultFolder = new File(AnalyzePointcut.RESULT_PATH);
+		final File resultFolder = new File(AnalyzePointcutPlugin.RESULT_PATH);
 		if (!resultFolder.exists())
 			resultFolder.mkdir();
 	}
@@ -293,7 +257,7 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 		else if (!selectedProjectCol.isEmpty()) {
 			PrintWriter benchmarkOut = null;
 			try {
-				benchmarkOut = AnalyzePointcut.getBenchmarkStatsWriter();
+				benchmarkOut = AnalyzePointcutPlugin.getBenchmarkStatsWriter();
 			}
 			catch (final IOException e) {
 				// TODO Auto-generated catch block
@@ -364,7 +328,7 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 				lDB, lMonitor);
 
 		lMonitor.subTask("Loading up the rulebase.");
-		final Reader source = new InputStreamReader(AnalyzePointcut.class
+		final Reader source = new InputStreamReader(AnalyzePointcutPlugin.class
 				.getResourceAsStream("/rules/NodeRules.drl"));
 		final RuleBase ruleBase = Util.readRule(source);
 		final WorkingMemory workingMemory = ruleBase.newStatefulSession();
@@ -391,7 +355,11 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 			lMonitor.worked(1);
 		}
 
-		final PrintWriter patternOut = AnalyzePointcut.getPatternStatsWriter();
+		//		ObjectContainer databaseConn = Util.getDatabaseConnection(new File(
+		//				Util.WORKSPACE_LOC, DATABASE_FILE_NAME));
+
+		final PrintWriter patternOut = AnalyzePointcutPlugin
+				.getPatternStatsWriter();
 		patternOut
 				.println("Benchmark\tAdvice#\tAdvice\tPattern\tSize\tPrecision\tConcreteness\tConfidence");
 
@@ -399,78 +367,81 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 				adviceCol.size());
 		int pointcut_count = 0;
 
-		Map<AdviceElement, Map<Path, Double>> adviceElementToPatternConfidenceMap = new LinkedHashMap<AdviceElement, Map<Path, Double>>();
-
+		Element root = new Element(this.getClass().getSimpleName());
 		for (final AdviceElement advElem : adviceCol) {
 
-			final Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			Element adviceXMLElement = new Element(AdviceElement.class.getSimpleName());
+			adviceXMLElement.setAttribute("id", advElem.getHandleIdentifier());
 
-			final Map<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Path<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
 			graph.enableElementsAccordingTo(advElem, lMonitor);
 
-			AnalyzePointcut.executeNodeQuery(new SubProgressMonitor(lMonitor,
-					1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
+			AnalyzePointcutPlugin.executeNodeQuery(new SubProgressMonitor(
+					lMonitor, 1,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
 					workingMemory, patternToResultMap,
 					patternToEnabledElementMap,
 					"forward suggested execution nodes");
 
-			AnalyzePointcut.executeNodeQuery(new SubProgressMonitor(lMonitor,
-					1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
+			AnalyzePointcutPlugin.executeNodeQuery(new SubProgressMonitor(
+					lMonitor, 1,
+					SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
 					workingMemory, patternToResultMap,
 					patternToEnabledElementMap,
 					"backward suggested execution nodes");
 
-			AnalyzePointcut.executeArcQuery("forward suggested X arcs",
+			AnalyzePointcutPlugin.executeArcQuery("forward suggested X arcs",
 					Relation.CALLS, workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			AnalyzePointcut.executeArcQuery("backward suggested X arcs",
+			AnalyzePointcutPlugin.executeArcQuery("backward suggested X arcs",
 					Relation.CALLS, workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			AnalyzePointcut.executeArcQuery("forward suggested X arcs",
+			AnalyzePointcutPlugin.executeArcQuery("forward suggested X arcs",
 					Relation.GETS, workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			AnalyzePointcut.executeArcQuery("backward suggested X arcs",
+			AnalyzePointcutPlugin.executeArcQuery("backward suggested X arcs",
 					Relation.GETS, workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			AnalyzePointcut.executeArcQuery("forward suggested X arcs",
+			AnalyzePointcutPlugin.executeArcQuery("forward suggested X arcs",
 					Relation.SETS, workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			AnalyzePointcut.executeArcQuery("backward suggested X arcs",
+			AnalyzePointcutPlugin.executeArcQuery("backward suggested X arcs",
 					Relation.SETS, workingMemory, patternToResultMap,
 					patternToEnabledElementMap, new SubProgressMonitor(
 							lMonitor, 1,
 							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-			Map<Path, Double> patternToConfidenceMap = new LinkedHashMap<Path, Double>();
+			for (final Pattern pattern : patternToResultMap.keySet()) {
 
-			for (final Path pattern : patternToResultMap.keySet()) {
-				final double precision = AnalyzePointcut.calculatePrecision(
+				double precision = Pattern.calculatePrecision(
 						patternToEnabledElementMap.get(pattern),
 						patternToResultMap.get(pattern));
+				double concreteness = Pattern.calculateConcreteness(pattern);
+				double confidence = Pattern.calculateConfidence(precision,
+						concreteness);
 
-				final double concreteness = AnalyzePointcut
-						.calculateConcreteness(pattern);
-
-				double confidence = calculateConfidence(precision,
-						concreteness, WEIGHT_PRECISION);
-
-				patternToConfidenceMap.put(pattern, confidence);
+				Element patternXMLElement = pattern.getXML();
+				patternXMLElement.setAttribute("confidence", String
+						.valueOf(confidence));
+				adviceXMLElement.addContent(patternXMLElement);
 
 				patternOut.print(advElem.getJavaProject().getProject()
 						.getName()
@@ -484,45 +455,16 @@ public class AnalyzePointcut implements IWorkbenchWindowActionDelegate {
 				patternOut.print(confidence + "\t");
 				patternOut.println();
 			}
-			adviceElementToPatternConfidenceMap.put(advElem,
-					patternToConfidenceMap);
+			root.addContent(adviceXMLElement);
 			pointcut_count++;
 			lMonitor.worked(1);
 		}
-
-		savePatterns(adviceElementToPatternConfidenceMap);
+		
+		DocType type = new DocType(this.getClass().getSimpleName());
+		Document doc = new Document(root, type);
+		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
+		serializer.output(doc, System.out);
 		patternOut.close();
-	}
-
-	/**
-	 * @param adviceElementToPatternConfidenceMap
-	 * @throws IOException
-	 */
-	@SuppressWarnings("restriction")
-	private void savePatterns(
-			Map<AdviceElement, Map<Path, Double>> adviceElementToPatternConfidenceMap)
-			throws IOException {
-
-		for (AdviceElement advElem : adviceElementToPatternConfidenceMap
-				.keySet()) {
-			StringBuilder fileNameBuilder = new StringBuilder(advElem
-					.toDebugString());
-			fileNameBuilder.append(".rejuv-pc.dat");
-
-			AspectElement aspectElem = (AspectElement) advElem.getParent();
-			fileNameBuilder.insert(0, aspectElem.getPath().lastSegment() + "#");
-			fileNameBuilder.insert(0, '.');
-
-			IPath aspectPath = aspectElem.getPath().removeLastSegments(1);
-			fileNameBuilder.insert(0, aspectPath.toOSString() + File.separator);
-
-			File file = new File(WORKSPACE_LOC, fileNameBuilder.toString());
-
-			FileOutputStream fos = new FileOutputStream(file);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(adviceElementToPatternConfidenceMap.get(advElem));
-			oos.close();
-		}
 	}
 
 	@SuppressWarnings("unchecked")

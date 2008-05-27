@@ -20,6 +20,7 @@ import org.eclipse.ajdt.core.javaelements.AJCompilationUnitManager;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -54,10 +55,22 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class Util {
 
+	/**
+	 * Where to store benchmark results.
+	 */
+
+	public static final File WORKSPACE_LOC = ResourcesPlugin.getWorkspace()
+			.getRoot().getLocation().toFile();
+
 	public static void assertExpression(final boolean exp) {
 		if (exp == false)
 			throw new AssertionError("Failed assertion");
 	}
+	
+//	public static ObjectContainer getDatabaseConnection(File databaseFile) {
+//		ObjectContainer db = Db4o.openFile(databaseFile.getAbsolutePath());
+//		return db;
+//	}
 
 	public static IElement convertBinding(final ICategories category,
 			final String readableName) {
