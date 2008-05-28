@@ -569,6 +569,7 @@ public class JayFX {
 				final IJavaElement target = relationship.getTarget();
 				// IElement adviceElem = Util.convertBinding(ICategories.ADVICE,
 				// advice.getHandleIdentifier());
+				//TODO: Encapsulate this switch statement into a method.
 				switch (target.getElementType()) {
 					case IJavaElement.METHOD: {
 						final IMethod meth = (IMethod) target;

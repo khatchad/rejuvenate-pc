@@ -7,23 +7,36 @@ import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
+import org.drools.WorkingMemory;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
+import org.jdom.Element;
 
+import ca.mcgill.cs.swevo.jayfx.ConversionException;
+import ca.mcgill.cs.swevo.jayfx.model.IElement;
+
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 public class AnalyzePointcutPlugin extends PointcutPlugin {
@@ -32,20 +45,19 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 	@SuppressWarnings("unused")
 	private static PrintWriter getAdviceStatusWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
-				+ "advice.csv");
+		final File aFile = new File(PointcutPlugin.RESULT_PATH + "advice.csv");
 		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
 	}
 
 	private static PrintWriter getBenchmarkStatsWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
+		final File aFile = new File(PointcutPlugin.RESULT_PATH
 				+ "benchmarks.csv");
 		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
 	}
 
 	@SuppressWarnings("unused")
 	private static PrintWriter getSuggestionWriter() throws IOException {
-		final File aFile = new File(AnalyzePointcutPlugin.RESULT_PATH
+		final File aFile = new File(PointcutPlugin.RESULT_PATH
 				+ "suggestion.csv");
 		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
 	}
@@ -54,10 +66,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	 * The main method invoked when the plug-in is clicked.
 	 */
 	public void run(final IAction action) {
-		final IProgressMonitor lMonitor = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().getViewReferences()[0]
-				.getView(true).getViewSite().getActionBars()
-				.getStatusLineManager().getProgressMonitor();
+		final IProgressMonitor monitor = getProgressMonitor();
 
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
@@ -69,16 +78,16 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 					"For test runs, select *either* project or advice but not both.");
 
 		if (!selectedAdvice.isEmpty())
-			analyzeAdvice(lMonitor, selectedAdvice);
-		
+			analyzeAdvice(monitor, selectedAdvice);
+
 		else if (!selectedProjectCol.isEmpty()) {
 			PrintWriter benchmarkOut = generateBenchmarkStatsWriter();
-			
+
 			for (final IJavaProject proj : selectedProjectCol) {
 				final long start = System.currentTimeMillis();
-				
+
 				Collection<? extends AdviceElement> toAnalyze = analyzeAdviceInProject(
-						lMonitor, proj);
+						monitor, proj);
 
 				int numShadows = 0;
 				if (!toAnalyze.isEmpty())
@@ -92,7 +101,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			benchmarkOut.close();
 		}
 
-		lMonitor.done();
+		monitor.done();
 	}
 
 	/**
@@ -179,5 +188,47 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 						proj.getProject(),
 						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
 		return relationshipList.size();
+	}
+
+	/**
+	 * @param adviceCol
+	 * @param monitor
+	 * @param graph
+	 * @param workingMemory
+	 * @param patternOut
+	 * @throws ConversionException
+	 * @throws CoreException
+	 * @throws IOException
+	 */
+	protected void analyzeAdviceCollection(
+			final Collection<? extends AdviceElement> adviceCol,
+			final IProgressMonitor monitor,
+			final IntentionGraph<IntentionNode<IElement>> graph,
+			final WorkingMemory workingMemory, final PrintWriter patternOut)
+			throws ConversionException, CoreException, IOException {
+
+		monitor.beginTask("Enabling graph elements for each selected advice.",
+				adviceCol.size());
+
+		int pointcut_count = 0;
+		for (final AdviceElement advElem : adviceCol) {
+			Element adviceXMLElement = createAdviceXMLElement(advElem);
+
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+
+			buildPatternMaps(monitor, graph, workingMemory, advElem,
+					patternToResultMap, patternToEnabledElementMap);
+
+			for (final Pattern pattern : patternToResultMap.keySet()) {
+				calculatePatternStatistics(patternOut, pointcut_count, advElem,
+						adviceXMLElement, patternToResultMap,
+						patternToEnabledElementMap, pattern);
+			}
+
+			writeXMLFile(advElem, adviceXMLElement);
+			pointcut_count++;
+			monitor.worked(1);
+		}
 	}
 }
