@@ -20,8 +20,8 @@ public aspect TimeColletor {
 		call(CompilationUnit getCompilationUnit(ICompilationUnit)) ||
 		call(PrintWriter+ get*StatsWriter(..)) ||
 		call(* ASTParser+.createAST(..)) ||
-		call(* calculate*(..)) ||
-		call(* getTotalNumberOfShadows(..));
+		call(* getTotalNumberOfShadows(..)) ||
+		call(* org.jdom..*.*(..));
 	
 	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();
