@@ -151,10 +151,25 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		return ret.toString();
 	}
 	
-	public Element getXML() {
+	private Element getXML(boolean includeTarget) {
 		Element ret = new Element(this.getClass().getSimpleName());
 		ret.setAttribute("enabled", String.valueOf(this.isEnabled()));
-		ret.addContent(this.type.getXML());
+		Element typeXML = this.type.getXML();
+		if (includeTarget) {
+			Element target = new Element("targetNode");
+			target.addContent(this.getToNode().getXML());
+			typeXML.addContent(target);
+		}
+		ret.addContent(typeXML);
 		return ret;
+	}
+	
+	public Element getXML() {
+		return this.getXML(false);
+	}
+	
+
+	public Element getXMLWithTargetNode() {
+		return this.getXML(true);
 	}
 }

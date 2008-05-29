@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.aspectj.asm.IProgramElement;
 import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
 import org.drools.compiler.PackageBuilder;
@@ -19,6 +21,11 @@ import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
 import org.eclipse.ajdt.core.javaelements.AJCompilationUnitManager;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
+import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
+import org.eclipse.ajdt.core.model.AJModel;
+import org.eclipse.ajdt.core.model.AJRelationship;
+import org.eclipse.ajdt.core.model.AJRelationshipManager;
+import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +34,7 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -44,6 +52,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.search.SearchMatch;
 
+import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -360,5 +369,68 @@ public class Util {
 	}
 
 	private Util() {
+	}
+
+	/**
+	 * @param advElem
+	 * @return
+	 * @throws JavaModelException 
+	 */
+	public static Set<IJavaElement> getAdvisedJavaElements(AdviceElement advElem) throws JavaModelException {
+		Set<IJavaElement> ret = new LinkedHashSet<IJavaElement>();
+		List<AJRelationship> relationshipList = Util.getAdviceRelationshipList(advElem);
+		for (final AJRelationship relationship : relationshipList) {
+			final IJavaElement advice = relationship.getSource();
+			if (advice.equals(advElem)) {
+				final IJavaElement target = relationship.getTarget();
+				switch (target.getElementType()) {
+					case IJavaElement.METHOD: {
+						final IMethod meth = (IMethod) target;
+						if (meth.getParent() instanceof AspectElement)
+							break; //don't consider advice right now.
+						ret.add(meth);
+						break;
+					}
+					case IJavaElement.TYPE: {
+						// its a default ctor.
+						final IType type = (IType) target;
+						for (final IMethod meth : type.getMethods())
+							if (meth.isConstructor()
+									&& meth.getParameterNames().length == 0) {
+								ret.add(meth);
+							}
+						break;
+					}
+					case IJavaElement.LOCAL_VARIABLE: {
+						// its an aspect element.
+						if (!(target instanceof IAJCodeElement))
+							throw new IllegalStateException(
+									"Something is screwy here.");
+						ret.add(target);
+						break;
+					}
+					default:
+						throw new IllegalStateException(
+								"Unexpected relationship target type: "
+										+ target.getElementType());
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * @param advElem
+	 * @return
+	 */
+	public static List<AJRelationship> getAdviceRelationshipList(
+			final AdviceElement advElem) {
+		final IProject proj = advElem.getJavaProject().getProject();
+		final List<AJRelationship> relationshipList = AJModel
+				.getInstance()
+				.getAllRelationships(
+						proj,
+						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
+		return relationshipList;
 	}
 }

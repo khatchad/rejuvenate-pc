@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +24,7 @@ import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
@@ -114,8 +116,11 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		Collection<? extends AdviceElement> toAnalyze = null;
 		try {
 			toAnalyze = Util.extractValidAdviceElements(proj);
-			if (!toAnalyze.isEmpty())
-				this.analyze(toAnalyze, lMonitor);
+			if (!toAnalyze.isEmpty()) {
+				final IntentionGraph<IntentionNode<IElement>> graph = generateIntentionGraph(
+						toAnalyze, lMonitor);
+				this.analyze(toAnalyze, graph, lMonitor);
+			}
 		}
 		catch (final JavaModelException e) {
 			// TODO Auto-generated catch block
@@ -213,12 +218,16 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		int pointcut_count = 0;
 		for (final AdviceElement advElem : adviceCol) {
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
+			graph.enableElementsAccordingTo(advElem, monitor);
 
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>>();
+			//			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+
+			Set<IJavaElement> advisedJavaElements = Util
+					.getAdvisedJavaElements(advElem);
 
 			buildPatternMaps(monitor, graph, workingMemory, advElem,
-					patternToResultMap, patternToEnabledElementMap);
+					patternToResultMap);
 
 			for (final Pattern pattern : patternToResultMap.keySet()) {
 				calculatePatternStatistics(patternOut, pointcut_count, advElem,
