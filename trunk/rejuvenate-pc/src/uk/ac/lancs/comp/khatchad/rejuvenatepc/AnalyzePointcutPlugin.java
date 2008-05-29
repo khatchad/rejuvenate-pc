@@ -232,7 +232,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			for (final Pattern pattern : patternToResultMap.keySet()) {
 				calculatePatternStatistics(patternOut, pointcut_count, advElem,
 						adviceXMLElement, patternToResultMap,
-						patternToEnabledElementMap, pattern);
+						pattern);
 			}
 
 			writeXMLFile(advElem, adviceXMLElement);

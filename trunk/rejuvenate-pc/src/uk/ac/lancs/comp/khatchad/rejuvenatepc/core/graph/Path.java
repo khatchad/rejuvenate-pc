@@ -19,7 +19,8 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  * @author raffi
  * 
  */
-public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements Serializable {
+public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
+		Serializable {
 
 	public static class PathObjectFilter implements ObjectFilter {
 
@@ -46,8 +47,37 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 	}
 
 	public Pattern<IntentionEdge<IElement>> extractPattern(
-			final IntentionNode<IElement> commonNode, IntentionNode<IElement> enabledNode) {
-		
+			final IntentionNode<IElement> commonNode,
+			IntentionEdge<IElement> enabledEdge) {
+
+		final Pattern<IntentionEdge<IElement>> ret = new Pattern<IntentionEdge<IElement>>();
+		for (final IntentionEdge<IElement> edge : this)
+			if (edge.getFromNode().equals(commonNode)) {
+				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
+						edge.getFromNode(), IntentionNode.DISABLED_WILDCARD,
+						edge.getType(), edge.equals(enabledEdge));
+				ret.add(newEdge);
+			}
+			else if (edge.getToNode().equals(commonNode)) {
+				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
+						IntentionNode.DISABLED_WILDCARD, edge.getToNode(), edge
+								.getType(), edge.equals(enabledEdge));
+				ret.add(newEdge);
+			}
+			else {
+				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
+						IntentionNode.DISABLED_WILDCARD,
+						IntentionNode.DISABLED_WILDCARD, edge.getType(), edge
+								.equals(enabledEdge));
+				ret.add(newEdge);
+			}
+		return ret;
+	}
+
+	public Pattern<IntentionEdge<IElement>> extractPattern(
+			final IntentionNode<IElement> commonNode,
+			IntentionNode<IElement> enabledNode) {
+
 		final Pattern<IntentionEdge<IElement>> ret = new Pattern<IntentionEdge<IElement>>();
 		for (final IntentionEdge<IElement> edge : this)
 			if (edge.getFromNode().equals(commonNode)) {
@@ -202,7 +232,7 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 				return false;
 		return true;
 	}
-	
+
 	public Element getXML() {
 		Element root = new Element(this.getClass().getSimpleName());
 
@@ -222,15 +252,4 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 		return root;
 	}
 
-
-	/**
-	 * @param commonNode
-	 * @param enabledEdge
-	 * @return
-	 */
-	public Pattern extractPattern(IntentionNode commonNode,
-			IntentionElement enabledEdge) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

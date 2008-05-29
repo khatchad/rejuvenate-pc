@@ -22,7 +22,9 @@ import org.drools.QueryResult;
 import org.drools.QueryResults;
 import org.drools.RuleBase;
 import org.drools.WorkingMemory;
+import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -82,8 +84,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final String queryString,
 			final Relation relation,
 			final WorkingMemory workingMemory,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap,
 			final IProgressMonitor lMonitor) {
 
 		final QueryResults suggestedArcs = workingMemory.getQueryResults(
@@ -97,24 +98,20 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final IntentionEdge suggestedEdge = (IntentionEdge) result
 					.get("$suggestedEdge");
 
-			final IntentionElement enabledEdge = (IntentionElement) result
+			final IntentionEdge enabledEdge = (IntentionEdge) result
 					.get("$enabledEdge");
 
 			final Path enabledPath = (Path) result.get("$enabledPath");
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
-			final Pattern pattern = enabledPath.extractPattern(commonNode, enabledEdge);
+			final Pattern pattern = enabledPath.extractPattern(commonNode,
+					enabledEdge);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
-						new LinkedHashSet<IntentionElement<IElement>>());
-			patternToResultMap.get(pattern).add(suggestedEdge);
-
-			if (!patternToEnabledElementMap.containsKey(pattern))
-				patternToEnabledElementMap.put(pattern,
-						new LinkedHashSet<IntentionElement<IElement>>());
-			patternToEnabledElementMap.get(pattern).add(enabledEdge);
+						new LinkedHashSet<IJavaElement>());
+			//patternToResultMap.get(pattern).add(suggestedEdge);
 
 			lMonitor.worked(1);
 		}
@@ -150,12 +147,14 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
-			final Pattern pattern = enabledPath.extractPattern(commonNode, enabledNode);
+			final Pattern pattern = enabledPath.extractPattern(commonNode,
+					enabledNode);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
 						new LinkedHashSet<IJavaElement>());
-			patternToResultMap.get(pattern).add(suggestedNode.getElem().getJavaElement());
+			patternToResultMap.get(pattern).add(
+					suggestedNode.getElem().getJavaElement());
 
 			lMonitor.worked(1);
 		}
@@ -258,7 +257,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 		final WorkingMemory workingMemory = generateRulesBase(lMonitor, graph);
 		final PrintWriter patternOut = generatePatternStatsWriter();
-		
+
 		analyzeAdviceCollection(adviceCol, lMonitor, graph, workingMemory,
 				patternOut);
 
@@ -270,7 +269,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final IProgressMonitor lMonitor,
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final WorkingMemory workingMemory, final PrintWriter patternOut)
-			throws ConversionException, CoreException, IOException, JDOMException;
+			throws ConversionException, CoreException, IOException,
+			JDOMException;
 
 	/**
 	 * @param lMonitor
@@ -300,8 +300,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			int pointcut_count,
 			final AdviceElement advElem,
 			Element adviceXMLElement,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap,
 			final Pattern pattern) {
 
 		double precision = Pattern.calculatePrecision(
@@ -369,7 +368,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		xmlOut.close();
 	}
 
-	protected static Document readXMLFile(AdviceElement advElem) throws JDOMException, IOException {
+	protected static Document readXMLFile(AdviceElement advElem)
+			throws JDOMException, IOException {
 		String fileName = getXMLFileName(advElem);
 		File file = new File(fileName);
 		if (!(file.exists() && file.canRead()))
@@ -468,36 +468,36 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 		executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
 				SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				"backward suggested execution nodes");
 
 		executeArcQuery("forward suggested X arcs", Relation.CALLS,
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				new SubProgressMonitor(lMonitor, 1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 		executeArcQuery("backward suggested X arcs", Relation.CALLS,
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				new SubProgressMonitor(lMonitor, 1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 		executeArcQuery("forward suggested X arcs", Relation.GETS,
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				new SubProgressMonitor(lMonitor, 1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 		executeArcQuery("backward suggested X arcs", Relation.GETS,
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				new SubProgressMonitor(lMonitor, 1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 		executeArcQuery("forward suggested X arcs", Relation.SETS,
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				new SubProgressMonitor(lMonitor, 1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
 		executeArcQuery("backward suggested X arcs", Relation.SETS,
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				new SubProgressMonitor(lMonitor, 1,
 						SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 	}
