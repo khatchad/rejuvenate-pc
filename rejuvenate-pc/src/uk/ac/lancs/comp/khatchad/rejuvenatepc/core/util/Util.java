@@ -52,7 +52,6 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.search.SearchMatch;
 
-import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -406,6 +405,7 @@ public class Util {
 						if (!(target instanceof IAJCodeElement))
 							throw new IllegalStateException(
 									"Something is screwy here.");
+						System.out.println(target.getHandleIdentifier());
 						ret.add(target);
 						break;
 					}
@@ -423,6 +423,7 @@ public class Util {
 	 * @param advElem
 	 * @return
 	 */
+	@SuppressWarnings({ "restriction", "unchecked" })
 	public static List<AJRelationship> getAdviceRelationshipList(
 			final AdviceElement advElem) {
 		final IProject proj = advElem.getJavaProject().getProject();
