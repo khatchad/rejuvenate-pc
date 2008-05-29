@@ -8,6 +8,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
+import org.jdom.Element;
+
 /**
  * @author raffi
  * 
@@ -66,4 +68,9 @@ public abstract class IntentionElement<E> implements Serializable {
 	public String toString() {
 		return this.enabled ? "*" : "";
 	}
+
+	/**
+	 * @return
+	 */
+	public abstract Element getXML();
 }

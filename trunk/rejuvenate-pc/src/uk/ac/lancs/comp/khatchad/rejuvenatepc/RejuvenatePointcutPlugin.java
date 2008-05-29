@@ -21,7 +21,10 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
@@ -46,48 +49,6 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			analyzeAdvice(monitor, selectedAdvice);
 	}
 
-	/**
-	 * @param adviceCol
-	 * @param lMonitor
-	 * @param graph
-	 * @param workingMemory
-	 * @param patternOut
-	 * @throws ConversionException
-	 * @throws CoreException
-	 * @throws IOException
-	 */
-	protected void analyzeAdviceCollection2(
-			final Collection<? extends AdviceElement> adviceCol,
-			final IProgressMonitor lMonitor,
-			final IntentionGraph<IntentionNode<IElement>> graph,
-			final WorkingMemory workingMemory, final PrintWriter patternOut)
-			throws ConversionException, CoreException, IOException {
-
-		lMonitor.beginTask("Enabling graph elements for each selected advice.",
-				adviceCol.size());
-
-		int pointcut_count = 0;
-		for (final AdviceElement advElem : adviceCol) {
-			Element adviceXMLElement = createAdviceXMLElement(advElem);
-
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-
-			buildPatternMaps(lMonitor, graph, workingMemory, advElem,
-					patternToResultMap, patternToEnabledElementMap);
-
-			for (final Pattern pattern : patternToResultMap.keySet()) {
-				calculatePatternStatistics(patternOut, pointcut_count, advElem,
-						adviceXMLElement, patternToResultMap,
-						patternToEnabledElementMap, pattern);
-			}
-
-			writeXMLFile(advElem, adviceXMLElement);
-			pointcut_count++;
-			lMonitor.worked(1);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#analyzeAdviceCollection(java.util.Collection, org.eclipse.core.runtime.IProgressMonitor, uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph, org.drools.WorkingMemory, java.io.PrintWriter)
 	 */
@@ -97,7 +58,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			IProgressMonitor monitor,
 			IntentionGraph<IntentionNode<IElement>> graph,
 			WorkingMemory workingMemory, PrintWriter patternOut)
-			throws ConversionException, CoreException, IOException {
+			throws ConversionException, CoreException, IOException, JDOMException {
 
 		monitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
@@ -105,14 +66,20 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 		for (final AdviceElement advElem : adviceCol) {
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			
+			//retrieve analysis information.
+			Document document = readXMLFile(advElem);
+			System.out.println(document);
 
-			buildPatternMaps(monitor, graph, workingMemory, advElem,
-					patternToResultMap, patternToEnabledElementMap);
+//			graph.enableElementsAccordingTo(advElem, monitor);
+//			
+//			buildPatternMaps(monitor, graph, workingMemory, advElem,
+//					patternToResultMap, patternToEnabledElementMap);
 			
 			//TODO: Intersect patterns.
 
 			//TODO: Need to make suggestions.
-			SortedMap<IJavaElement, Double> suggestions = null;// obtainSuggestions()
+//			SortedMap<IJavaElement, Double> suggestions = null;// obtainSuggestions()
 
 			monitor.worked(1);
 		}

@@ -19,10 +19,7 @@ import java.util.Set;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
-import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJRelationship;
-import org.eclipse.ajdt.core.model.AJRelationshipManager;
-import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -46,6 +43,9 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 
+import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
+
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
 import ca.mcgill.cs.swevo.jayfx.model.ICategories;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -58,10 +58,6 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * in the input project and dependent projects.
  */
 public class JayFX {
-	private enum JoinpointType {
-		FIELD_GET, FIELD_SET, CONSTRUCTOR_CALL, METHOD_CALL, EXCEPTION_HANDLER;
-	}
-
 	private static final String INIT_STRING = ".<init>";
 
 	/**
@@ -221,12 +217,7 @@ public class JayFX {
 
 		this.resetAllElements(new SubProgressMonitor(monitor, 1));
 
-		final IProject proj = advElem.getJavaProject().getProject();
-		final List<AJRelationship> relationshipList = AJModel
-				.getInstance()
-				.getAllRelationships(
-						proj,
-						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
+		final List<AJRelationship> relationshipList = Util.getAdviceRelationshipList(advElem);
 
 		this.enableElementsAccordingTo(advElem, new SubProgressMonitor(monitor,
 				1), relationshipList);

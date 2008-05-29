@@ -46,31 +46,32 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 	}
 
 	public Pattern<IntentionEdge<IElement>> extractPattern(
-			final IntentionNode<IElement> commonNode) {
+			final IntentionNode<IElement> commonNode, IntentionNode<IElement> enabledNode) {
+		
 		final Pattern<IntentionEdge<IElement>> ret = new Pattern<IntentionEdge<IElement>>();
 		for (final IntentionEdge<IElement> edge : this)
 			if (edge.getFromNode().equals(commonNode)) {
 				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
 						edge.getFromNode(),
-						edge.getToNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+						edge.getToNode().equals(enabledNode) ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD, edge
-								.getType(), edge.isEnabled());
+								.getType(), false);
 				ret.add(newEdge);
 			}
 			else if (edge.getToNode().equals(commonNode)) {
 				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
-						edge.getFromNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+						edge.getFromNode().equals(enabledNode) ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD, edge
-								.getToNode(), edge.getType(), edge.isEnabled());
+								.getToNode(), edge.getType(), false);
 				ret.add(newEdge);
 			}
 			else {
 				final IntentionEdge<IElement> newEdge = new IntentionEdge<IElement>(
-						edge.getFromNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+						edge.getFromNode().equals(enabledNode) ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD,
-						edge.getToNode().isEnabled() ? IntentionNode.ENABLED_WILDCARD
+						edge.getToNode().equals(enabledNode) ? IntentionNode.ENABLED_WILDCARD
 								: IntentionNode.DISABLED_WILDCARD, edge
-								.getType(), edge.isEnabled());
+								.getType(), false);
 				ret.add(newEdge);
 			}
 		return ret;
@@ -219,5 +220,17 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 		}
 
 		return root;
+	}
+
+
+	/**
+	 * @param commonNode
+	 * @param enabledEdge
+	 * @return
+	 */
+	public Pattern extractPattern(IntentionNode commonNode,
+			IntentionElement enabledEdge) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

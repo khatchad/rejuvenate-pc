@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
@@ -39,6 +40,8 @@ import org.eclipse.ui.PlatformUI;
 import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -101,7 +104,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
-			final Pattern pattern = enabledPath.extractPattern(commonNode);
+			final Pattern pattern = enabledPath.extractPattern(commonNode, enabledEdge);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
@@ -128,8 +131,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	private static void executeNodeQuery(
 			final IProgressMonitor lMonitor,
 			final WorkingMemory workingMemory,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap,
 			final String queryString) {
 
 		final QueryResults suggestedNodes = workingMemory
@@ -148,17 +150,12 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
-			final Pattern pattern = enabledPath.extractPattern(commonNode);
+			final Pattern pattern = enabledPath.extractPattern(commonNode, enabledNode);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
-						new LinkedHashSet<IntentionElement<IElement>>());
-			patternToResultMap.get(pattern).add(suggestedNode);
-
-			if (!patternToEnabledElementMap.containsKey(pattern))
-				patternToEnabledElementMap.put(pattern,
-						new LinkedHashSet<IntentionElement<IElement>>());
-			patternToEnabledElementMap.get(pattern).add(enabledNode);
+						new LinkedHashSet<IJavaElement>());
+			patternToResultMap.get(pattern).add(suggestedNode.getElem().getJavaElement());
 
 			lMonitor.worked(1);
 		}
@@ -183,14 +180,22 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	@SuppressWarnings("restriction")
 	private static PrintWriter getXMLFileWriter(AdviceElement advElem)
 			throws IOException {
+		String fileName = getXMLFileName(advElem);
+
+		final File aFile = new File(Util.WORKSPACE_LOC, fileName.toString());
+		return AnalyzePointcutPlugin.getPrintWriter(aFile, false);
+	}
+
+	/**
+	 * @param advElem
+	 * @return
+	 */
+	private static String getXMLFileName(AdviceElement advElem) {
 		StringBuilder fileNameBuilder = new StringBuilder(advElem.getPath()
 				.toOSString());
 		fileNameBuilder.append("#" + advElem.toDebugString());
 		fileNameBuilder.append(".rejuv-pc.xml");
-
-		final File aFile = new File(Util.WORKSPACE_LOC, fileNameBuilder
-				.toString());
-		return AnalyzePointcutPlugin.getPrintWriter(aFile, false);
+		return fileNameBuilder.toString();
 	}
 
 	/**
@@ -228,7 +233,9 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	protected void analyzeAdvice(final IProgressMonitor lMonitor,
 			final Collection<AdviceElement> selectedAdvice) {
 		try {
-			this.analyze(selectedAdvice, lMonitor);
+			final IntentionGraph<IntentionNode<IElement>> graph = generateIntentionGraph(
+					selectedAdvice, lMonitor);
+			this.analyze(selectedAdvice, graph, lMonitor);
 		}
 		catch (final Exception e) {
 			// TODO Auto-generated catch block
@@ -246,14 +253,12 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 	@SuppressWarnings( { "unchecked", "restriction" })
 	protected void analyze(final Collection<? extends AdviceElement> adviceCol,
+			IntentionGraph<IntentionNode<IElement>> graph,
 			final IProgressMonitor lMonitor) throws Exception {
-		final IntentionGraph<IntentionNode<IElement>> graph = generateIntentionGraph(
-				adviceCol, lMonitor);
 
 		final WorkingMemory workingMemory = generateRulesBase(lMonitor, graph);
-
 		final PrintWriter patternOut = generatePatternStatsWriter();
-
+		
 		analyzeAdviceCollection(adviceCol, lMonitor, graph, workingMemory,
 				patternOut);
 
@@ -265,7 +270,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final IProgressMonitor lMonitor,
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final WorkingMemory workingMemory, final PrintWriter patternOut)
-			throws ConversionException, CoreException, IOException;
+			throws ConversionException, CoreException, IOException, JDOMException;
 
 	/**
 	 * @param lMonitor
@@ -298,6 +303,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			final Pattern pattern) {
+
 		double precision = Pattern.calculatePrecision(
 				patternToEnabledElementMap.get(pattern), patternToResultMap
 						.get(pattern));
@@ -305,10 +311,40 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		double confidence = Pattern
 				.calculateConfidence(precision, concreteness);
 
-		registerPatternXMLElement(adviceXMLElement, pattern, confidence);
+		Element patternXMLElement = getPatternXMLElement(pattern, confidence);
+
+		//enabled elements.
+		Element enabledElementsXMLElement = getXML(patternToEnabledElementMap
+				.get(pattern), "enabledElements");
+		patternXMLElement.addContent(enabledElementsXMLElement);
+
+		//suggestions.
+		Element suggestedElementsXML = getXML(patternToResultMap.get(pattern),
+				"suggestedElements");
+		patternXMLElement.addContent(suggestedElementsXML);
+
+		adviceXMLElement.addContent(patternXMLElement);
 
 		printPatternResults(patternOut, pointcut_count, advElem, pattern,
 				precision, concreteness, confidence);
+	}
+
+	/**
+	 * @param patternToEnabledElementMap
+	 * @param pattern
+	 * @return
+	 */
+	private Element getXML(final Set<IntentionElement<IElement>> set,
+			String elementName) {
+		Element ret = new Element(elementName);
+		for (IntentionElement<IElement> enabledElement : set) {
+			if (enabledElement instanceof IntentionEdge)
+				ret.addContent(((IntentionEdge) enabledElement)
+						.getXMLWithTargetNode());
+			else
+				ret.addContent(enabledElement.getXML());
+		}
+		return ret;
 	}
 
 	/**
@@ -331,6 +367,24 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		PrintWriter xmlOut = getXMLFileWriter(advElem);
 		serializer.output(doc, xmlOut);
 		xmlOut.close();
+	}
+
+	protected static Document readXMLFile(AdviceElement advElem) throws JDOMException, IOException {
+		String fileName = getXMLFileName(advElem);
+		File file = new File(fileName);
+		if (!(file.exists() && file.canRead()))
+			throw new IllegalArgumentException(
+					"The the analysis information for advice element "
+							+ advElem.getElementName()
+							+ " does not exist or can't be read. Try running the AnalyzePointcut plug-in first.");
+		return readXMLFile(file);
+	}
+
+	protected static Document readXMLFile(File file) throws JDOMException,
+			IOException {
+		SAXBuilder parser = new SAXBuilder();
+		Document ret = parser.build(file);
+		return ret;
 	}
 
 	/**
@@ -358,24 +412,19 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		patternOut.println();
 	}
 
-	/**
-	 * @param adviceXMLElement
-	 * @param pattern
-	 * @param confidence
-	 */
-	private void registerPatternXMLElement(Element adviceXMLElement,
-			final Pattern pattern, double confidence) {
+	private Element getPatternXMLElement(final Pattern pattern,
+			double confidence) {
 		Element patternXMLElement = pattern.getXML();
 		patternXMLElement
 				.setAttribute("confidence", String.valueOf(confidence));
-		adviceXMLElement.addContent(patternXMLElement);
+		return patternXMLElement;
 	}
 
 	/**
 	 * @param advElem
 	 * @return
 	 */
-	protected Element createAdviceXMLElement(final AdviceElement advElem) {
+	protected static Element createAdviceXMLElement(final AdviceElement advElem) {
 		Element adviceXMLElement = new Element(AdviceElement.class
 				.getSimpleName());
 		adviceXMLElement.setAttribute("id", advElem.getHandleIdentifier());
@@ -397,12 +446,9 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final WorkingMemory workingMemory,
 			final AdviceElement advElem,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap)
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap)
 			throws ConversionException, CoreException {
-		graph.enableElementsAccordingTo(advElem, lMonitor);
-		executeQueries(lMonitor, workingMemory, patternToResultMap,
-				patternToEnabledElementMap);
+		executeQueries(lMonitor, workingMemory, patternToResultMap);
 	}
 
 	/**
@@ -414,11 +460,10 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	private void executeQueries(
 			final IProgressMonitor lMonitor,
 			final WorkingMemory workingMemory,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap) {
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap) {
 		executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
 				SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
-				workingMemory, patternToResultMap, patternToEnabledElementMap,
+				workingMemory, patternToResultMap,
 				"forward suggested execution nodes");
 
 		executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
@@ -512,7 +557,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @throws JavaModelException
 	 * @throws Exception
 	 */
-	private IntentionGraph<IntentionNode<IElement>> generateIntentionGraph(
+	protected IntentionGraph<IntentionNode<IElement>> generateIntentionGraph(
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor lMonitor) throws JayFXException,
 			ConversionException, JavaModelException, Exception {
