@@ -7,7 +7,11 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaModelException;
 import org.jdom.Element;
+
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
@@ -39,10 +43,10 @@ public class Pattern<E extends IntentionEdge<IElement>> extends Path<E> {
 	}
 
 	public static double calculatePrecision(
-			final Set<IntentionElement<IElement>> searchedFor,
-			final Set<IntentionElement<IElement>> found) {
+			final AdviceElement searchedFor,
+			final Set<IJavaElement> found) throws JavaModelException {
 		final int totalElements = found.size();
-		final int lookingFor = searchedFor.size();
+		final int lookingFor = Util.getAdvisedJavaElements(searchedFor).size();
 		return (double) lookingFor / totalElements;
 	}
 
