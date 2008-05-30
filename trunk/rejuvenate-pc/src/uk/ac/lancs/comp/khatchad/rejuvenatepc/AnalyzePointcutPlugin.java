@@ -221,7 +221,6 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			graph.enableElementsAccordingTo(advElem, monitor);
 
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>>();
-			//			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
 			Set<IJavaElement> advisedJavaElements = Util
 					.getAdvisedJavaElements(advElem);

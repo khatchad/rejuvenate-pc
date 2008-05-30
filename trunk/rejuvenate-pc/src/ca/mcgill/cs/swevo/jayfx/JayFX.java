@@ -558,21 +558,9 @@ public class JayFX {
 
 			if (advice.equals(advElem)) {
 				final IJavaElement target = relationship.getTarget();
-				// IElement adviceElem = Util.convertBinding(ICategories.ADVICE,
-				// advice.getHandleIdentifier());
-				//TODO: Encapsulate this switch statement into a method.
 				switch (target.getElementType()) {
 					case IJavaElement.METHOD: {
 						final IMethod meth = (IMethod) target;
-						// try {
-						// this.aDB.addElement(adviceElem, advice.getFlags());
-						// } catch (JavaModelException e) {
-						// // TODO Auto-generated catch block
-						// e.printStackTrace();
-						// }
-
-						// this.aDB.addRelation(adviceElem, Relation.ADVISES,
-						// this.convertToElement(meth));
 						if (meth.getParent() instanceof AspectElement)
 							break;
 

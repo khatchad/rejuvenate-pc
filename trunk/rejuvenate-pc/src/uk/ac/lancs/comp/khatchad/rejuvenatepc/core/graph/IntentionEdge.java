@@ -3,6 +3,12 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
+import java.util.Set;
+
+import org.eclipse.ajdt.core.AspectJCore;
+import org.eclipse.ajdt.core.model.AJModel;
+import org.eclipse.ajdt.core.model.AJProjectModel;
+import org.eclipse.jdt.core.IJavaElement;
 import org.jdom.Element;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -171,5 +177,15 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 
 	public Element getXMLWithTargetNode() {
 		return this.getXML(true);
+	}
+	
+	/**
+	 * Returns the AJCodeElements corresponding to this edge.
+	 * @return The AJCodeElements corresponding to this edge.
+	 */
+
+	public Set<IJavaElement> getJavaElement() {
+		// Need to *somehow* get AJCodeElements here. Perhaps use search engine?
+		return null;
 	}
 }

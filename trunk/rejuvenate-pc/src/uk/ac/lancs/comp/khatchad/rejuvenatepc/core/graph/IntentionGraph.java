@@ -43,7 +43,8 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 				node = this.nodeMap.get(elem);
 			else {
 				// make a node for this element.
-				//				IJavaElement jElem = this.database.convertToJavaElement(elem);
+				// IJavaElement jElem =
+				// this.database.convertToJavaElement(elem);
 				node = new IntentionNode<IElement>(elem);
 				this.nodeMap.put(elem, node);
 			}
@@ -73,8 +74,8 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 	 * @return
 	 */
 	public Set<IntentionNode<IElement>> commenceDFS() {
-		//		for ( IntentionNode<IElement> node : white )
-		//			node.dfs();
+		// for ( IntentionNode<IElement> node : white )
+		// node.dfs();
 		return null;
 	}
 
@@ -84,38 +85,6 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 		this.database.enableElementsAccordingTo(advElem,
 				new SubProgressMonitor(monitor, 1));
 		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, 1));
-
-		/*
-			IProject proj = this.database.getSelectedAdvice().getJavaProject().getProject();
-			List<AJRelationship> relationshipList = AJModel.getInstance().getAllRelationships(proj, new AJRelationshipType[] {AJRelationshipManager.ADVISES});
-			for (AJRelationship relationship : relationshipList ) {
-				org.eclipse.ajdt.core.javaelements.AdviceElement advice = (org.eclipse.ajdt.core.javaelements.AdviceElement)relationship.getSource();
-				if ( advice.equals(this.database.getSelectedAdvice()) ) {
-					IJavaElement target = relationship.getTarget();
-					switch(target.getElementType()) {
-					case IJavaElement.METHOD: {
-						IMethod meth = (IMethod)target;
-						IElement adviceElem = Util.convertBinding(ICategories.ADVICE, advice.getHandleIdentifier());
-		//    				try {
-		//    					this.database.addElement(adviceElem, advice.getFlags());
-		//    				} catch (JavaModelException e) {
-		//    					// TODO Auto-generated catch block
-		//    					e.printStackTrace();
-		//    				}
-		//    				
-		//    				this.aDB.addRelation(adviceElem, Relation.ADVISES, aCurrMethod);
-						break;
-					}
-					case IJavaElement.LOCAL_VARIABLE: {
-						//its an aspect element.
-						break;
-					}
-					default:
-						throw new IllegalStateException("Unexpected relationship target type: " + target.getElementType());
-					}
-				}
-			}
-		*/
 	}
 
 	/**
@@ -200,20 +169,18 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 	/**
 	 * @param database
 	 * @param elem
-	 * @param node
+	 * @param fromNode
 	 * @throws Exception
 	 */
 	private void makeEdges(final IElement elem,
-			final IntentionNode<IElement> node, final Relation relation)
+			final IntentionNode<IElement> fromNode, final Relation relation)
 			throws Exception {
 		for (final IElement toElement : this.database.getRange(elem, relation)) {
 			final IntentionNode<IElement> toNode = this.getNode(toElement);
 			final IntentionEdge<IElement> edge = new IntentionEdge<IElement>(
-					node, toNode, relation, toNode
+					fromNode, toNode, relation, toNode
 							.hasEnabledEdgesForIncommingRelation(relation));
-			//			if (relation.equals(Relation.ADVISES))
-			//				toNode.enable();
-			node.addEdge(edge);
+			fromNode.addEdge(edge);
 		}
 	}
 

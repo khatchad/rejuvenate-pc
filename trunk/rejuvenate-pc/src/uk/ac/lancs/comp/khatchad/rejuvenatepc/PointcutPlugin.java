@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.jdom.Attribute;
 import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -111,7 +112,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
 						new LinkedHashSet<IJavaElement>());
-			//patternToResultMap.get(pattern).add(suggestedEdge);
+			//TODO: Need to make Edge to IJavaElement conversion.
+			patternToResultMap.get(pattern).addAll(suggestedEdge.getJavaElement());
 
 			lMonitor.worked(1);
 		}
@@ -294,6 +296,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @param patternToResultMap
 	 * @param patternToEnabledElementMap
 	 * @param pattern
+	 * @throws JavaModelException 
 	 */
 	protected void calculatePatternStatistics(
 			final PrintWriter patternOut,
@@ -301,10 +304,10 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final AdviceElement advElem,
 			Element adviceXMLElement,
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap,
-			final Pattern pattern) {
+			final Pattern pattern) throws JavaModelException {
 
 		double precision = Pattern.calculatePrecision(
-				patternToEnabledElementMap.get(pattern), patternToResultMap
+				advElem, patternToResultMap
 						.get(pattern));
 		double concreteness = Pattern.calculateConcreteness(pattern);
 		double confidence = Pattern
@@ -313,8 +316,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		Element patternXMLElement = getPatternXMLElement(pattern, confidence);
 
 		//enabled elements.
-		Element enabledElementsXMLElement = getXML(patternToEnabledElementMap
-				.get(pattern), "enabledElements");
+		Element enabledElementsXMLElement = getXML(Util.getAdvisedJavaElements(advElem)
+				, "enabledElements");
 		patternXMLElement.addContent(enabledElementsXMLElement);
 
 		//suggestions.
@@ -333,15 +336,15 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @param pattern
 	 * @return
 	 */
-	private Element getXML(final Set<IntentionElement<IElement>> set,
+	private Element getXML(final Set<IJavaElement> set,
 			String elementName) {
 		Element ret = new Element(elementName);
-		for (IntentionElement<IElement> enabledElement : set) {
-			if (enabledElement instanceof IntentionEdge)
-				ret.addContent(((IntentionEdge) enabledElement)
-						.getXMLWithTargetNode());
-			else
-				ret.addContent(enabledElement.getXML());
+		for (IJavaElement element: set) {
+			Element javaElementXML = new Element(element.getClass().getSimpleName());
+			javaElementXML.setAttribute(new Attribute("id", element.getHandleIdentifier()));
+			javaElementXML.setAttribute(new Attribute("name", element.getElementName()));
+			javaElementXML.setAttribute(new Attribute("type", String.valueOf(element.getElementType())));
+			ret.addContent(javaElementXML);
 		}
 		return ret;
 	}
