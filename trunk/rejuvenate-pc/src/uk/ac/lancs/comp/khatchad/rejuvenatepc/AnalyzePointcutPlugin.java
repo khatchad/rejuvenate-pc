@@ -24,7 +24,6 @@ import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
@@ -117,9 +116,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		try {
 			toAnalyze = Util.extractValidAdviceElements(proj);
 			if (!toAnalyze.isEmpty()) {
-				final IntentionGraph<IntentionNode<IElement>> graph = generateIntentionGraph(
-						toAnalyze, lMonitor);
-				this.analyze(toAnalyze, graph, lMonitor);
+				this.analyze(toAnalyze, lMonitor);
 			}
 		}
 		catch (final JavaModelException e) {
@@ -218,20 +215,17 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		int pointcut_count = 0;
 		for (final AdviceElement advElem : adviceCol) {
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
-			graph.enableElementsAccordingTo(advElem, monitor);
 
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IJavaElement>>();
-
-			Set<IJavaElement> advisedJavaElements = Util
-					.getAdvisedJavaElements(advElem);
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
 			buildPatternMaps(monitor, graph, workingMemory, advElem,
-					patternToResultMap);
+					patternToResultMap, patternToEnabledElementMap);
 
 			for (final Pattern pattern : patternToResultMap.keySet()) {
 				calculatePatternStatistics(patternOut, pointcut_count, advElem,
 						adviceXMLElement, patternToResultMap,
-						pattern);
+						patternToEnabledElementMap, pattern);
 			}
 
 			writeXMLFile(advElem, adviceXMLElement);

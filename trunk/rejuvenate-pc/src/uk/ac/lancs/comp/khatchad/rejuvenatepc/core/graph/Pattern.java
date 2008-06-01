@@ -43,10 +43,10 @@ public class Pattern<E extends IntentionEdge<IElement>> extends Path<E> {
 	}
 
 	public static double calculatePrecision(
-			final AdviceElement searchedFor,
-			final Set<IJavaElement> found) throws JavaModelException {
+			final Set<IntentionElement<IElement>> searchedFor,
+			final Set<IntentionElement<IElement>> found) {
 		final int totalElements = found.size();
-		final int lookingFor = Util.getAdvisedJavaElements(searchedFor).size();
+		final int lookingFor = searchedFor.size();
 		return (double) lookingFor / totalElements;
 	}
 

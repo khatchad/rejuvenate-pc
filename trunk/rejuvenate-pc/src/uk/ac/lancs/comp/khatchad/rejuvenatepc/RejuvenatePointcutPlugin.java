@@ -58,7 +58,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			IProgressMonitor monitor,
 			IntentionGraph<IntentionNode<IElement>> graph,
 			WorkingMemory workingMemory, PrintWriter patternOut)
-			throws ConversionException, CoreException, IOException, JDOMException {
+			throws ConversionException, CoreException, IOException {
 
 		monitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
@@ -68,7 +68,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 			
 			//retrieve analysis information.
-			Document document = readXMLFile(advElem);
+			Document document = null; //readXMLFile(advElem);
 			System.out.println(document);
 
 //			graph.enableElementsAccordingTo(advElem, monitor);
