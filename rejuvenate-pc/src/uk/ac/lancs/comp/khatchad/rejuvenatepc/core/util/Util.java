@@ -51,6 +51,8 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.search.SearchMatch;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
@@ -74,11 +76,11 @@ public class Util {
 		if (exp == false)
 			throw new AssertionError("Failed assertion");
 	}
-	
-//	public static ObjectContainer getDatabaseConnection(File databaseFile) {
-//		ObjectContainer db = Db4o.openFile(databaseFile.getAbsolutePath());
-//		return db;
-//	}
+
+	//	public static ObjectContainer getDatabaseConnection(File databaseFile) {
+	//		ObjectContainer db = Db4o.openFile(databaseFile.getAbsolutePath());
+	//		return db;
+	//	}
 
 	public static IElement convertBinding(final ICategories category,
 			final String readableName) {
@@ -373,11 +375,13 @@ public class Util {
 	/**
 	 * @param advElem
 	 * @return
-	 * @throws JavaModelException 
+	 * @throws JavaModelException
 	 */
-	public static Set<IJavaElement> getAdvisedJavaElements(AdviceElement advElem) throws JavaModelException {
+	public static Set<IJavaElement> getAdvisedJavaElements(AdviceElement advElem)
+			throws JavaModelException {
 		Set<IJavaElement> ret = new LinkedHashSet<IJavaElement>();
-		List<AJRelationship> relationshipList = Util.getAdviceRelationshipList(advElem);
+		List<AJRelationship> relationshipList = Util
+				.getAdviceRelationshipList(advElem);
 		for (final AJRelationship relationship : relationshipList) {
 			final IJavaElement advice = relationship.getSource();
 			if (advice.equals(advElem)) {
@@ -423,7 +427,7 @@ public class Util {
 	 * @param advElem
 	 * @return
 	 */
-	@SuppressWarnings({ "restriction", "unchecked" })
+	@SuppressWarnings( { "restriction", "unchecked" })
 	public static List<AJRelationship> getAdviceRelationshipList(
 			final AdviceElement advElem) {
 		final IProject proj = advElem.getJavaProject().getProject();
@@ -433,5 +437,17 @@ public class Util {
 						proj,
 						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
 		return relationshipList;
+	}
+
+	/**
+	 * @param elem
+	 * @return
+	 */
+	public static Element getXML(IJavaElement elem) {
+		Element ret = new Element(elem.getClass().getSimpleName());
+		ret.setAttribute(new Attribute("id", elem.getHandleIdentifier()));
+		ret.setAttribute(new Attribute("name", elem.getElementName()));
+		ret.setAttribute(new Attribute("type", String.valueOf(elem.getElementType())));	
+		return ret;
 	}
 }
