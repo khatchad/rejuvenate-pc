@@ -57,7 +57,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			Collection<? extends AdviceElement> adviceCol,
 			IProgressMonitor monitor,
 			IntentionGraph<IntentionNode<IElement>> graph,
-			WorkingMemory workingMemory, PrintWriter patternOut)
+			WorkingMemory workingMemory)
 			throws ConversionException, CoreException, IOException {
 
 		monitor.beginTask("Enabling graph elements for each selected advice.",

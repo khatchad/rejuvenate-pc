@@ -73,4 +73,9 @@ public abstract class IntentionElement<E> implements Serializable {
 	 * @return
 	 */
 	public abstract Element getXML();
+
+	/**
+	 * @return
+	 */
+	public abstract String getLongDescription();
 }

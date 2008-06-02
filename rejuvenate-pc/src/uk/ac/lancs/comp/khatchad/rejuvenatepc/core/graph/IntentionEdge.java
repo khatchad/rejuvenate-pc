@@ -170,6 +170,15 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		return ret;
 	}
 	
+	@Override
+	public String getLongDescription() {
+		StringBuilder ret = new StringBuilder();
+		ret.append(super.toString());
+		ret.append(this.type.toString() + ": ");
+		ret.append(this.getToNode().getLongDescription());
+		return null;
+	}
+
 	public Element getXML() {
 		return this.getXML(false);
 	}

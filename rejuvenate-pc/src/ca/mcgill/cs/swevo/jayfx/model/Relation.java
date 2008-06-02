@@ -20,7 +20,7 @@ import org.jdom.Element;
  * Encapsulate various services related to relations.
  */
 public enum Relation {
-
+	
 	EXPLICITLY_CALLS(Type.ID_EXPLICITLY_CALLS, true), ANNOTATES(
 			Type.ID_ANNOTATES, true), CONTAINS(Type.ID_CONTAINS, true), CHECKS(
 			Type.ID_CHECKS, true), CREATES(Type.ID_CREATES, true), DECLARES_METHOD(
@@ -450,4 +450,5 @@ public enum Relation {
 		ret.setAttribute("type", this.toString());
 		return ret;
 	}
+
 }
