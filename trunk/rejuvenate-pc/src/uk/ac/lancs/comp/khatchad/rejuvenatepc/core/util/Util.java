@@ -54,6 +54,7 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -446,7 +447,8 @@ public class Util {
 		Element ret = new Element(elem.getClass().getSimpleName());
 		ret.setAttribute(new Attribute("id", elem.getHandleIdentifier()));
 		ret.setAttribute(new Attribute("name", elem.getElementName()));
-		ret.setAttribute(new Attribute("type", String.valueOf(elem.getElementType())));	
+		ret.setAttribute(new Attribute("type", String.valueOf(elem
+				.getElementType())));
 		return ret;
 	}
 
@@ -461,16 +463,26 @@ public class Util {
 	}
 
 	@SuppressWarnings("restriction")
-	public
-	static PrintWriter getXMLFileWriter(AdviceElement advElem)
+	public static PrintWriter getXMLFileWriter(AdviceElement advElem)
 			throws IOException {
 		StringBuilder fileNameBuilder = new StringBuilder(advElem.getPath()
 				.toOSString());
 		fileNameBuilder.append("#" + advElem.toDebugString());
 		fileNameBuilder.append(".rejuv-pc.xml");
-	
-		final File aFile = new File(WORKSPACE_LOC, fileNameBuilder
-				.toString());
+
+		final File aFile = new File(WORKSPACE_LOC, fileNameBuilder.toString());
 		return getPrintWriter(aFile, false);
+	}
+
+	/**
+	 * @param values
+	 * @return
+	 */
+	public static <E> Collection<E> flattenCollection(Collection<? extends Collection<E>> values) {
+		Collection<E> ret = new LinkedHashSet<E>();
+		for (Collection<E> col : values)
+			for (E e : col)
+				ret.add(e);
+		return ret;
 	}
 }
