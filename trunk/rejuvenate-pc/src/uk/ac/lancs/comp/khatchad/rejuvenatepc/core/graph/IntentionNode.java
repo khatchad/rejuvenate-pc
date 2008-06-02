@@ -135,4 +135,15 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 		ret.setAttribute("id", this.elem.getId());
 		return ret;
 	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement#getLongDescription()
+	 */
+	@Override
+	public String getLongDescription() {
+		StringBuilder ret = new StringBuilder();
+		ret.append(super.toString());
+		ret.append(this.elem.getId());
+		return ret.toString();
+	}
 }

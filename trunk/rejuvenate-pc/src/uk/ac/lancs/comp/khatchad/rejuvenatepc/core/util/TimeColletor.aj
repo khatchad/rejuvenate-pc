@@ -21,7 +21,8 @@ public aspect TimeColletor {
 		call(PrintWriter+ get*StatsWriter(..)) ||
 		call(* ASTParser+.createAST(..)) ||
 		call(* getTotalNumberOfShadows(..)) ||
-		call(* org.jdom..*.*(..));
+		call(* org.jdom..*.*(..)) ||
+		call(* java.io..*.*(..));
 	
 	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();

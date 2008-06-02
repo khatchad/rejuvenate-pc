@@ -43,24 +43,25 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 	private static final String DATABASE_FILE_NAME = "rejuv-pc.dat";
+	private PrintWriter benchmarkOut;
 
 	@SuppressWarnings("unused")
 	private static PrintWriter getAdviceStatusWriter() throws IOException {
 		final File aFile = new File(PointcutPlugin.RESULT_PATH + "advice.csv");
-		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
+		return Util.getPrintWriter(aFile, true);
 	}
 
 	private static PrintWriter getBenchmarkStatsWriter() throws IOException {
 		final File aFile = new File(PointcutPlugin.RESULT_PATH
 				+ "benchmarks.csv");
-		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
+		return Util.getPrintWriter(aFile, true);
 	}
 
 	@SuppressWarnings("unused")
 	private static PrintWriter getSuggestionWriter() throws IOException {
 		final File aFile = new File(PointcutPlugin.RESULT_PATH
 				+ "suggestion.csv");
-		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
+		return Util.getPrintWriter(aFile, true);
 	}
 
 	/**
@@ -82,8 +83,6 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			analyzeAdvice(monitor, selectedAdvice);
 
 		else if (!selectedProjectCol.isEmpty()) {
-			PrintWriter benchmarkOut = generateBenchmarkStatsWriter();
-
 			for (final IJavaProject proj : selectedProjectCol) {
 				final long start = System.currentTimeMillis();
 
@@ -96,13 +95,12 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 				final int secs = calculateTimeStatistics(start);
 
-				printBenchmarkStatistics(benchmarkOut, proj, toAnalyze,
+				printBenchmarkStatistics(proj, toAnalyze,
 						numShadows, secs);
 			}
-			benchmarkOut.close();
 		}
-
 		monitor.done();
+		this.closeConnections();
 	}
 
 	/**
@@ -165,14 +163,12 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	}
 
 	/**
-	 * @param benchmarkOut
 	 * @param proj
 	 * @param toAnalyze
 	 * @param numShadows
 	 * @param secs
 	 */
-	private void printBenchmarkStatistics(PrintWriter benchmarkOut,
-			final IJavaProject proj,
+	private void printBenchmarkStatistics(final IJavaProject proj,
 			Collection<? extends AdviceElement> toAnalyze, int numShadows,
 			final int secs) {
 		benchmarkOut.print(proj.getProject().getName() + "\t");
@@ -206,13 +202,13 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor monitor,
 			final IntentionGraph<IntentionNode<IElement>> graph,
-			final WorkingMemory workingMemory, final PrintWriter patternOut)
+			final WorkingMemory workingMemory)
 			throws ConversionException, CoreException, IOException {
 
 		monitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
 
-		int pointcut_count = 0;
+		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
 
@@ -223,14 +219,34 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 					patternToResultMap, patternToEnabledElementMap);
 
 			for (final Pattern pattern : patternToResultMap.keySet()) {
-				calculatePatternStatistics(patternOut, pointcut_count, advElem,
+				calculatePatternStatistics(
+						pointcutCount, advElem,
 						adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
 			}
 
 			writeXMLFile(advElem, adviceXMLElement);
-			pointcut_count++;
+			pointcutCount++;
 			monitor.worked(1);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#closeConnections()
+	 */
+	@Override
+	protected void closeConnections() {
+		super.closeConnections();
+		this.benchmarkOut.close();
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#openConnections()
+	 */
+	@Override
+	protected void openConnections() throws IOException {
+		// TODO Auto-generated method stub
+		super.openConnections();
+		benchmarkOut = generateBenchmarkStatsWriter();
 	}
 }

@@ -4,7 +4,6 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -171,38 +170,30 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		lMonitor.done();
 	}
 
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	protected static PrintWriter getPrintWriter(final File aFile,
-			final boolean append) throws IOException {
-		final FileWriter resFileOut = new FileWriter(aFile, append);
-		return new PrintWriter(resFileOut);
-	}
-
 	private static PrintWriter getPatternStatsWriter() throws IOException {
 		final File aFile = new File(PointcutPlugin.RESULT_PATH + "patterns.csv");
-		return AnalyzePointcutPlugin.getPrintWriter(aFile, true);
+		return Util.getPrintWriter(aFile, true);
 	}
 
-	@SuppressWarnings("restriction")
-	private static PrintWriter getXMLFileWriter(AdviceElement advElem)
+	private static PrintWriter getEnabledElementStatsWriter()
 			throws IOException {
-		StringBuilder fileNameBuilder = new StringBuilder(advElem.getPath()
-				.toOSString());
-		fileNameBuilder.append("#" + advElem.toDebugString());
-		fileNameBuilder.append(".rejuv-pc.xml");
+		final File aFile = new File(PointcutPlugin.RESULT_PATH + "enabled.csv");
+		return Util.getPrintWriter(aFile, true);
+	}
 
-		final File aFile = new File(Util.WORKSPACE_LOC, fileNameBuilder
-				.toString());
-		return AnalyzePointcutPlugin.getPrintWriter(aFile, false);
+	private static PrintWriter getSuggestionStatsWriter() throws IOException {
+		final File aFile = new File(PointcutPlugin.RESULT_PATH
+				+ "suggestions.csv");
+		return Util.getPrintWriter(aFile, true);
 	}
 
 	/**
 	 * The selected item on the workbench.
 	 */
 	private IStructuredSelection aSelection;
+	private PrintWriter patternOut;
+	private PrintWriter enabledOut;
+	private PrintWriter suggestionOut;
 
 	/**
 	 * @return
@@ -215,7 +206,31 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		return patternOut;
 	}
 
+	private static PrintWriter generateSuggestionStatsWriter()
+			throws IOException {
+		final PrintWriter ret = getSuggestionStatsWriter();
+		ret	
+						.println("Benchmark\tAdvice#\tAdvice\tPattern\tElement\t");
+		return ret;
+	}
+
+	private static PrintWriter generateEnabledStatsWriter() throws IOException {
+		final PrintWriter patternOut = getEnabledElementStatsWriter();
+		patternOut.println("Benchmark\tAdvice#\tAdvice\tPattern\tElement\t");
+		return patternOut;
+	}
+
 	public void dispose() {
+		closeConnections();
+	}
+
+	/**
+	 * 
+	 */
+	protected void closeConnections() {
+		this.patternOut.close();
+		this.suggestionOut.close();
+		this.enabledOut.close();
 	}
 
 	/**
@@ -225,6 +240,23 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		final File resultFolder = new File(PointcutPlugin.RESULT_PATH);
 		if (!resultFolder.exists())
 			resultFolder.mkdir();
+
+		try {
+			openConnections();
+		}
+		catch (IOException e) {
+			//TODO: More robustness here.
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @throws IOException
+	 */
+	protected void openConnections() throws IOException {
+		patternOut = generatePatternStatsWriter();
+		enabledOut = generateEnabledStatsWriter();
+		suggestionOut = generateSuggestionStatsWriter();
 	}
 
 	/**
@@ -247,7 +279,6 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final ISelection selection) {
 		if (selection instanceof IStructuredSelection)
 			this.aSelection = (IStructuredSelection) selection;
-
 	}
 
 	@SuppressWarnings( { "unchecked", "restriction" })
@@ -258,20 +289,15 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 		final WorkingMemory workingMemory = generateRulesBase(lMonitor, graph);
 
-		final PrintWriter patternOut = generatePatternStatsWriter();
-
-		analyzeAdviceCollection(adviceCol, lMonitor, graph, workingMemory,
-				patternOut);
-
-		patternOut.close();
+		analyzeAdviceCollection(adviceCol, lMonitor, graph, workingMemory);
 	}
 
 	protected abstract void analyzeAdviceCollection(
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor lMonitor,
 			final IntentionGraph<IntentionNode<IElement>> graph,
-			final WorkingMemory workingMemory, final PrintWriter patternOut)
-			throws ConversionException, CoreException, IOException;
+			final WorkingMemory workingMemory) throws ConversionException,
+			CoreException, IOException;
 
 	/**
 	 * @param lMonitor
@@ -288,22 +314,21 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	}
 
 	/**
-	 * @param patternOut
-	 * @param pointcut_count
+	 * @param pointcutCount
 	 * @param advElem
 	 * @param adviceXMLElement
 	 * @param patternToResultMap
 	 * @param patternToEnabledElementMap
 	 * @param pattern
+	 * @throws IOException
 	 */
 	protected void calculatePatternStatistics(
-			final PrintWriter patternOut,
-			int pointcut_count,
+			int pointcutCount,
 			final AdviceElement advElem,
 			Element adviceXMLElement,
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
-			final Pattern pattern) {
+			final Pattern pattern) throws IOException {
 
 		double precision = Pattern.calculatePrecision(
 				patternToEnabledElementMap.get(pattern), patternToResultMap
@@ -319,15 +344,43 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 				.get(pattern), "enabledElements");
 		patternXMLElement.addContent(enabledElementsXMLElement);
 
+		printEnabledElementResults(pattern, pointcutCount, advElem,
+				patternToEnabledElementMap.get(pattern));
+
 		//suggestions.
 		Element suggestedElementsXML = getXML(patternToResultMap.get(pattern),
-				"suggestedElements");
+				"suggestedlements");
 		patternXMLElement.addContent(suggestedElementsXML);
+
+		printSuggestedElementResults(pattern, pointcutCount, advElem,
+				patternToEnabledElementMap.get(pattern));
 
 		adviceXMLElement.addContent(patternXMLElement);
 
-		printPatternResults(patternOut, pointcut_count, advElem, pattern,
-				precision, concreteness, confidence);
+		printPatternResults(pointcutCount, advElem, pattern, precision,
+				concreteness, confidence);
+	}
+
+	/**
+	 * @param pattern
+	 * @param pointcutCount
+	 * @param advElem
+	 * @param set
+	 */
+	private void printSuggestedElementResults(Pattern pattern,
+			int pointcutCount, AdviceElement advElem,
+			Set<IntentionElement<IElement>> set) {
+
+		for (IntentionElement elem : set) {
+			this.suggestionOut.print(advElem.getJavaProject().getProject()
+					.getName()
+					+ "\t");
+			this.suggestionOut.print(pointcutCount + "\t");
+			this.suggestionOut.print(advElem.readableName() + "\t");
+			this.suggestionOut.print(pattern + "\t");
+			this.suggestionOut.print(elem.getLongDescription());
+			this.suggestionOut.println();
+		}
 	}
 
 	/**
@@ -365,27 +418,25 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		DocType type = new DocType(this.getClass().getSimpleName());
 		Document doc = new Document(adviceXMLElement, type);
 		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
-		PrintWriter xmlOut = getXMLFileWriter(advElem);
+		PrintWriter xmlOut = Util.getXMLFileWriter(advElem);
 		serializer.output(doc, xmlOut);
 		xmlOut.close();
 	}
 
 	/**
-	 * @param patternOut
-	 * @param pointcut_count
+	 * @param pointcutCount
 	 * @param advElem
 	 * @param pattern
 	 * @param precision
 	 * @param concreteness
 	 * @param confidence
 	 */
-	private void printPatternResults(final PrintWriter patternOut,
-			int pointcut_count, final AdviceElement advElem,
-			final Pattern pattern, double precision, double concreteness,
-			double confidence) {
+	private void printPatternResults(int pointcutCount,
+			final AdviceElement advElem, final Pattern pattern,
+			double precision, double concreteness, double confidence) {
 		patternOut
 				.print(advElem.getJavaProject().getProject().getName() + "\t");
-		patternOut.print(pointcut_count + "\t");
+		patternOut.print(pointcutCount + "\t");
 		patternOut.print(advElem.readableName() + "\t");
 		patternOut.print(pattern + "\t");
 		patternOut.print(pattern.size() + "\t");
@@ -394,9 +445,28 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		patternOut.print(confidence + "\t");
 		patternOut.println();
 	}
-	
-	private void printSuggestionResults(PrintWriter out) {
-		//TODO
+
+	/**
+	 * @param pattern
+	 * @param pointcut_count
+	 * @param advElem
+	 * @param set
+	 * @throws IOException
+	 */
+	private void printEnabledElementResults(Pattern pattern, int pointcutCount,
+			AdviceElement advElem, Set<IntentionElement<IElement>> set)
+			throws IOException {
+
+		for (IntentionElement elem : set) {
+			this.enabledOut.print(advElem.getJavaProject().getProject()
+					.getName()
+					+ "\t");
+			this.enabledOut.print(pointcutCount + "\t");
+			this.enabledOut.print(advElem.readableName() + "\t");
+			this.enabledOut.print(pattern + "\t");
+			this.enabledOut.print(elem.getLongDescription());
+			this.enabledOut.println();
+		}
 	}
 
 	/**

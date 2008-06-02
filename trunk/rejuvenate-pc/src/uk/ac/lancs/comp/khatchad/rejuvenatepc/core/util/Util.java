@@ -409,7 +409,6 @@ public class Util {
 						if (!(target instanceof IAJCodeElement))
 							throw new IllegalStateException(
 									"Something is screwy here.");
-						System.out.println(target.getHandleIdentifier());
 						ret.add(target);
 						break;
 					}
@@ -449,5 +448,29 @@ public class Util {
 		ret.setAttribute(new Attribute("name", elem.getElementName()));
 		ret.setAttribute(new Attribute("type", String.valueOf(elem.getElementType())));	
 		return ret;
+	}
+
+	/**
+	 * @return
+	 * @throws IOException
+	 */
+	public static PrintWriter getPrintWriter(final File aFile,
+			final boolean append) throws IOException {
+		final FileWriter resFileOut = new FileWriter(aFile, append);
+		return new PrintWriter(resFileOut);
+	}
+
+	@SuppressWarnings("restriction")
+	public
+	static PrintWriter getXMLFileWriter(AdviceElement advElem)
+			throws IOException {
+		StringBuilder fileNameBuilder = new StringBuilder(advElem.getPath()
+				.toOSString());
+		fileNameBuilder.append("#" + advElem.toDebugString());
+		fileNameBuilder.append(".rejuv-pc.xml");
+	
+		final File aFile = new File(WORKSPACE_LOC, fileNameBuilder
+				.toString());
+		return getPrintWriter(aFile, false);
 	}
 }
