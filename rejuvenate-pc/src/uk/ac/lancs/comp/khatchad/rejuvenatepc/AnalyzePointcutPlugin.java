@@ -95,8 +95,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 				final int secs = calculateTimeStatistics(start);
 
-				printBenchmarkStatistics(proj, toAnalyze,
-						numShadows, secs);
+				printBenchmarkStatistics(proj, toAnalyze, numShadows, secs);
 			}
 		}
 		monitor.done();
@@ -202,8 +201,8 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor monitor,
 			final IntentionGraph<IntentionNode<IElement>> graph,
-			final WorkingMemory workingMemory)
-			throws ConversionException, CoreException, IOException {
+			final WorkingMemory workingMemory) throws ConversionException,
+			CoreException, IOException {
 
 		monitor.beginTask("Enabling graph elements for each selected advice.",
 				adviceCol.size());
@@ -218,16 +217,23 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			buildPatternMaps(monitor, graph, workingMemory, advElem,
 					patternToResultMap, patternToEnabledElementMap);
 
+			double totalConfidence = 0;
 			for (final Pattern pattern : patternToResultMap.keySet()) {
-				calculatePatternStatistics(
-						pointcutCount, advElem,
-						adviceXMLElement, patternToResultMap,
+				totalConfidence += calculatePatternStatistics(pointcutCount,
+						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
 			}
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;
 			monitor.worked(1);
+			printAdviceResults(pointcutCount, advElem, patternToResultMap
+					.keySet().size(), Util.flattenCollection(
+					patternToResultMap.values()).size(), Util
+					.flattenCollection(patternToEnabledElementMap.values())
+					.size(), totalConfidence
+					/ patternToResultMap.keySet().size(), Util
+					.getAdvisedJavaElements(advElem).size());
 		}
 	}
 

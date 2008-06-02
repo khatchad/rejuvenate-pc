@@ -187,6 +187,11 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		return Util.getPrintWriter(aFile, true);
 	}
 
+	private static PrintWriter getAdviceStatsWriter() throws IOException {
+		final File aFile = new File(PointcutPlugin.RESULT_PATH + "advice.csv");
+		return Util.getPrintWriter(aFile, true);
+	}
+
 	/**
 	 * The selected item on the workbench.
 	 */
@@ -194,23 +199,12 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	private PrintWriter patternOut;
 	private PrintWriter enabledOut;
 	private PrintWriter suggestionOut;
-
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	private static PrintWriter generatePatternStatsWriter() throws IOException {
-		final PrintWriter patternOut = getPatternStatsWriter();
-		patternOut
-				.println("Benchmark\tAdvice#\tAdvice\tPattern\tSize\tPrecision\tConcreteness\tConfidence");
-		return patternOut;
-	}
+	private PrintWriter adviceOut;
 
 	private static PrintWriter generateSuggestionStatsWriter()
 			throws IOException {
 		final PrintWriter ret = getSuggestionStatsWriter();
-		ret	
-						.println("Benchmark\tAdvice#\tAdvice\tPattern\tElement\t");
+		ret.println("Benchmark\tAdvice#\tAdvice\tPattern\tElement\t");
 		return ret;
 	}
 
@@ -231,6 +225,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		this.patternOut.close();
 		this.suggestionOut.close();
 		this.enabledOut.close();
+		this.adviceOut.close();
 	}
 
 	/**
@@ -257,6 +252,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		patternOut = generatePatternStatsWriter();
 		enabledOut = generateEnabledStatsWriter();
 		suggestionOut = generateSuggestionStatsWriter();
+		adviceOut = generateAdviceStatsWriter();
 	}
 
 	/**
@@ -320,9 +316,10 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @param patternToResultMap
 	 * @param patternToEnabledElementMap
 	 * @param pattern
+	 * @return
 	 * @throws IOException
 	 */
-	protected void calculatePatternStatistics(
+	protected double calculatePatternStatistics(
 			int pointcutCount,
 			final AdviceElement advElem,
 			Element adviceXMLElement,
@@ -353,12 +350,15 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		patternXMLElement.addContent(suggestedElementsXML);
 
 		printSuggestedElementResults(pattern, pointcutCount, advElem,
-				patternToEnabledElementMap.get(pattern));
+				patternToResultMap.get(pattern));
 
 		adviceXMLElement.addContent(patternXMLElement);
 
-		printPatternResults(pointcutCount, advElem, pattern, precision,
-				concreteness, confidence);
+		printPatternResults(pointcutCount, advElem, pattern, patternToResultMap
+				.get(pattern).size(), patternToEnabledElementMap.get(pattern)
+				.size(), precision, concreteness, confidence);
+
+		return confidence;
 	}
 
 	/**
@@ -381,6 +381,29 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			this.suggestionOut.print(elem.getLongDescription());
 			this.suggestionOut.println();
 		}
+	}
+
+	private static PrintWriter generateAdviceStatsWriter() throws IOException {
+		final PrintWriter ret = getAdviceStatsWriter();
+		ret
+				.println("Benchmark\tAdvice#\tAdvice\t#Shadows\t#Patterns\t#Results\t#Enabled\tConfidence\t");
+		return ret;
+	}
+
+	protected void printAdviceResults(int pointcutCount, AdviceElement advElem,
+			int numOfPatterns, int numOfResults, int numOfEnabled,
+			double averageConfidence, int numOfShadows) {
+		this.adviceOut.print(advElem.getJavaProject().getProject().getName()
+				+ "\t");
+		this.adviceOut.print(pointcutCount + "\t");
+		this.adviceOut.print(advElem.readableName() + "\t");
+		this.adviceOut.print(numOfShadows + "\t");
+		this.adviceOut.print(numOfPatterns + "\t");
+		this.adviceOut.print(numOfResults + "\t");
+		this.adviceOut.print(numOfEnabled + "\t");
+		this.adviceOut.print(averageConfidence + "\t");
+
+		this.adviceOut.println();
 	}
 
 	/**
@@ -424,21 +447,36 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	}
 
 	/**
+	 * @return
+	 * @throws IOException
+	 */
+	private static PrintWriter generatePatternStatsWriter() throws IOException {
+		final PrintWriter patternOut = getPatternStatsWriter();
+		patternOut
+				.println("Benchmark\tAdvice#\tAdvice\tPattern\t#Results\t#Enabled\tSize\tPrecision\tConcreteness\tConfidence");
+		return patternOut;
+	}
+
+	/**
 	 * @param pointcutCount
 	 * @param advElem
 	 * @param pattern
 	 * @param precision
 	 * @param concreteness
 	 * @param confidence
+	 * @param confidence2
 	 */
 	private void printPatternResults(int pointcutCount,
 			final AdviceElement advElem, final Pattern pattern,
-			double precision, double concreteness, double confidence) {
+			int numOfResults, int numOfEnabled, double precision,
+			double concreteness, double confidence) {
 		patternOut
 				.print(advElem.getJavaProject().getProject().getName() + "\t");
 		patternOut.print(pointcutCount + "\t");
 		patternOut.print(advElem.readableName() + "\t");
 		patternOut.print(pattern + "\t");
+		patternOut.print(numOfResults + "\t");
+		patternOut.print(numOfEnabled + "\t");
 		patternOut.print(pattern.size() + "\t");
 		patternOut.print(precision + "\t");
 		patternOut.print(concreteness + "\t");

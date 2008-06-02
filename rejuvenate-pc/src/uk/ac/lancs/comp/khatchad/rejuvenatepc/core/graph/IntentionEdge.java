@@ -176,7 +176,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		ret.append(super.toString());
 		ret.append(this.type.toString() + ": ");
 		ret.append(this.getToNode().getLongDescription());
-		return null;
+		return ret.toString();
 	}
 
 	public Element getXML() {
