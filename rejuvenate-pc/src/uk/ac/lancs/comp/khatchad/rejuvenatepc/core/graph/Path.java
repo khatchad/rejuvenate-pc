@@ -46,6 +46,22 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 	 */
 	private static final long serialVersionUID = -456698317927297139L;
 
+	/**
+	 * @param patternElem
+	 */
+	public Path(Element patternElem) {
+		// TODO Auto-generated constructor stub
+		Element pathElem = patternElem.getChild(PATH);
+//		Attribute enabledAttribute
+		for (Object intentionEdgeElemObj : pathElem.getChildren() ) {
+			Element intentionEdgeXMLElem = (Element)intentionEdgeElemObj;
+//			IntentionEdge intentionEdge = IntentionElement.create(intentionXMLElem);
+//			this.add(intentionElem);
+		}
+	}
+	
+	public Path() {}
+
 	/* (non-Javadoc)
 	 * @see java.util.Vector#equals(java.lang.Object)
 	 */
@@ -246,26 +262,11 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 		Element root = new Element(this.getClass().getSimpleName());
 		Element path = new Element(PATH);
 
-		int sequence = 1;
-		if (!this.isEmpty()) {
-			Element node = this.get(0).getFromNode().getXML();
-			node.setAttribute(SEQUENCE, String.valueOf(sequence++));
-			path.addContent(node);
-		}
-
-		final Iterator<E> i = this.iterator();
-		boolean hasNext = i.hasNext();
-		while (hasNext) {
-			final E o = i.next();
-			
-			Element edge = o.getXML();
-			edge.setAttribute(SEQUENCE, String.valueOf(sequence++));
-			path.addContent(edge);
-			
-			Element node = o.getToNode().getXML();
-			node.setAttribute(SEQUENCE, String.valueOf(sequence++));
-			path.addContent(node);
-			hasNext = i.hasNext();
+		int sequence = 0;
+		for ( E edge : this ) {
+			Element edgeXMLElem = edge.getXML();
+			edgeXMLElem.setAttribute(SEQUENCE, String.valueOf(sequence++));
+			path.addContent(edgeXMLElem);
 		}
 
 		root.addContent(path);
