@@ -25,6 +25,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.jdom.Attribute;
+import org.jdom.DataConversionException;
 import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -49,6 +51,15 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class RejuvenatePointcutPlugin extends PointcutPlugin {
 
+	/**
+	 * 
+	 */
+	private static final String PATH = "path";
+	/**
+	 * 
+	 */
+	private static final String PATTERN = "Pattern";
+
 	public void run(IAction action) {
 		final IProgressMonitor monitor = getProgressMonitor();
 		final Collection<AdviceElement> selectedAdvice = this
@@ -56,7 +67,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 
 		if (!selectedAdvice.isEmpty())
 			analyzeAdvice(monitor, selectedAdvice);
-		
+
 		monitor.done();
 	}
 
@@ -96,14 +107,14 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			Map<Pattern<IntentionEdge<IElement>>, Double> extractedPatternToConfidenceMap = extractPatterns(document);
 			Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = patternToResultMap
 					.keySet();
-//			Set<Pattern<IntentionEdge<IElement>>> retrievedPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
-//					extractedPatternSet);
-//			retrievedPatternSet.retainAll(derivedPatternSet);
+			//			Set<Pattern<IntentionEdge<IElement>>> retrievedPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
+			//					extractedPatternSet);
+			//			retrievedPatternSet.retainAll(derivedPatternSet);
 
 			//TODO: Need to make suggestions.
-//			for (Pattern<IntentionEdge<IElement>> pattern : retrievedPatternSet) {
-				//TODO: Use the maps here.
-//			}
+			//			for (Pattern<IntentionEdge<IElement>> pattern : retrievedPatternSet) {
+			//TODO: Use the maps here.
+			//			}
 
 			//			SortedMap<IJavaElement, Double> suggestions = null;// obtainSuggestions()
 
@@ -114,15 +125,19 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 	/**
 	 * @param document
 	 * @return
+	 * @throws DataConversionException 
 	 */
 	private Map<Pattern<IntentionEdge<IElement>>, Double> extractPatterns(
-			Document document) {
-		//TODO: Finish this method.
+			Document document) throws DataConversionException {
 		Map<Pattern<IntentionEdge<IElement>>, Double> ret = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Double>();
+		
 		Element root = document.getRootElement();
-		for ( Object obj : root.getChildren("Pattern") ) {
-			Element patternElem = (Element) obj;
-			
+		for (Object patternObj : root.getChildren(PATTERN)) {
+			Element patternElem = (Element) patternObj;
+			Pattern<IntentionEdge<IElement>> pattern = new Pattern<IntentionEdge<IElement>>(patternElem);
+			Attribute confidenceAttribute = patternElem.getAttribute("confidence");
+			double confidence = confidenceAttribute.getDoubleValue();
+			ret.put(pattern, confidence);
 		}
 		return ret;
 	}

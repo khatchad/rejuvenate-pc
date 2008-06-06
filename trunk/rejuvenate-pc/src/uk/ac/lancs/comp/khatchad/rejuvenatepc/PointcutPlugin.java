@@ -59,6 +59,26 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
+	/**
+	 * 
+	 */
+	private static final String SUGGESTEDLEMENTS = "suggestedlements";
+	/**
+	 * 
+	 */
+	private static final String ENABLED_ELEMENTS = "enabledElements";
+	/**
+	 * 
+	 */
+	private static final String RULES_FILE = "/rules/NodeRules.drl";
+	/**
+	 * 
+	 */
+	private static final String ADVISED_ELEMENTS = "advisedElements";
+	/**
+	 * 
+	 */
+	private static final String CONFIDENCE = "confidence";
 	protected static final String RESULT_PATH = new File(ResourcesPlugin
 			.getWorkspace().getRoot().getLocation().toOSString()
 			+ File.separator + "results").getPath()
@@ -333,7 +353,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 		//enabled elements.
 		Element enabledElementsXMLElement = getXML(patternToEnabledElementMap
-				.get(pattern), "enabledElements");
+				.get(pattern), ENABLED_ELEMENTS);
 		patternXMLElement.addContent(enabledElementsXMLElement);
 
 		printEnabledElementResults(pattern, pointcutCount, advElem,
@@ -341,7 +361,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 
 		//suggestions.
 		Element suggestedElementsXML = getXML(patternToResultMap.get(pattern),
-				"suggestedlements");
+				SUGGESTEDLEMENTS);
 		patternXMLElement.addContent(suggestedElementsXML);
 
 		printSuggestedElementResults(pattern, pointcutCount, advElem,
@@ -496,7 +516,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			double confidence) {
 		Element patternXMLElement = pattern.getXML();
 		patternXMLElement
-				.setAttribute("confidence", String.valueOf(confidence));
+				.setAttribute(CONFIDENCE, String.valueOf(confidence));
 		return patternXMLElement;
 	}
 
@@ -624,7 +644,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			throws Exception {
 		lMonitor.subTask("Loading up the rulebase.");
 		final Reader source = new InputStreamReader(AnalyzePointcutPlugin.class
-				.getResourceAsStream("/rules/NodeRules.drl"));
+				.getResourceAsStream(RULES_FILE));
 		final RuleBase ruleBase = Util.readRule(source);
 		final WorkingMemory workingMemory = ruleBase.newStatefulSession();
 
@@ -704,7 +724,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 */
 	private static Element getAdvisedJavaElementsXMLElement(
 			Element adviceXMLElement, Set<IJavaElement> advisedJavaElements) {
-		Element ret = new Element("advisedElements");
+		Element ret = new Element(ADVISED_ELEMENTS);
 		for (IJavaElement jElem : advisedJavaElements) {
 			Element xmlElem = Util.getXML(jElem);
 			ret.addContent(xmlElem);

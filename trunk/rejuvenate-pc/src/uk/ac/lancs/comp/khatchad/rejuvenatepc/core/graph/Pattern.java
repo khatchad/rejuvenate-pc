@@ -3,6 +3,8 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
+import static java.lang.Math.max;
+
 import java.util.Collection;
 import java.util.Set;
 
@@ -28,11 +30,21 @@ public class Pattern<E extends IntentionEdge<IElement>> extends Path<E> {
 
 	private static final long serialVersionUID = -8126850132892419370L;
 
+	/**
+	 * @param patternElem
+	 */
+	public Pattern(Element patternElem) {
+		super(patternElem);
+	}
+	
+	public Pattern() {
+	}
+
 	public static double calculateConfidence(final double precision,
 			final double concreteness, final double weight_precision) {
 		final double result = precision * weight_precision + (1 - concreteness)
 				* (1 - weight_precision);
-		return Math.max(result, precision);
+		return max(result, precision);
 	}
 	
 	public static double calculateConfidence(final double precision,

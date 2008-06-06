@@ -19,7 +19,22 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * 
  */
 public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
-	
+
+	/**
+	 * 
+	 */
+	private static final String SOURCE = "source";
+
+	/**
+	 * 
+	 */
+	private static final String TARGET = "target";
+
+	/**
+	 * 
+	 */
+	private static final String ENABLED = "enabled";
+
 	private static final long serialVersionUID = -4758844315757084370L;
 
 	private IntentionNode<E> fromNode;
@@ -156,20 +171,20 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		ret.append(this.type);
 		return ret.toString();
 	}
-	
+
 	private Element getXML(boolean includeTarget) {
 		Element ret = new Element(this.getClass().getSimpleName());
-		ret.setAttribute("enabled", String.valueOf(this.isEnabled()));
+		ret.setAttribute(ENABLED, String.valueOf(this.isEnabled()));
 		Element typeXML = this.type.getXML();
 		if (includeTarget) {
-			Element target = new Element("targetNode");
+			Element target = new Element(TARGET);
 			target.addContent(this.getToNode().getXML());
 			typeXML.addContent(target);
 		}
 		ret.addContent(typeXML);
 		return ret;
 	}
-	
+
 	@Override
 	public String getLongDescription() {
 		StringBuilder ret = new StringBuilder();
@@ -180,16 +195,31 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	}
 
 	public Element getXML() {
-		return this.getXML(false);
+		Element ret = new Element(this.getClass().getSimpleName());
+		
+		ret.setAttribute(ENABLED, String.valueOf(this.isEnabled()));
+		
+		Element typeXML = this.type.getXML();
+		ret.addContent(typeXML);
+		
+		Element source = new Element(SOURCE);
+		source.addContent(this.getFromNode().getXML());
+		ret.addContent(source);
+		
+		Element target = new Element(TARGET);
+		target.addContent(this.getToNode().getXML());
+		ret.addContent(target);
+		
+		return ret;
 	}
-	
 
 	public Element getXMLWithTargetNode() {
 		return this.getXML(true);
 	}
-	
+
 	/**
 	 * Returns the AJCodeElements corresponding to this edge.
+	 * 
 	 * @return The AJCodeElements corresponding to this edge.
 	 */
 
