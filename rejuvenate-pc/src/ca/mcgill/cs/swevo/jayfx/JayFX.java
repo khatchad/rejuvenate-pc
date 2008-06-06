@@ -217,7 +217,8 @@ public class JayFX {
 
 		this.resetAllElements(new SubProgressMonitor(monitor, 1));
 
-		final List<AJRelationship> relationshipList = Util.getAdviceRelationshipList(advElem);
+		final List<AJRelationship> relationshipList = Util
+				.getAdviceRelationshipList(advElem);
 
 		this.enableElementsAccordingTo(advElem, new SubProgressMonitor(monitor,
 				1), relationshipList);
@@ -544,7 +545,7 @@ public class JayFX {
 	 * @throws ConversionException
 	 * @throws CoreException
 	 */
-	private void enableElementsAccordingTo(final AdviceElement advElem,
+	private void enableElementsAccordingTo(final AdviceElement advisingElement,
 			final IProgressMonitor monitor,
 			final List<AJRelationship> relationshipList)
 			throws ConversionException, CoreException {
@@ -556,99 +557,104 @@ public class JayFX {
 
 			final IJavaElement advice = relationship.getSource();
 
-			if (advice.equals(advElem)) {
+			if (advice.equals(advisingElement)) {
 				final IJavaElement target = relationship.getTarget();
-				switch (target.getElementType()) {
-					case IJavaElement.METHOD: {
-						final IMethod meth = (IMethod) target;
-						if (meth.getParent() instanceof AspectElement)
-							break;
-
-						final IElement toEnable = this.convertToElement(meth);
-						if (toEnable == null)
-							throw new IllegalStateException("In trouble!");
-						toEnable.enable();
-						break;
-					}
-					case IJavaElement.TYPE: {
-						// its a default ctor.
-						final IType type = (IType) target;
-						for (final IMethod meth : type.getMethods())
-							if (meth.isConstructor()
-									&& meth.getParameterNames().length == 0) {
-								final IElement toEnable = this
-										.convertToElement(meth);
-								if (toEnable == null)
-									throw new IllegalStateException(
-											"In trouble!");
-								toEnable.enable();
-							}
-						break;
-					}
-					case IJavaElement.LOCAL_VARIABLE: {
-						// its an aspect element.
-						if (!(target instanceof IAJCodeElement))
-							throw new IllegalStateException(
-									"Something is screwy here.");
-
-						final IAJCodeElement ajElem = (IAJCodeElement) target;
-						final StringBuilder targetString = new StringBuilder(
-								ajElem.getElementName());
-						final String type = targetString.substring(0,
-								targetString.indexOf("("));
-						final StringBuilder typeBuilder = new StringBuilder(
-								type.toUpperCase());
-						final int pos = typeBuilder.indexOf("-");
-
-						final String joinPointTypeAsString = typeBuilder
-								.replace(pos, pos + 1, "_").toString();
-
-						final JoinpointType joinPointTypeAsEnum = JoinpointType
-								.valueOf(joinPointTypeAsString);
-
-						switch (joinPointTypeAsEnum) {
-							case FIELD_GET: {
-								this
-										.enableElementsAccordingToFieldGet(targetString);
-								break;
-							}
-
-							case FIELD_SET: {
-								this
-										.enableElementsAccordingToFieldSet(targetString);
-								break;
-							}
-
-							case METHOD_CALL: {
-								this
-										.enableElementsAccordingToMethodCall(targetString);
-								break;
-							}
-
-							case CONSTRUCTOR_CALL: {
-								this
-										.enableElementsAccordingToConstructorCall(targetString);
-								break;
-							}
-
-							case EXCEPTION_HANDLER: {
-								System.out
-										.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
-								break;
-							}
-						}
-
-						break;
-					}
-					default:
-						throw new IllegalStateException(
-								"Unexpected relationship target type: "
-										+ target.getElementType());
-				}
+				enableElementsAccordingTo(target);
 			}
 			monitor.worked(1);
 		}
 		monitor.done();
+	}
+
+	/**
+	 * @param advisedElement
+	 * @throws ConversionException
+	 * @throws JavaModelException
+	 * @throws CoreException
+	 */
+	public void enableElementsAccordingTo(final IJavaElement advisedElement)
+			throws ConversionException, JavaModelException, CoreException {
+		switch (advisedElement.getElementType()) {
+			case IJavaElement.METHOD: {
+				final IMethod meth = (IMethod) advisedElement;
+				if (meth.getParent() instanceof AspectElement)
+					break;
+
+				final IElement toEnable = this.convertToElement(meth);
+				if (toEnable == null)
+					throw new IllegalStateException("In trouble!");
+				toEnable.enable();
+				break;
+			}
+			case IJavaElement.TYPE: {
+				// its a default ctor.
+				final IType type = (IType) advisedElement;
+				for (final IMethod meth : type.getMethods())
+					if (meth.isConstructor()
+							&& meth.getParameterNames().length == 0) {
+						final IElement toEnable = this.convertToElement(meth);
+						if (toEnable == null)
+							throw new IllegalStateException("In trouble!");
+						toEnable.enable();
+					}
+				break;
+			}
+			case IJavaElement.LOCAL_VARIABLE: {
+				// its an aspect element.
+				if (!(advisedElement instanceof IAJCodeElement))
+					throw new IllegalStateException("Something is screwy here.");
+
+				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
+				final StringBuilder targetString = new StringBuilder(ajElem
+						.getElementName());
+				final String type = targetString.substring(0, targetString
+						.indexOf("("));
+				final StringBuilder typeBuilder = new StringBuilder(type
+						.toUpperCase());
+				final int pos = typeBuilder.indexOf("-");
+
+				final String joinPointTypeAsString = typeBuilder.replace(pos,
+						pos + 1, "_").toString();
+
+				final JoinpointType joinPointTypeAsEnum = JoinpointType
+						.valueOf(joinPointTypeAsString);
+
+				switch (joinPointTypeAsEnum) {
+					case FIELD_GET: {
+						this.enableElementsAccordingToFieldGet(targetString);
+						break;
+					}
+
+					case FIELD_SET: {
+						this.enableElementsAccordingToFieldSet(targetString);
+						break;
+					}
+
+					case METHOD_CALL: {
+						this.enableElementsAccordingToMethodCall(targetString);
+						break;
+					}
+
+					case CONSTRUCTOR_CALL: {
+						this
+								.enableElementsAccordingToConstructorCall(targetString);
+						break;
+					}
+
+					case EXCEPTION_HANDLER: {
+						System.out
+								.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
+						break;
+					}
+				}
+
+				break;
+			}
+			default:
+				throw new IllegalStateException(
+						"Unexpected relationship target type: "
+								+ advisedElement.getElementType());
+		}
 	}
 
 	/**

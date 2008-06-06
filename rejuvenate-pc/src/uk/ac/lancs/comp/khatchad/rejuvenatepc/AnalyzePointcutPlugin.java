@@ -28,7 +28,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.jdom.DocType;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -218,11 +222,13 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 					patternToResultMap, patternToEnabledElementMap);
 
 			double totalConfidence = 0;
-			for (final Pattern pattern : patternToResultMap.keySet()) {
+			for (final Pattern pattern : patternToResultMap.keySet())
 				totalConfidence += calculatePatternStatistics(pointcutCount,
 						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
-			}
+
+//			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+//					+ advElem.getPath().toOSString() + "-");
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;
@@ -254,5 +260,20 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		// TODO Auto-generated method stub
 		super.openConnections();
 		benchmarkOut = generateBenchmarkStatsWriter();
+	}
+
+	/**
+	 * @param advElem
+	 * @param adviceXMLElement
+	 * @throws IOException
+	 */
+	protected void writeXMLFile(final AdviceElement advElem,
+			Element adviceXMLElement) throws IOException {
+		DocType type = new DocType(this.getClass().getSimpleName());
+		Document doc = new Document(adviceXMLElement, type);
+		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
+		PrintWriter xmlOut = Util.getXMLFileWriter(advElem);
+		serializer.output(doc, xmlOut);
+		xmlOut.close();
 	}
 }

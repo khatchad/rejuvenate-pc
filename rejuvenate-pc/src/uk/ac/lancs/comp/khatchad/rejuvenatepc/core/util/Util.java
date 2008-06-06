@@ -341,7 +341,7 @@ public class Util {
 		return true;
 	}
 
-	private static void makeDotFile(
+	public static void makeDotFile(
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final File aFile) throws IOException {
 		final FileWriter resFileOut = new FileWriter(aFile, false);
@@ -355,7 +355,7 @@ public class Util {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unused")
-	private static void makeDotFile(
+	public static void makeDotFile(
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final int adviceNumer, final String resultPath) throws IOException {
 		final File file = new File(resultPath + "adv" + adviceNumer + ".dot");
@@ -363,7 +363,7 @@ public class Util {
 	}
 
 	@SuppressWarnings("unused")
-	private static void makeDotFile(
+	public static void makeDotFile(
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final String resultPath) throws IOException {
 		final File file = new File(resultPath + "intention_graph.dot");
@@ -462,17 +462,6 @@ public class Util {
 		return new PrintWriter(resFileOut);
 	}
 
-	@SuppressWarnings("restriction")
-	public static PrintWriter getXMLFileWriter(AdviceElement advElem)
-			throws IOException {
-		StringBuilder fileNameBuilder = new StringBuilder(advElem.getPath()
-				.toOSString());
-		fileNameBuilder.append("#" + advElem.toDebugString());
-		fileNameBuilder.append(".rejuv-pc.xml");
-
-		final File aFile = new File(WORKSPACE_LOC, fileNameBuilder.toString());
-		return getPrintWriter(aFile, false);
-	}
 
 	/**
 	 * @param values
@@ -484,5 +473,39 @@ public class Util {
 			for (E e : col)
 				ret.add(e);
 		return ret;
+	}
+	
+	@SuppressWarnings("restriction")
+	public static PrintWriter getXMLFileWriter(AdviceElement advElem)
+			throws IOException {
+		String fileName = getRelativeXMLFileName(advElem);
+		final File aFile = new File(WORKSPACE_LOC, fileName);
+		return getPrintWriter(aFile, false);
+	}
+
+	/**
+	 * @param advElem
+	 * @return
+	 */
+	private static String getRelativeXMLFileName(AdviceElement advElem) {
+		StringBuilder fileNameBuilder = new StringBuilder(advElem.getPath()
+				.toOSString());
+		fileNameBuilder.append("#" + advElem.toDebugString());
+		fileNameBuilder.append(".rejuv-pc.xml");
+		return fileNameBuilder.toString();
+	}
+	
+
+	/**
+	 * @param advElem
+	 * @return
+	 */
+	@SuppressWarnings("restriction")
+	public static File getSavedXMLFile(AdviceElement advElem) {
+		String relativeFileName = getRelativeXMLFileName(advElem);
+		File aFile = new File(WORKSPACE_LOC, relativeFileName);
+		if ( !aFile.exists() )
+			throw new IllegalArgumentException("No XML file found for advice " + advElem.getElementName());
+		return aFile;
 	}
 }
