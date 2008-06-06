@@ -13,6 +13,8 @@ import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaModelException;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
@@ -212,5 +214,22 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 			monitor.worked(1);
 		}
 		monitor.done();
+	}
+
+	/**
+	 * @param advisedElements
+	 * @param monitor
+	 * @throws CoreException 
+	 * @throws ConversionException 
+	 * @throws JavaModelException 
+	 */
+	public void enableElementsAccordingTo(
+			Collection<IJavaElement> advisedElements, IProgressMonitor monitor) throws JavaModelException, ConversionException, CoreException {
+		monitor.beginTask("Re-enabling elements according to retrieved information.", advisedElements.size());
+		for ( IJavaElement elem : advisedElements ) {
+			this.database.enableElementsAccordingTo(elem);
+			monitor.worked(1);
+		}
+		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, 1));
 	}
 }

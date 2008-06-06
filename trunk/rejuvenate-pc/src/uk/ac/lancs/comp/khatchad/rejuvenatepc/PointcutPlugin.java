@@ -37,13 +37,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.jdom.Attribute;
-import org.jdom.DocType;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
@@ -293,7 +288,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final IProgressMonitor lMonitor,
 			final IntentionGraph<IntentionNode<IElement>> graph,
 			final WorkingMemory workingMemory) throws ConversionException,
-			CoreException, IOException;
+			CoreException, IOException, JDOMException;
 
 	/**
 	 * @param lMonitor
@@ -432,21 +427,6 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	}
 
 	/**
-	 * @param advElem
-	 * @param adviceXMLElement
-	 * @throws IOException
-	 */
-	protected void writeXMLFile(final AdviceElement advElem,
-			Element adviceXMLElement) throws IOException {
-		DocType type = new DocType(this.getClass().getSimpleName());
-		Document doc = new Document(adviceXMLElement, type);
-		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
-		PrintWriter xmlOut = Util.getXMLFileWriter(advElem);
-		serializer.output(doc, xmlOut);
-		xmlOut.close();
-	}
-
-	/**
 	 * @return
 	 * @throws IOException
 	 */
@@ -530,8 +510,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		Element adviceXMLElement = new Element(AdviceElement.class
 				.getSimpleName());
 		Element ret = Util.getXML(advElem);
-		Element advisedElementXML = getAdvisedJavaElements(adviceXMLElement,
-				Util.getAdvisedJavaElements(advElem));
+		Element advisedElementXML = getAdvisedJavaElementsXMLElement(
+				adviceXMLElement, Util.getAdvisedJavaElements(advElem));
 		ret.addContent(advisedElementXML);
 		return ret;
 	}
@@ -722,8 +702,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @param adviceXMLElement
 	 * @param advisedJavaElements
 	 */
-	private static Element getAdvisedJavaElements(Element adviceXMLElement,
-			Set<IJavaElement> advisedJavaElements) {
+	private static Element getAdvisedJavaElementsXMLElement(
+			Element adviceXMLElement, Set<IJavaElement> advisedJavaElements) {
 		Element ret = new Element("advisedElements");
 		for (IJavaElement jElem : advisedJavaElements) {
 			Element xmlElem = Util.getXML(jElem);
