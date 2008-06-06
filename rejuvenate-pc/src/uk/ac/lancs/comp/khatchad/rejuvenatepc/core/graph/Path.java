@@ -22,6 +22,15 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
 public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 		Serializable {
 
+	/**
+	 * 
+	 */
+	private static final String PATH = "path";
+	/**
+	 * 
+	 */
+	private static final String SEQUENCE = "sequence";
+
 	public static class PathObjectFilter implements ObjectFilter {
 
 		/* (non-Javadoc)
@@ -235,20 +244,31 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 
 	public Element getXML() {
 		Element root = new Element(this.getClass().getSimpleName());
+		Element path = new Element(PATH);
 
+		int sequence = 1;
 		if (!this.isEmpty()) {
-			root.addContent(this.get(0).getFromNode().getXML());
+			Element node = this.get(0).getFromNode().getXML();
+			node.setAttribute(SEQUENCE, String.valueOf(sequence++));
+			path.addContent(node);
 		}
 
 		final Iterator<E> i = this.iterator();
 		boolean hasNext = i.hasNext();
 		while (hasNext) {
 			final E o = i.next();
-			root.addContent(o.getXML());
-			root.addContent((o.getToNode().getXML()));
+			
+			Element edge = o.getXML();
+			edge.setAttribute(SEQUENCE, String.valueOf(sequence++));
+			path.addContent(edge);
+			
+			Element node = o.getToNode().getXML();
+			node.setAttribute(SEQUENCE, String.valueOf(sequence++));
+			path.addContent(node);
 			hasNext = i.hasNext();
 		}
 
+		root.addContent(path);
 		return root;
 	}
 

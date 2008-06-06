@@ -93,17 +93,17 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 					patternToResultMap, patternToEnabledElementMap);
 
 			//Intersect pattern sets.
-			Set<Pattern<IntentionEdge<IElement>>> extractedPatternSet = extractPatterns(document);
+			Map<Pattern<IntentionEdge<IElement>>, Double> extractedPatternToConfidenceMap = extractPatterns(document);
 			Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = patternToResultMap
 					.keySet();
-			Set<Pattern<IntentionEdge<IElement>>> retrievedPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
-					extractedPatternSet);
-			retrievedPatternSet.retainAll(derivedPatternSet);
+//			Set<Pattern<IntentionEdge<IElement>>> retrievedPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
+//					extractedPatternSet);
+//			retrievedPatternSet.retainAll(derivedPatternSet);
 
 			//TODO: Need to make suggestions.
-			for (Pattern<IntentionEdge<IElement>> pattern : retrievedPatternSet) {
+//			for (Pattern<IntentionEdge<IElement>> pattern : retrievedPatternSet) {
 				//TODO: Use the maps here.
-			}
+//			}
 
 			//			SortedMap<IJavaElement, Double> suggestions = null;// obtainSuggestions()
 
