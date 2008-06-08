@@ -233,4 +233,15 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		// Need to *somehow* get AJCodeElements here. Perhaps use search engine?
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement#getPrettyString()
+	 */
+	@Override
+	public String toPrettyString() {
+		StringBuilder ret = new StringBuilder(this.toString().toLowerCase());
+		ret.append(": ");
+		ret.append(this.toNode);
+		return ret.toString();
+	}
 }

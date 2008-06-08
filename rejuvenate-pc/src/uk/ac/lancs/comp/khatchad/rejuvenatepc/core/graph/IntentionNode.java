@@ -157,4 +157,12 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 		ret.append(this.elem.getId());
 		return ret.toString();
 	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement#getPrettyString()
+	 */
+	@Override
+	public String toPrettyString() {
+		return this.toString();
+	}
 }
