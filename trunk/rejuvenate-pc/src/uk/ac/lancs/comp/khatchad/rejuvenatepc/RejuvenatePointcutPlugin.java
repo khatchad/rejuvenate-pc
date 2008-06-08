@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -103,26 +106,73 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			buildPatternMaps(monitor, graph, workingMemory, advElem,
 					derivedPatternToResultMap, deriedPatternToEnabledElementMap);
 
-			//Intersect pattern sets.
+			//Retrieve the saved patterns.
 			Map<Pattern<IntentionEdge<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
 
-			Set<Pattern<IntentionEdge<IElement>>> recoveredPatternSet = recoveredPatternToConfidenceMap
-					.keySet();
-			Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = derivedPatternToResultMap
-					.keySet();
-			//			Set<Pattern<IntentionEdge<IElement>>> retrievedPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
-			//					extractedPatternSet);
-			//			retrievedPatternSet.retainAll(derivedPatternSet);
+			//Intersect pattern sets.
+			Set<Pattern<IntentionEdge<IElement>>> survingPatternSet = obtainSurvingPatterns(
+					derivedPatternToResultMap, recoveredPatternToConfidenceMap);
+			
+			//Make suggestions sorted by highest confidence.
+			SortedMap<Double, Set<IntentionElement<IElement>>> confidenceToSuggestedIntentionElementSetMap = new TreeMap<Double, Set<IntentionElement<IElement>>>(
+					new Comparator<Double>() {
+						public int compare(Double o1, Double o2) {
+							return o1.compareTo(o2) * -1;
+						}
+					});
 
-			//TODO: Need to make suggestions.
-			//			for (Pattern<IntentionEdge<IElement>> pattern : retrievedPatternSet) {
-			//TODO: Use the maps here.
-			//			}
+			for (Pattern<IntentionEdge<IElement>> pattern : survingPatternSet) {
+				//Get the confidence.
+				double confidence = recoveredPatternToConfidenceMap
+						.get(pattern);
 
-			//			SortedMap<IJavaElement, Double> suggestions = null;// obtainSuggestions()
+				if (!confidenceToSuggestedIntentionElementSetMap
+						.containsKey(confidence)) {
+					confidenceToSuggestedIntentionElementSetMap.put(confidence,
+							new LinkedHashSet<IntentionElement<IElement>>());
+				}
+				Set<IntentionElement<IElement>> suggestedIntentionElementSet = confidenceToSuggestedIntentionElementSetMap
+						.get(confidence);
+
+				//Get the suggestions.
+				for (IntentionElement<IElement> intentionElement : derivedPatternToResultMap
+						.get(pattern)) {
+					suggestedIntentionElementSet.add(intentionElement);
+				}
+			}
+
+			System.out.println("Suggestions sorted descendingly by confidence");
+			System.out.println("Confidence\tSuggestion");
+			for (Double confidence : confidenceToSuggestedIntentionElementSetMap
+					.keySet()) {
+				for (IntentionElement<IElement> suggestion : confidenceToSuggestedIntentionElementSetMap
+						.get(confidence)) {
+					System.out.println(confidence + "\t" + suggestion);
+				}
+			}
 
 			monitor.worked(1);
 		}
+	}
+
+	/**
+	 * @param derivedPatternToResultMap
+	 * @param recoveredPatternToConfidenceMap
+	 * @return
+	 */
+	private Set<Pattern<IntentionEdge<IElement>>> obtainSurvingPatterns(
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap,
+			Map<Pattern<IntentionEdge<IElement>>, Double> recoveredPatternToConfidenceMap) {
+		Set<Pattern<IntentionEdge<IElement>>> recoveredPatternSet = recoveredPatternToConfidenceMap
+				.keySet();
+		Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = derivedPatternToResultMap
+				.keySet();
+
+		Set<Pattern<IntentionEdge<IElement>>> survingPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
+				derivedPatternSet);
+		survingPatternSet.retainAll(recoveredPatternSet);
+
+		return survingPatternSet;
 	}
 
 	/**
