@@ -13,14 +13,23 @@ package ca.mcgill.cs.swevo.jayfx.model;
 import java.io.Serializable;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 /**
  * A program element in the Java model.
  */
 public interface IElement extends Serializable {
+	/**
+	 * 
+	 */
+	static final String ID = "id";
+
 	public void disable();
 
 	public void disableAllIncommingRelations();
+	
+	public Element getXML();
 
 	/**
 	 * 
@@ -35,7 +44,7 @@ public interface IElement extends Serializable {
 	/**
 	 * @return The category for this element.
 	 */
-	public ICategories getCategory();
+	public Category getCategory();
 
 	/**
 	 * @return The declaring class of the element. Null if the element is a
@@ -47,8 +56,6 @@ public interface IElement extends Serializable {
 	 * @return The ID for this element.
 	 */
 	public String getId();
-
-	public IJavaElement getJavaElement();
 
 	/**
 	 * @return String Name of the package this element belongs to.

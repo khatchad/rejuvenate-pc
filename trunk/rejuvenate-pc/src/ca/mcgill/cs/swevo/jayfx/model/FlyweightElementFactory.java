@@ -13,6 +13,7 @@ package ca.mcgill.cs.swevo.jayfx.model;
 import java.util.Hashtable;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.jdom.Element;
 
 import uk.ac.lancs.comp.khatchad.ajayfx.model.AJCodeElement;
 import uk.ac.lancs.comp.khatchad.ajayfx.model.AdviceElement;
@@ -33,10 +34,10 @@ public class FlyweightElementFactory {
 	 * 
 	 * @param pCategory
 	 *            The category of element. Must be a value declared in
-	 *            ICategories.
+	 *            Category.
 	 * @param pId
 	 *            The id for the element. For example, a field Id for
-	 *            ICategories.FIELD.
+	 *            Category.FIELD.
 	 * @see <a
 	 *      href="http://java.sun.com/docs/books/jls/third_edition/html/binaryComp.html#13.1">
 	 *      Java Specification, Third Section, 13.1 Section for the binary name
@@ -45,24 +46,24 @@ public class FlyweightElementFactory {
 	 * @exception InternalProblemException
 	 *                if an invalid category is passed as parameter.
 	 */
-	public static IElement getElement(final ICategories pCategory,
-			final String pId, final IJavaElement elem) {
+	public static IElement getElement(final Category pCategory,
+			final String pId) {
 		IElement lReturn = FlyweightElementFactory.aElements.get(pCategory
 				+ FlyweightElementFactory.KEY_SEPARATOR + pId);
 		if (lReturn == null) {
-			if (pCategory == ICategories.CLASS)
+			if (pCategory == Category.CLASS)
 				lReturn = new ClassElement(pId);
-			else if (pCategory == ICategories.FIELD)
+			else if (pCategory == Category.FIELD)
 				lReturn = new FieldElement(pId);
-			else if (pCategory == ICategories.METHOD)
+			else if (pCategory == Category.METHOD)
 				lReturn = new MethodElement(pId);
-			else if (pCategory == ICategories.PACKAGE)
-				lReturn = new PackageElement(pId, elem);
-			else if (pCategory == ICategories.ASPECT)
+			else if (pCategory == Category.PACKAGE)
+				lReturn = new PackageElement(pId);
+			else if (pCategory == Category.ASPECT)
 				lReturn = new AspectElement(pId);
-			else if (pCategory == ICategories.ADVICE)
+			else if (pCategory == Category.ADVICE)
 				lReturn = new AdviceElement(pId);
-			else if (pCategory == ICategories.AJCODE)
+			else if (pCategory == Category.AJCODE)
 				lReturn = new AJCodeElement(pId);
 			else
 				throw new InternalProblemException("Invalid element category: "
@@ -74,6 +75,17 @@ public class FlyweightElementFactory {
 	}
 
 	private FlyweightElementFactory() {
+	}
 
+	/**
+	 * @param elementXML
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> E getElement(Element elementXML) {
+		//extract the category and the ID and delegate the behavior.
+		String identifierString = elementXML.getAttribute(IElement.ID).getValue();
+		Category category = Category.valueOf(elementXML.getChild(Category.class.getSimpleName()));
+		return (E) getElement(category, identifierString);
 	}
 }

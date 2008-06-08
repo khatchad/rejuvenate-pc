@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rejuvenate Pointcut
-Bundle-SymbolicName: uk.ac.lancs.comp.khatchad.rejuvenatepc;singleton:=true
+Bundle-SymbolicName: uk.ac.lancs.comp.khatchad.rejuvenatepc.core;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-Vendor: Lancaster University
 Require-Bundle: org.eclipse.jdt.core,

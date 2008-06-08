@@ -86,11 +86,11 @@ public class FieldElement extends AbstractElement {
 	/**
 	 * Returns the category of this element, i.e., a field.
 	 * 
-	 * @return ICategories.FIELD.
+	 * @return Category.FIELD.
 	 */
 	@Override
-	public ICategories getCategory() {
-		return ICategories.FIELD;
+	public Category getCategory() {
+		return Category.FIELD;
 	}
 
 	/**
@@ -99,8 +99,8 @@ public class FieldElement extends AbstractElement {
 	public ClassElement getDeclaringClass() {
 		ClassElement lReturn = null;
 		lReturn = (ClassElement) FlyweightElementFactory.getElement(
-				ICategories.CLASS, this.getId().substring(0,
-						this.getId().lastIndexOf(".")), null);
+				Category.CLASS, this.getId().substring(0,
+						this.getId().lastIndexOf(".")));
 		return lReturn;
 	}
 

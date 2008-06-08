@@ -6,9 +6,12 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jdom.Attribute;
+import org.jdom.DataConversionException;
 import org.jdom.Element;
 
-import uk.ac.lancs.comp.khatchad.ajayfx.model.NullElement;
+import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -26,10 +29,8 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	public static final IntentionNode<IElement> ENABLED_WILDCARD = new IntentionNode<IElement>(
 			new WildcardElement(true));
 
-	public static final IntentionNode<IElement> NULL = new IntentionNode<IElement>(
-			new NullElement());
-
 	private final E elem;
+	
 	private final Set<IntentionEdge<E>> edges = new HashSet<IntentionEdge<E>>();
 
 	/**
@@ -41,6 +42,17 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 			this.enable();
 		else
 			this.disable();
+	}
+
+	/**
+	 * @param xmlElem
+	 * @throws DataConversionException 
+	 */
+	@SuppressWarnings("unchecked")
+	public IntentionNode(Element xmlElem) throws DataConversionException {
+		super(xmlElem);
+		Element elementXML = xmlElem.getChild(IElement.class.getSimpleName());
+		this.elem = FlyweightElementFactory.getElement(elementXML);
 	}
 
 	/**
@@ -130,9 +142,8 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	 * @return
 	 */
 	public Element getXML() {
-		Element ret = new Element(this.getClass().getSimpleName());
-		ret.setAttribute("enabled", String.valueOf(this.isEnabled()));
-		ret.setAttribute("id", this.elem.getId());
+		Element ret = super.getXML();
+		ret.addContent(this.elem.getXML());
 		return ret;
 	}
 

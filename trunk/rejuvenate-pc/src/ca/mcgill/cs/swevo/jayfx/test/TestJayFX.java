@@ -22,7 +22,7 @@ import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.RelationNotSupportedException;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -1634,14 +1634,14 @@ public class TestJayFX extends TestCase {
 
 	private IElement getElement(final String pId, final boolean pIsClass) {
 		if (pIsClass)
-			return FlyweightElementFactory.getElement(ICategories.CLASS, pId,
-					null);
+			return FlyweightElementFactory.getElement(Category.CLASS, pId
+					);
 		else if (pId.endsWith(")"))
-			return FlyweightElementFactory.getElement(ICategories.METHOD, pId,
-					null);
+			return FlyweightElementFactory.getElement(Category.METHOD, pId
+					);
 		else
-			return FlyweightElementFactory.getElement(ICategories.FIELD, pId,
-					null);
+			return FlyweightElementFactory.getElement(Category.FIELD, pId
+					);
 	}
 
 	protected void setUp() throws Exception {

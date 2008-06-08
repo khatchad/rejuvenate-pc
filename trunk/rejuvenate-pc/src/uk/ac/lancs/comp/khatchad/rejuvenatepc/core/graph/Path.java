@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import org.drools.ObjectFilter;
+import org.jdom.DataConversionException;
 import org.jdom.Element;
 
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -22,10 +23,6 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
 public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 		Serializable {
 
-	/**
-	 * 
-	 */
-	private static final String PATH = "path";
 	/**
 	 * 
 	 */
@@ -48,19 +45,20 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 
 	/**
 	 * @param patternElem
+	 * @throws DataConversionException 
 	 */
-	public Path(Element patternElem) {
-		// TODO Auto-generated constructor stub
-		Element pathElem = patternElem.getChild(PATH);
-//		Attribute enabledAttribute
-		for (Object intentionEdgeElemObj : pathElem.getChildren() ) {
-			Element intentionEdgeXMLElem = (Element)intentionEdgeElemObj;
-//			IntentionEdge intentionEdge = IntentionElement.create(intentionXMLElem);
-//			this.add(intentionElem);
+	@SuppressWarnings("unchecked")
+	public Path(Element pathElem) throws DataConversionException {
+		for (Object intentionEdgeElemObj : pathElem
+				.getChildren(IntentionEdge.class.getSimpleName())) {
+			Element intentionEdgeXMLElem = (Element) intentionEdgeElemObj;
+			IntentionEdge<IElement> intentionEdge = new IntentionEdge<IElement>(intentionEdgeXMLElem);
+			this.add((E)intentionEdge);
 		}
 	}
-	
-	public Path() {}
+
+	public Path() {
+	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Vector#equals(java.lang.Object)
@@ -260,16 +258,12 @@ public class Path<E extends IntentionEdge<IElement>> extends Stack<E> implements
 
 	public Element getXML() {
 		Element root = new Element(this.getClass().getSimpleName());
-		Element path = new Element(PATH);
-
 		int sequence = 0;
-		for ( E edge : this ) {
+		for (E edge : this) {
 			Element edgeXMLElem = edge.getXML();
 			edgeXMLElem.setAttribute(SEQUENCE, String.valueOf(sequence++));
-			path.addContent(edgeXMLElem);
+			root.addContent(edgeXMLElem);
 		}
-
-		root.addContent(path);
 		return root;
 	}
 

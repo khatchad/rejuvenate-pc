@@ -268,7 +268,7 @@ public class Analyzer {
 	//    public boolean isInterface( IElement pElement )
 	//    {
 	//    	boolean lReturn = false;
-	//    	if( pElement.getCategory() == ICategories.CLASS )
+	//    	if( pElement.getCategory() == Category.CLASS )
 	//    	{
 	//    		if( aDB.getModifiers( pElement ) >= 16384 )
 	//    		{
@@ -285,7 +285,7 @@ public class Analyzer {
 	//    public boolean isAbstractMethod( IElement pElement )
 	//    {
 	//    	boolean lReturn = false;
-	//    	if( pElement.getCategory() == ICategories.METHOD )
+	//    	if( pElement.getCategory() == Category.METHOD )
 	//    	{
 	//    		if( aDB.getModifiers( pElement ) >= 16384 )
 	//    		{
@@ -377,7 +377,7 @@ public class Analyzer {
 	//		for( Iterator i = lElements.iterator(); i.hasNext(); )
 	//		{
 	//			IElement lNext = (IElement)i.next();
-	//			if( lNext.getCategory() == ICategories.METHOD )
+	//			if( lNext.getCategory() == Category.METHOD )
 	//			{
 	//				if(  !((MethodElement)lNext).getName().startsWith("<init>") &&
 	//				     !((MethodElement)lNext).getName().startsWith("<clinit>"))

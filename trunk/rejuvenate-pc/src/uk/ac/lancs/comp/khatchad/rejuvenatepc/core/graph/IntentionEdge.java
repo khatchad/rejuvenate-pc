@@ -9,6 +9,8 @@ import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJProjectModel;
 import org.eclipse.jdt.core.IJavaElement;
+import org.jdom.Attribute;
+import org.jdom.DataConversionException;
 import org.jdom.Element;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -29,11 +31,6 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 * 
 	 */
 	private static final String TARGET = "target";
-
-	/**
-	 * 
-	 */
-	private static final String ENABLED = "enabled";
 
 	private static final long serialVersionUID = -4758844315757084370L;
 
@@ -75,6 +72,34 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 			this.enable();
 		else
 			this.disable();
+	}
+
+	/**
+	 * @param elem
+	 * @throws DataConversionException 
+	 */
+	public IntentionEdge(Element elem) throws DataConversionException {
+		super(elem);
+		
+		Element typeElem = elem.getChild(Relation.class.getSimpleName());
+		this.type = Relation.valueOf(typeElem);
+		
+		Element sourceElem = elem.getChild(SOURCE).getChild(IntentionNode.class.getSimpleName());
+		this.fromNode = recoverNode(sourceElem);
+		
+		Element targetElem = elem.getChild(TARGET).getChild(IntentionNode.class.getSimpleName());
+		this.toNode = recoverNode(targetElem);
+	}
+
+	/**
+	 * @param sourceElem
+	 * @throws DataConversionException
+	 */
+	private static <E extends IElement> IntentionNode<E> recoverNode(Element sourceElem) throws DataConversionException {
+		if ( WildcardElement.isWildcardElement(sourceElem.getChild(IElement.class.getSimpleName())) ) 
+			return (IntentionNode<E>)(IntentionElement.isEnabled(sourceElem) ? IntentionNode.ENABLED_WILDCARD : IntentionNode.DISABLED_WILDCARD);
+		else 
+			return new IntentionNode<E>(sourceElem);
 	}
 
 	/* (non-Javadoc)
@@ -172,19 +197,6 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		return ret.toString();
 	}
 
-	private Element getXML(boolean includeTarget) {
-		Element ret = new Element(this.getClass().getSimpleName());
-		ret.setAttribute(ENABLED, String.valueOf(this.isEnabled()));
-		Element typeXML = this.type.getXML();
-		if (includeTarget) {
-			Element target = new Element(TARGET);
-			target.addContent(this.getToNode().getXML());
-			typeXML.addContent(target);
-		}
-		ret.addContent(typeXML);
-		return ret;
-	}
-
 	@Override
 	public String getLongDescription() {
 		StringBuilder ret = new StringBuilder();
@@ -195,10 +207,8 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	}
 
 	public Element getXML() {
-		Element ret = new Element(this.getClass().getSimpleName());
-		
-		ret.setAttribute(ENABLED, String.valueOf(this.isEnabled()));
-		
+		Element ret = super.getXML();
+				
 		Element typeXML = this.type.getXML();
 		ret.addContent(typeXML);
 		
@@ -211,10 +221,6 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		ret.addContent(target);
 		
 		return ret;
-	}
-
-	public Element getXMLWithTargetNode() {
-		return this.getXML(true);
 	}
 
 	/**

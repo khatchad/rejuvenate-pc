@@ -431,8 +431,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 		Element ret = new Element(elementName);
 		for (IntentionElement<IElement> enabledElement : set) {
 			if (enabledElement instanceof IntentionEdge)
-				ret.addContent(((IntentionEdge) enabledElement)
-						.getXMLWithTargetNode());
+				ret.addContent(((IntentionEdge) enabledElement).getXML());
 			else
 				ret.addContent(enabledElement.getXML());
 		}
@@ -515,8 +514,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	private static Element getPatternXMLElement(final Pattern pattern,
 			double confidence) {
 		Element patternXMLElement = pattern.getXML();
-		patternXMLElement
-				.setAttribute(CONFIDENCE, String.valueOf(confidence));
+		patternXMLElement.setAttribute(CONFIDENCE, String.valueOf(confidence));
 		return patternXMLElement;
 	}
 

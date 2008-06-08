@@ -10,10 +10,32 @@
 
 package ca.mcgill.cs.swevo.jayfx.model;
 
+import org.jdom.Attribute;
+import org.jdom.Element;
+
 /**
  * The various categories of elements supported by the Concern Graph model for
  * the Java language.
  */
-public enum ICategories {
-	CLASS, FIELD, METHOD, PACKAGE, ASPECT, ADVICE, AJCODE, WILDCARD, NULL
+public enum Category {
+	CLASS, FIELD, METHOD, PACKAGE, ASPECT, ADVICE, AJCODE, WILDCARD;
+
+	/**
+	 * 
+	 */
+	private static final String TYPE = "type";
+
+	/**
+	 * @return
+	 */
+	public Element getXML() {
+		Element ret = new Element(this.getClass().getSimpleName());
+		ret.setAttribute(TYPE, this.toString());
+		return ret;
+	}
+	
+	public static Category valueOf(Element elem) {
+		Attribute typeAttribute = elem.getAttribute(TYPE);
+		return valueOf(typeAttribute.getValue());
+	}
 }
