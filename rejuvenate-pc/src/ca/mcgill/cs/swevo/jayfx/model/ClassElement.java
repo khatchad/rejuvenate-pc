@@ -82,8 +82,8 @@ public class ClassElement extends AbstractElement {
 	 * @return the keyword "class".
 	 */
 	@Override
-	public ICategories getCategory() {
-		return ICategories.CLASS;
+	public Category getCategory() {
+		return Category.CLASS;
 	}
 
 	/**

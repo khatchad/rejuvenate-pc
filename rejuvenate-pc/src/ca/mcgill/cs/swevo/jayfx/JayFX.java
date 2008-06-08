@@ -47,7 +47,7 @@ import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
@@ -426,7 +426,7 @@ public class JayFX {
 			// k++;
 			final IElement lNext = lToProcess.iterator().next();
 			lToProcess.remove(lNext);
-			if (lNext.getCategory() == ICategories.METHOD)
+			if (lNext.getCategory() == Category.METHOD)
 				if (!this.isAbstractMethod(lNext)) {
 					final Set<IElement> lOverrides = this
 							.getOverridenMethods(lNext);
@@ -502,7 +502,7 @@ public class JayFX {
 	 */
 	public boolean isAbstractMethod(final IElement pElement) {
 		boolean lReturn = false;
-		if (pElement.getCategory() == ICategories.METHOD)
+		if (pElement.getCategory() == Category.METHOD)
 			if (this.aDB.getModifiers(pElement) >= 16384)
 				lReturn = true;
 		return lReturn;
@@ -664,35 +664,13 @@ public class JayFX {
 	private void enableElementsAccordingToCall(
 			final StringBuilder targetString, final int javaSearchConstant)
 			throws ConversionException {
+		
 		final SearchPattern pattern = SearchPattern.createPattern(targetString
 				.toString(), javaSearchConstant,
 				IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH
 						| SearchPattern.R_CASE_SENSITIVE);
-		final SearchEngine engine = new SearchEngine();
-		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
-		try {
-			engine.search(pattern, new SearchParticipant[] { SearchEngine
-					.getDefaultSearchParticipant() }, SearchEngine
-					.createWorkspaceScope(), new SearchRequestor() {
-
-				@Override
-				public void acceptSearchMatch(final SearchMatch match)
-						throws CoreException {
-					if (match.getAccuracy() == SearchMatch.A_ACCURATE
-							&& !match.isInsideDocComment())
-						results.add(match);
-				}
-			}, null);
-		}
-		catch (final NullPointerException e) {
-			System.err.println("Caught " + e
-					+ " from search engine. Rethrowing.");
-			throw e;
-		}
-		catch (final CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		final Collection<SearchMatch> results = Util.search(pattern);
 
 		for (final SearchMatch match : results) {
 			final IElement toEnable = this
@@ -820,7 +798,7 @@ public class JayFX {
 			final IElement pElement) {
 		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
-		if (pElement.getCategory() == ICategories.CLASS)
+		if (pElement.getCategory() == Category.CLASS)
 			try {
 				final IJavaElement lElement = this
 						.convertToJavaElement(pElement);
@@ -843,7 +821,7 @@ public class JayFX {
 			final IElement pElement) {
 		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
-		if (pElement.getCategory() == ICategories.CLASS)
+		if (pElement.getCategory() == Category.CLASS)
 			try {
 				final IJavaElement lElement = this
 						.convertToJavaElement(pElement);
@@ -875,7 +853,7 @@ public class JayFX {
 			final IElement pElement) {
 		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
-		if (pElement.getCategory() == ICategories.CLASS)
+		if (pElement.getCategory() == Category.CLASS)
 			try {
 				final IJavaElement lElement = this
 						.convertToJavaElement(pElement);
@@ -907,7 +885,7 @@ public class JayFX {
 			final IElement pElement) {
 		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
-		if (pElement.getCategory() == ICategories.CLASS)
+		if (pElement.getCategory() == Category.CLASS)
 			try {
 				final IJavaElement lElement = this
 						.convertToJavaElement(pElement);
@@ -916,11 +894,11 @@ public class JayFX {
 							.getSuperclassTypeSignature();
 					if (lSignature != null) {
 						final IElement lSuperclass = FlyweightElementFactory
-								.getElement(ICategories.CLASS, this.aConverter
+								.getElement(Category.CLASS, this.aConverter
 										.resolveType(lSignature,
 												(IType) lElement).substring(1,
-												lSignature.length() - 1),
-										lElement);
+												lSignature.length() - 1)
+										);
 						//						assert lSuperclass instanceof ClassElement;
 						lReturn.add(lSuperclass);
 					}
@@ -951,7 +929,7 @@ public class JayFX {
 			final IElement pElement, boolean pImplements) {
 		//		assert pElement != null;
 		final Set<IElement> lReturn = new HashSet<IElement>();
-		if (pElement.getCategory() == ICategories.CLASS)
+		if (pElement.getCategory() == Category.CLASS)
 			try {
 				final IJavaElement lElement = this
 						.convertToJavaElement(pElement);
@@ -963,7 +941,7 @@ public class JayFX {
 							for (final String element : lInterfaces) {
 								final IElement lInterface = FlyweightElementFactory
 										.getElement(
-												ICategories.CLASS,
+												Category.CLASS,
 												this.aConverter
 														.resolveType(
 																element,
@@ -971,8 +949,8 @@ public class JayFX {
 														.substring(
 																1,
 																element
-																		.length() - 1),
-												lElement);
+																		.length() - 1)
+												);
 								lReturn.add(lInterface);
 							}
 					}
@@ -1004,7 +982,7 @@ public class JayFX {
 		final Set<IElement> lElements = this.getRange(pClass,
 				Relation.DECLARES_METHOD);
 		for (final IElement lMethodElement : lElements)
-			if (lMethodElement.getCategory() == ICategories.METHOD)
+			if (lMethodElement.getCategory() == Category.METHOD)
 				if (!((MethodElement) lMethodElement).getName().startsWith(
 						"<init>")
 						&& !((MethodElement) lMethodElement).getName()
@@ -1023,7 +1001,7 @@ public class JayFX {
 		/*
 		 * for( Iterator i = lElements.iterator(); i.hasNext(); ) { IElement
 		 * lNext = (IElement)i.next(); if( lNext.getCategory() ==
-		 * ICategories.METHOD ) { if(
+		 * Category.METHOD ) { if(
 		 * !((MethodElement)lNext).getName().startsWith("<init>") &&
 		 * !((MethodElement)lNext).getName().startsWith("<clinit>")) { if(
 		 * !Modifier.isStatic( aDB.getModifiers( lNext ))) { if(

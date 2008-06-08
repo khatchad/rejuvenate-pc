@@ -25,7 +25,7 @@ public class PackageElement extends AbstractElement {
 	 */
 	private static final long serialVersionUID = -3606792222309273813L;
 
-	private final IJavaElement elem;
+//	private final IJavaElement elem;
 
 	private boolean enabled;
 
@@ -38,10 +38,13 @@ public class PackageElement extends AbstractElement {
 	 * @param pId
 	 *            The fully qualified name of the class.
 	 */
-	protected PackageElement(final String pId, final IJavaElement elem) {
+	protected PackageElement(final String pId) {
 		super(pId);
-		this.elem = elem;
 	}
+//	protected PackageElement(final String pId, final IJavaElement elem) {
+//		super(pId);
+//		this.elem = elem;
+//	}
 
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
@@ -90,8 +93,8 @@ public class PackageElement extends AbstractElement {
 	 * @return the keyword "class".
 	 */
 	@Override
-	public ICategories getCategory() {
-		return ICategories.PACKAGE;
+	public Category getCategory() {
+		return Category.PACKAGE;
 	}
 
 	/**
@@ -105,10 +108,10 @@ public class PackageElement extends AbstractElement {
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.AbstractElement#getJavaElement()
 	 */
-	@Override
-	public IJavaElement getJavaElement() {
-		return this.elem;
-	}
+//	@Override
+//	public IJavaElement getJavaElement() {
+//		return this.elem;
+//	}
 
 	/**
 	 * @return The name of the package in which this class is defined.

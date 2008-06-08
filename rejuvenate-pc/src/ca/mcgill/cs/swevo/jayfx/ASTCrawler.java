@@ -67,7 +67,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
@@ -180,8 +180,7 @@ public class ASTCrawler extends ASTVisitor {
 					lParamBindings[lParamBindings.length - 1]).getId();
 		lReturn += ")";
 
-		return FlyweightElementFactory.getElement(ICategories.METHOD, lReturn,
-				pBinding.getJavaElement());
+		return FlyweightElementFactory.getElement(Category.METHOD, lReturn);
 	}
 
 	/**
@@ -203,8 +202,8 @@ public class ASTCrawler extends ASTVisitor {
 					+ pBinding.getName());
 			return null;
 		}
-		return FlyweightElementFactory.getElement(ICategories.CLASS, pBinding
-				.getBinaryName(), elem);
+		return FlyweightElementFactory.getElement(Category.CLASS, pBinding
+				.getBinaryName());
 	}
 
 	/**
@@ -219,8 +218,8 @@ public class ASTCrawler extends ASTVisitor {
 		final String lFieldID = ASTCrawler.convertBinding(
 				pBinding.getDeclaringClass()).getId()
 				+ "." + pBinding.getName();
-		return FlyweightElementFactory.getElement(ICategories.FIELD, lFieldID,
-				pBinding.getJavaElement());
+		return FlyweightElementFactory.getElement(Category.FIELD, lFieldID
+				);
 	}
 
 	/**
@@ -236,12 +235,12 @@ public class ASTCrawler extends ASTVisitor {
 			final ITypeBinding pBinding) {
 		ASTCrawler.checkForNull(pBinding);
 		if (pBinding.getDimensions() == 0 && !pBinding.isPrimitive())
-			return FlyweightElementFactory.getElement(ICategories.CLASS,
+			return FlyweightElementFactory.getElement(Category.CLASS,
 					Signature.C_RESOLVED + pBinding.getBinaryName()
-							+ Signature.C_SEMICOLON, pBinding.getJavaElement());
+							+ Signature.C_SEMICOLON);
 		else
-			return FlyweightElementFactory.getElement(ICategories.CLASS,
-					pBinding.getBinaryName(), pBinding.getJavaElement());
+			return FlyweightElementFactory.getElement(Category.CLASS,
+					pBinding.getBinaryName());
 	}
 
 	@SuppressWarnings({ "unchecked", "unused" })
@@ -454,9 +453,8 @@ public class ASTCrawler extends ASTVisitor {
 				return false;
 
 			lConstructor = (MethodElement) FlyweightElementFactory.getElement(
-					ICategories.METHOD, lDeclaringClass.getId() + "."
-							+ ASTCrawler.aINIT_METHOD_NAME, lTBinding
-							.getJavaElement());
+					Category.METHOD, lDeclaringClass.getId() + "."
+							+ ASTCrawler.aINIT_METHOD_NAME);
 			this.aDB
 					.addElement(lConstructor, ASTCrawler.aINIT_METHOD_MODIFIERS);
 		}
@@ -505,9 +503,8 @@ public class ASTCrawler extends ASTVisitor {
 			return false;
 
 		IElement lField;
-		lField = FlyweightElementFactory.getElement(ICategories.FIELD,
-				this.aCurrType.getId() + "." + lSimpleName, pNode
-						.resolveVariable().getJavaElement());
+		lField = FlyweightElementFactory.getElement(Category.FIELD,
+				this.aCurrType.getId() + "." + lSimpleName);
 		this.aDB.addElement(lField, pNode.getModifiers());
 		this.aDB.addRelation(this.aCurrType, Relation.DECLARES_FIELD, lField);
 
@@ -595,8 +592,8 @@ public class ASTCrawler extends ASTVisitor {
 
 		if (Modifier.isStatic(pNode.getModifiers())) {
 			this.aCurrMethod = (MethodElement) FlyweightElementFactory
-					.getElement(ICategories.METHOD, this.aCurrType.getId()
-							+ "." + ASTCrawler.aCLINIT_METHOD_NAME, null);
+					.getElement(Category.METHOD, this.aCurrType.getId()
+							+ "." + ASTCrawler.aCLINIT_METHOD_NAME);
 			if (!this.aDB.contains(this.aCurrMethod))
 				//This <clinit>() method will be in any class that has a static field with initialization
 				//But the DECLARES relation will be linked only if this method has at least one sub relations
@@ -614,8 +611,8 @@ public class ASTCrawler extends ASTVisitor {
 			final Expression lInit = fragment.getInitializer();
 
 			if (lSimpleName != null) {
-				lField = FlyweightElementFactory.getElement(ICategories.FIELD,
-						this.aCurrType.getId() + "." + lSimpleName, null);
+				lField = FlyweightElementFactory.getElement(Category.FIELD,
+						this.aCurrType.getId() + "." + lSimpleName);
 				this.aDB.addElement(lField, pNode.getModifiers());
 
 				this.aDB.addRelation(this.aCurrType, Relation.DECLARES_FIELD,
@@ -652,12 +649,12 @@ public class ASTCrawler extends ASTVisitor {
 
 		if (Flags.isStatic(pNode.getModifiers()))
 			this.aCurrMethod = (MethodElement) FlyweightElementFactory
-					.getElement(ICategories.METHOD, this.aCurrType.getId()
-							+ "." + ASTCrawler.aCLINIT_METHOD_NAME, null);
+					.getElement(Category.METHOD, this.aCurrType.getId()
+							+ "." + ASTCrawler.aCLINIT_METHOD_NAME);
 		else {
 			this.aCurrMethod = (MethodElement) FlyweightElementFactory
-					.getElement(ICategories.METHOD, this.aCurrType.getId()
-							+ "." + ASTCrawler.aINIT_METHOD_NAME, null);
+					.getElement(Category.METHOD, this.aCurrType.getId()
+							+ "." + ASTCrawler.aINIT_METHOD_NAME);
 			this.aCurrConstructorList.add(this.aCurrMethod);
 		}
 
@@ -778,7 +775,7 @@ public class ASTCrawler extends ASTVisitor {
 		//			List<AdviceElement> applicableAdvice = getApplicableAdvice(elem);
 		//			for (AdviceElement advice: applicableAdvice ) {
 		//				if ( advice != null && advice.equals(this.selectedAdvice) ) {
-		//    				IElement adviceElem = Utils.convertBinding(ICategories.ADVICE, advice.getHandleIdentifier());
+		//    				IElement adviceElem = Utils.convertBinding(Category.ADVICE, advice.getHandleIdentifier());
 		//    				try {
 		//    					this.aDB.addElement(adviceElem, advice.getFlags());
 		//    				} catch (JavaModelException e) {
@@ -1270,8 +1267,8 @@ public class ASTCrawler extends ASTVisitor {
 	 */
 	private IElement convertBinding(final IPackageBinding binding) {
 		ASTCrawler.checkForNull(binding);
-		return FlyweightElementFactory.getElement(ICategories.PACKAGE, binding
-				.getName(), binding.getJavaElement());
+		return FlyweightElementFactory.getElement(Category.PACKAGE, binding
+				.getName());
 	}
 
 	// Extracts types and loads them into the converter
@@ -1337,8 +1334,8 @@ public class ASTCrawler extends ASTVisitor {
 	private void restoreTypeRelation() {
 		//		if this <clinit> method has relations in it, the relation DECLARES is added to the current type
 		final MethodElement lMethod = (MethodElement) FlyweightElementFactory
-				.getElement(ICategories.METHOD, this.aCurrType.getId() + "."
-						+ ASTCrawler.aCLINIT_METHOD_NAME, null);
+				.getElement(Category.METHOD, this.aCurrType.getId() + "."
+						+ ASTCrawler.aCLINIT_METHOD_NAME);
 		if (this.aDB.contains(lMethod) && this.aDB.hasRelations(lMethod))
 			this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
 					lMethod);
@@ -1346,8 +1343,8 @@ public class ASTCrawler extends ASTVisitor {
 		if (this.aDB.hasRelations(this.aTempMethod))
 			if (this.aCurrConstructorList.size() == 0) {
 				final IElement lDefaultConstructor = FlyweightElementFactory
-						.getElement(ICategories.METHOD, this.aCurrType.getId()
-								+ "." + ASTCrawler.aINIT_METHOD_NAME, null);
+						.getElement(Category.METHOD, this.aCurrType.getId()
+								+ "." + ASTCrawler.aINIT_METHOD_NAME);
 				this.aDB.addElement(lDefaultConstructor,
 						ASTCrawler.aINIT_METHOD_MODIFIERS);
 				this.aDB.copyRelations(this.aTempMethod, lDefaultConstructor);
@@ -1412,9 +1409,8 @@ public class ASTCrawler extends ASTVisitor {
 
 		//Insert temp method for field initializers
 		this.aTempMethod = (MethodElement) FlyweightElementFactory.getElement(
-				ICategories.METHOD, this.aCurrType.getId() + "."
-						+ ASTCrawler.aTEMP_METHOD_NAME, pBinding
-						.getJavaElement());
+				Category.METHOD, this.aCurrType.getId() + "."
+						+ ASTCrawler.aTEMP_METHOD_NAME);
 		this.aDB.addElement(this.aTempMethod, pBinding.getModifiers());
 	}
 

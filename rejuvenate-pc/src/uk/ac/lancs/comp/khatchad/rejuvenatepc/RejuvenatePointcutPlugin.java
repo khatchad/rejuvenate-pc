@@ -88,8 +88,8 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> deriedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
 			//retrieve analysis information.
 			Document document = readXMLFile(advElem);
@@ -101,11 +101,14 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 					+ advElem.getPath().toOSString() + "-");
 
 			buildPatternMaps(monitor, graph, workingMemory, advElem,
-					patternToResultMap, patternToEnabledElementMap);
+					derivedPatternToResultMap, deriedPatternToEnabledElementMap);
 
 			//Intersect pattern sets.
-			Map<Pattern<IntentionEdge<IElement>>, Double> extractedPatternToConfidenceMap = extractPatterns(document);
-			Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = patternToResultMap
+			Map<Pattern<IntentionEdge<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
+
+			Set<Pattern<IntentionEdge<IElement>>> recoveredPatternSet = recoveredPatternToConfidenceMap
+					.keySet();
+			Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = derivedPatternToResultMap
 					.keySet();
 			//			Set<Pattern<IntentionEdge<IElement>>> retrievedPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
 			//					extractedPatternSet);
@@ -125,17 +128,19 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 	/**
 	 * @param document
 	 * @return
-	 * @throws DataConversionException 
+	 * @throws DataConversionException
 	 */
 	private Map<Pattern<IntentionEdge<IElement>>, Double> extractPatterns(
 			Document document) throws DataConversionException {
 		Map<Pattern<IntentionEdge<IElement>>, Double> ret = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Double>();
-		
+
 		Element root = document.getRootElement();
 		for (Object patternObj : root.getChildren(PATTERN)) {
 			Element patternElem = (Element) patternObj;
-			Pattern<IntentionEdge<IElement>> pattern = new Pattern<IntentionEdge<IElement>>(patternElem);
-			Attribute confidenceAttribute = patternElem.getAttribute("confidence");
+			Pattern<IntentionEdge<IElement>> pattern = new Pattern<IntentionEdge<IElement>>(
+					patternElem);
+			Attribute confidenceAttribute = patternElem
+					.getAttribute("confidence");
 			double confidence = confidenceAttribute.getDoubleValue();
 			ret.put(pattern, confidence);
 		}

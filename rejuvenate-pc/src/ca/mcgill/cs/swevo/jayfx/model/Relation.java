@@ -14,6 +14,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Vector;
 
+import org.jdom.Attribute;
 import org.jdom.Element;
 
 /**
@@ -61,6 +62,11 @@ public enum Relation {
 
 	T_IDENTITY(Type.ID_IDENTITY, false), T_STATIC_CALLS(Type.ID_STATIC_CALLS,
 			false), T_REFERENCES(Type.ID_REFERENCES, false);
+
+	/**
+			 * 
+			 */
+			private static final String TYPE = "type";
 
 	/**
 	 * Type enum encapsulates the following information of a relation: i. code
@@ -204,7 +210,7 @@ public enum Relation {
 	/**
 	 * Returns all the relations for which a domain category is valid.
 	 */
-	public static Relation[] getAllRelations(final ICategories pCategory,
+	public static Relation[] getAllRelations(final Category pCategory,
 			final boolean pDirect) {
 		final Vector<Relation> lReturn = new Vector<Relation>();
 
@@ -333,9 +339,9 @@ public enum Relation {
 	 * @return True if this relation can have elements of category pCategory in
 	 *         its domain.
 	 */
-	public boolean hasDomainCategory(final ICategories pCategory) {
+	public boolean hasDomainCategory(final Category pCategory) {
 		boolean lReturn = false;
-		if (pCategory == ICategories.CLASS) {
+		if (pCategory == Category.CLASS) {
 			if (this == DECLARES_METHOD || this == EXTENDS_CLASS
 					|| this == EXTENDS_INTERFACES
 					|| this == IMPLEMENTS_INTERFACE || this == INHERITS
@@ -351,7 +357,7 @@ public enum Relation {
 					|| this == T_REFERENCES)
 				lReturn = true;
 		}
-		else if (pCategory == ICategories.METHOD) {
+		else if (pCategory == Category.METHOD) {
 			if (this == ACCESSES || this == SETS || this == GETS
 					|| this == CALLS || this == EXPLICITLY_CALLS
 					|| this == CHECKS || this == CREATES
@@ -366,7 +372,7 @@ public enum Relation {
 					|| this == T_REFERENCES)
 				lReturn = true;
 		}
-		else if (pCategory == ICategories.FIELD)
+		else if (pCategory == Category.FIELD)
 			if (this == OF_TYPE || this == T_DECLARES || this == T_ACCESSES
 					|| this == T_INHERITS || this == T_USES || this == IDENTITY
 					|| this == T_IDENTITY || this == T_REFERENCES)
@@ -434,9 +440,9 @@ public enum Relation {
 	/**
 	 * @return The full code for this relation.
 	 */
-	public String toString() {
-		return this.getFullCode();
-	}
+//	public String toString() {
+//		return this.getFullCode();
+//	}
 
 	private Type getType() {
 		return this.aId;
@@ -447,8 +453,13 @@ public enum Relation {
 	 */
 	public Element getXML() {
 		Element ret = new Element(this.getClass().getSimpleName());
-		ret.setAttribute("type", this.toString());
+		ret.setAttribute(TYPE, this.toString());
 		return ret;
 	}
-
+	
+	public static Relation valueOf(Element elem) {
+		Attribute typeAttribute = elem.getAttribute(TYPE);
+		String typeString = typeAttribute.getValue();
+		return valueOf(typeString);
+	}
 }

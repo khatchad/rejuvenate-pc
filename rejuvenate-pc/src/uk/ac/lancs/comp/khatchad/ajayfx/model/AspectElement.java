@@ -6,9 +6,13 @@ package uk.ac.lancs.comp.khatchad.ajayfx.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jdom.Attribute;
+import org.jdom.Element;
+
 import ca.mcgill.cs.swevo.jayfx.model.AbstractElement;
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
+import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
 /**
@@ -73,8 +77,8 @@ public class AspectElement extends AbstractElement {
 	 * @see ca.mcgill.cs.swevo.jayfx.model.AbstractElement#getCategory()
 	 */
 	@Override
-	public ICategories getCategory() {
-		return ICategories.ASPECT;
+	public Category getCategory() {
+		return Category.ASPECT;
 	}
 
 	/* (non-Javadoc)

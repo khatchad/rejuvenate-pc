@@ -11,6 +11,7 @@ import java.util.Set;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
+import org.jdom.DataConversionException;
 import org.jdom.Element;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
@@ -32,8 +33,9 @@ public class Pattern<E extends IntentionEdge<IElement>> extends Path<E> {
 
 	/**
 	 * @param patternElem
+	 * @throws DataConversionException 
 	 */
-	public Pattern(Element patternElem) {
+	public Pattern(Element patternElem) throws DataConversionException {
 		super(patternElem);
 	}
 	

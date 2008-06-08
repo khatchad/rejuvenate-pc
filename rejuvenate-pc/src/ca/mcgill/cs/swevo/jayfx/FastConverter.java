@@ -11,9 +11,11 @@
 package ca.mcgill.cs.swevo.jayfx;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
 import org.eclipse.jdt.core.IField;
@@ -22,10 +24,16 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchPattern;
+
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 import ca.mcgill.cs.swevo.jayfx.model.FieldElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
 
@@ -99,8 +107,8 @@ public class FastConverter {
 			final IElement lClass = this.getClassElement(((IField) pElement)
 					.getDeclaringType());
 			lReturn = FlyweightElementFactory
-					.getElement(ICategories.FIELD, lClass.getId() + "."
-							+ ((IField) pElement).getElementName(), pElement);
+					.getElement(Category.FIELD, lClass.getId() + "."
+							+ ((IField) pElement).getElementName());
 		}
 		else if (pElement instanceof IMethod) {
 			final IElement lClass = this.getClassElement(((IMethod) pElement)
@@ -140,8 +148,8 @@ public class FastConverter {
 						.getDeclaringType());
 			}
 			lSignature += ")";
-			lReturn = FlyweightElementFactory.getElement(ICategories.METHOD,
-					lClass.getId() + "." + lName + lSignature, pElement);
+			lReturn = FlyweightElementFactory.getElement(Category.METHOD,
+					lClass.getId() + "." + lName + lSignature);
 		}
 
 		else if (pElement instanceof IAJCodeElement) {
@@ -172,7 +180,7 @@ public class FastConverter {
 			throws ConversionException {
 		//	    assert( pElement!= null );
 		IJavaElement lReturn = null;
-		if (pElement.getCategory() == ICategories.CLASS) {
+		if (pElement.getCategory() == Category.CLASS) {
 			lReturn = this.aTypeMap.get(pElement.getId());
 			if (lReturn == null)
 				// TODO Make this smarter in the case of multiple projects
@@ -187,19 +195,30 @@ public class FastConverter {
 			if (lReturn == null)
 				throw new ConversionException("Cannot find type " + pElement);
 		}
-		else if (pElement.getCategory() == ICategories.PACKAGE)
-			lReturn = pElement.getJavaElement();
+		else if (pElement.getCategory() == Category.PACKAGE) {
+			String id = pElement.getId();
+			final SearchPattern pattern = SearchPattern.createPattern(id,
+					IJavaSearchConstants.PACKAGE,
+					IJavaSearchConstants.DECLARATIONS,
+					SearchPattern.R_EXACT_MATCH
+							| SearchPattern.R_CASE_SENSITIVE);
+			Collection<SearchMatch> matches = Util.search(pattern);
+			if ( matches.isEmpty() )
+				throw new ConversionException("Cannot find type " + pElement);
+			else
+				lReturn = (IJavaElement)matches.iterator().next().getElement();
+		}
 		else {
 			final IJavaElement lDeclaringClass = this.getJavaElement(pElement
 					.getDeclaringClass());
-			if (pElement.getCategory() == ICategories.FIELD) {
+			if (pElement.getCategory() == Category.FIELD) {
 				lReturn = ((IType) lDeclaringClass)
 						.getField(((FieldElement) pElement).getSimpleName());
 				if (lReturn == null)
 					throw new ConversionException("Cannot find field "
 							+ pElement);
 			}
-			else if (pElement.getCategory() == ICategories.METHOD)
+			else if (pElement.getCategory() == Category.METHOD)
 				try {
 					final IMethod[] lMethods = ((IType) lDeclaringClass)
 							.getMethods();
@@ -318,13 +337,13 @@ public class FastConverter {
 
 	@SuppressWarnings("unused")
 	private IElement getAspectElement(final IType pType) {
-		return FlyweightElementFactory.getElement(ICategories.ASPECT, pType
-				.getFullyQualifiedName('$'), null);
+		return FlyweightElementFactory.getElement(Category.ASPECT, pType
+				.getFullyQualifiedName('$'));
 	}
 
 	private IElement getClassElement(final IType pType) {
-		return FlyweightElementFactory.getElement(ICategories.CLASS, pType
-				.getFullyQualifiedName('$'), null);
+		return FlyweightElementFactory.getElement(Category.CLASS, pType
+				.getFullyQualifiedName('$'));
 	}
 
 	/**

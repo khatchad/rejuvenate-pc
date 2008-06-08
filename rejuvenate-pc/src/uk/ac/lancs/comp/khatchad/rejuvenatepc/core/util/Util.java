@@ -28,6 +28,7 @@ import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -50,7 +51,11 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
@@ -58,7 +63,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
 /**
@@ -83,9 +88,9 @@ public class Util {
 	//		return db;
 	//	}
 
-	public static IElement convertBinding(final ICategories category,
+	public static IElement convertBinding(final Category category,
 			final String readableName) {
-		return FlyweightElementFactory.getElement(category, readableName, null);
+		return FlyweightElementFactory.getElement(category, readableName);
 	}
 
 	/**
@@ -507,5 +512,38 @@ public class Util {
 		if ( !aFile.exists() )
 			throw new IllegalArgumentException("No XML file found for advice " + advElem.getElementName());
 		return aFile;
+	}
+
+	/**
+	 * @param pattern
+	 * @return
+	 */
+	public static Collection<SearchMatch> search(final SearchPattern pattern) {
+		final SearchEngine engine = new SearchEngine();
+		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
+		try {
+			engine.search(pattern, new SearchParticipant[] { SearchEngine
+					.getDefaultSearchParticipant() }, SearchEngine
+					.createWorkspaceScope(), new SearchRequestor() {
+	
+				@Override
+				public void acceptSearchMatch(final SearchMatch match)
+						throws CoreException {
+					if (match.getAccuracy() == SearchMatch.A_ACCURATE
+							&& !match.isInsideDocComment())
+						results.add(match);
+				}
+			}, null);
+		}
+		catch (final NullPointerException e) {
+			System.err.println("Caught " + e
+					+ " from search engine. Rethrowing.");
+			throw e;
+		}
+		catch (final CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return results;
 	}
 }

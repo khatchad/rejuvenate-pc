@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.Signature;
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
 import ca.mcgill.cs.swevo.jayfx.model.FieldElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
 
 /**
@@ -127,7 +127,7 @@ class Converter {
 	 */
 	public static ClassElement getClassElement(final IType pClass) {
 		return (ClassElement) FlyweightElementFactory.getElement(
-				ICategories.CLASS, pClass.getFullyQualifiedName(), null);
+				Category.CLASS, pClass.getFullyQualifiedName());
 	}
 
 	/**
@@ -144,7 +144,7 @@ class Converter {
 		final String lName = lClassName + Converter.DOT
 				+ pField.getElementName();
 		return (FieldElement) FlyweightElementFactory.getElement(
-				ICategories.FIELD, lName, null);
+				Category.FIELD, lName);
 	}
 
 	/**
@@ -179,7 +179,7 @@ class Converter {
 			throw new ConversionException(pException);
 		}
 		return (MethodElement) FlyweightElementFactory.getElement(
-				ICategories.METHOD, lName + lSignature, null);
+				Category.METHOD, lName + lSignature);
 	}
 
 	/**

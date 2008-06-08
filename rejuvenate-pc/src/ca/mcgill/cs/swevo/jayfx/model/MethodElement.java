@@ -93,11 +93,11 @@ public class MethodElement extends AbstractElement {
 	/**
 	 * Returns the category of this element type, i.e., a method.
 	 * 
-	 * @return ICategories.METHOD
+	 * @return Category.METHOD
 	 */
 	@Override
-	public ICategories getCategory() {
-		return ICategories.METHOD;
+	public Category getCategory() {
+		return Category.METHOD;
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class MethodElement extends AbstractElement {
 		final int lIndex = lName.lastIndexOf(".");
 		ClassElement lReturn = null;
 		lReturn = (ClassElement) FlyweightElementFactory.getElement(
-				ICategories.CLASS, lName.substring(0, lIndex), null);
+				Category.CLASS, lName.substring(0, lIndex));
 		return lReturn;
 	}
 

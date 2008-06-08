@@ -24,6 +24,7 @@ public aspect TimeColletor {
 		call(* org.jdom..*.*(..)) ||
 		call(* java.io..*.*(..));
 	
+	/*
 	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();
 		final Object ret = proceed();
@@ -31,6 +32,7 @@ public aspect TimeColletor {
 		this.collectedTime += elapsed;
 		return ret;
 	}
+	*/
 	
 	public long getCollectedTime()
 	{

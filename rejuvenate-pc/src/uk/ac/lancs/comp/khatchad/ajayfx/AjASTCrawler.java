@@ -21,7 +21,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import ca.mcgill.cs.swevo.jayfx.FastConverter;
 import ca.mcgill.cs.swevo.jayfx.ProgramDatabase;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -56,8 +56,8 @@ public class AjASTCrawler extends AsmHierarchyBuilder {
 	 */
 	private static IElement convertBinding(final TypeBinding pBinding) {
 		AjASTCrawler.checkForNull(pBinding);
-		return FlyweightElementFactory.getElement(ICategories.ASPECT, pBinding
-				.debugName(), null);
+		return FlyweightElementFactory.getElement(Category.ASPECT, pBinding
+				.debugName());
 	}
 
 	//	private static Map<AdviceElement, Set<IElement>> advisingMap = new HashMap<AdviceElement, Set<IElement>>();
@@ -176,7 +176,7 @@ public class AjASTCrawler extends AsmHierarchyBuilder {
 	 * @return
 	 */
 	private IElement convertBinding(final MethodBinding binding) {
-		return Util.convertBinding(ICategories.ADVICE, String.valueOf(binding
+		return Util.convertBinding(Category.ADVICE, String.valueOf(binding
 				.readableName()));
 	}
 
@@ -185,7 +185,7 @@ public class AjASTCrawler extends AsmHierarchyBuilder {
 	 * @return
 	 */
 	private IElement convertBinding(final PackageBinding binding) {
-		return FlyweightElementFactory.getElement(ICategories.PACKAGE, String
-				.valueOf(binding.readableName()), null);
+		return FlyweightElementFactory.getElement(Category.PACKAGE, String
+				.valueOf(binding.readableName()));
 	}
 }

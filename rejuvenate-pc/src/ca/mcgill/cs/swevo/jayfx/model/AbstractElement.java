@@ -11,6 +11,8 @@
 package ca.mcgill.cs.swevo.jayfx.model;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 /**
  * Abtract class for the various program elements in the model.
@@ -39,7 +41,7 @@ public abstract class AbstractElement implements IElement {
 	 * @return An int representing the category of the element.
 	 * @see ca.ubc.cs.javadb.model.IElement#getCategory()
 	 */
-	public abstract ICategories getCategory();
+	public abstract Category getCategory();
 
 	/**
 	 * This method must be redeclared here for compatibility with the IElement
@@ -55,10 +57,10 @@ public abstract class AbstractElement implements IElement {
 	/* (non-Javadoc)
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#getJavaElement()
 	 */
-	public IJavaElement getJavaElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public IJavaElement getJavaElement() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	/**
 	 * @return The id of this element without the package.
@@ -74,4 +76,11 @@ public abstract class AbstractElement implements IElement {
 	public String toString() {
 		return this.getId();
 	}
+	
+	public Element getXML() {
+		Element ret = new Element(IElement.class.getSimpleName());
+		ret.setAttribute(new Attribute(IElement.ID, this.getId()));
+		ret.addContent(this.getCategory().getXML());
+		return ret;
+	}	
 }

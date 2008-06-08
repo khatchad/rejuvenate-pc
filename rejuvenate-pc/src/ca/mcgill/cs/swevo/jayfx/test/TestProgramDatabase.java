@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import ca.mcgill.cs.swevo.jayfx.ElementNotFoundException;
 import ca.mcgill.cs.swevo.jayfx.ProgramDatabase;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -269,18 +269,18 @@ public class TestProgramDatabase extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		this.aClass1 = FlyweightElementFactory.getElement(ICategories.CLASS,
-				"a.b.c.Class1", null);
-		this.aClass2 = FlyweightElementFactory.getElement(ICategories.CLASS,
-				"a.b.c.Class2", null);
-		this.aField1 = FlyweightElementFactory.getElement(ICategories.FIELD,
-				"a.b.c.Class1.aField1", null);
-		FlyweightElementFactory.getElement(ICategories.FIELD,
-				"a.b.c.Class2.aField2", null);
-		this.aMethod1 = FlyweightElementFactory.getElement(ICategories.METHOD,
-				"a.b.c.Class1.method1()", null);
-		this.aMethod2 = FlyweightElementFactory.getElement(ICategories.METHOD,
-				"a.b.c.Class2.method2()", null);
+		this.aClass1 = FlyweightElementFactory.getElement(Category.CLASS,
+				"a.b.c.Class1" );
+		this.aClass2 = FlyweightElementFactory.getElement(Category.CLASS,
+				"a.b.c.Class2" );
+		this.aField1 = FlyweightElementFactory.getElement(Category.FIELD,
+				"a.b.c.Class1.aField1" );
+		FlyweightElementFactory.getElement(Category.FIELD,
+				"a.b.c.Class2.aField2" );
+		this.aMethod1 = FlyweightElementFactory.getElement(Category.METHOD,
+				"a.b.c.Class1.method1()" );
+		this.aMethod2 = FlyweightElementFactory.getElement(Category.METHOD,
+				"a.b.c.Class2.method2()" );
 		this.aDB = new ProgramDatabase();
 	}
 

@@ -4,9 +4,11 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.jdom.Attribute;
+import org.jdom.Element;
 
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
-import ca.mcgill.cs.swevo.jayfx.model.ICategories;
+import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -15,6 +17,11 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * 
  */
 public class WildcardElement implements IElement {
+
+	/**
+	 * 
+	 */
+	private static final String QUESTION_MARK = "?";
 
 	private static final long serialVersionUID = -4175380054692252185L;
 	
@@ -50,8 +57,8 @@ public class WildcardElement implements IElement {
 	public void enableIncommingRelationsFor(final Relation calls) {
 	}
 
-	public ICategories getCategory() {
-		return ICategories.WILDCARD;
+	public Category getCategory() {
+		return Category.WILDCARD;
 	}
 
 	/* (non-Javadoc)
@@ -65,14 +72,11 @@ public class WildcardElement implements IElement {
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#getId()
 	 */
 	public String getId() {
-		return "?";
+		return QUESTION_MARK;
 	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#getJavaElement()
-	 */
-	public IJavaElement getJavaElement() {
-		return null;
+	
+	public static boolean isWildcardIdentifier(String identifier) {
+		return identifier.equals(QUESTION_MARK);
 	}
 
 	/* (non-Javadoc)
@@ -86,7 +90,7 @@ public class WildcardElement implements IElement {
 	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#getShortName()
 	 */
 	public String getShortName() {
-		return "?";
+		return QUESTION_MARK;
 	}
 
 	/* (non-Javadoc)
@@ -101,5 +105,20 @@ public class WildcardElement implements IElement {
 	 */
 	public boolean isEnabled() {
 		return this.enabled;
+	}
+	
+	public Element getXML() {
+		Element ret = new Element(IElement.class.getSimpleName());
+		ret.setAttribute(new Attribute(ID, this.getId()));
+		ret.addContent(this.getCategory().getXML());
+		return ret;
+	}
+
+	/**
+	 * @param elementXML
+	 * @return
+	 */
+	public static boolean isWildcardElement(Element elementXML) {
+		return elementXML.getAttribute(ID).getValue().equals(QUESTION_MARK);
 	}
 }
