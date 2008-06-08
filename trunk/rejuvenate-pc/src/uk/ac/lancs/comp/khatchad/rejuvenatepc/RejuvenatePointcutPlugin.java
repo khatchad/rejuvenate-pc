@@ -6,12 +6,14 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -26,6 +28,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.jdom.Attribute;
@@ -44,6 +48,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model.Suggestion;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -52,7 +57,10 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  * @author raffi
  * 
  */
-public class RejuvenatePointcutPlugin extends PointcutPlugin {
+public class RejuvenatePointcutPlugin extends PointcutPlugin implements
+		IStructuredContentProvider {
+	
+	private static RejuvenatePointcutPlugin instance;
 
 	/**
 	 * 
@@ -63,7 +71,10 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 	 */
 	private static final String PATTERN = "Pattern";
 
+	private List<Suggestion<IntentionElement<IElement>>> suggestionList = new ArrayList<Suggestion<IntentionElement<IElement>>>();
+
 	public void run(IAction action) {
+		this.suggestionList.clear();
 		final IProgressMonitor monitor = getProgressMonitor();
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
@@ -112,7 +123,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 			//Intersect pattern sets.
 			Set<Pattern<IntentionEdge<IElement>>> survingPatternSet = obtainSurvingPatterns(
 					derivedPatternToResultMap, recoveredPatternToConfidenceMap);
-			
+
 			//Make suggestions sorted by highest confidence.
 			SortedMap<Double, Set<IntentionElement<IElement>>> confidenceToSuggestedIntentionElementSetMap = new TreeMap<Double, Set<IntentionElement<IElement>>>(
 					new Comparator<Double>() {
@@ -121,6 +132,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 						}
 					});
 
+			System.out.println("Suggestion\tPattern\tConfidence");
 			for (Pattern<IntentionEdge<IElement>> pattern : survingPatternSet) {
 				//Get the confidence.
 				double confidence = recoveredPatternToConfidenceMap
@@ -138,9 +150,14 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 				for (IntentionElement<IElement> intentionElement : derivedPatternToResultMap
 						.get(pattern)) {
 					suggestedIntentionElementSet.add(intentionElement);
+					System.out.println(intentionElement.toPrettyString() + "\t"
+							+ pattern + "\t" + confidence);
+					Suggestion<IntentionElement<IElement>> suggestion = new Suggestion<IntentionElement<IElement>>(intentionElement, pattern, confidence);
+					this.suggestionList.add(suggestion);
 				}
 			}
 
+			/*
 			System.out.println("Suggestions sorted descendingly by confidence");
 			System.out.println("Confidence\tSuggestion");
 			for (Double confidence : confidenceToSuggestedIntentionElementSetMap
@@ -150,6 +167,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 					System.out.println(confidence + "\t" + suggestion);
 				}
 			}
+			*/
 
 			monitor.worked(1);
 		}
@@ -226,5 +244,40 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin {
 		org.jdom.input.SAXBuilder builder = new SAXBuilder();
 		File advXMLFile = Util.getSavedXMLFile(advElem);
 		return builder.build(advXMLFile);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	 */
+	public Object[] getElements(Object inputElement) {
+		return this.suggestionList.toArray();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @return the suggestionList
+	 */
+	public List<Suggestion<IntentionElement<IElement>>> getSuggestionList() {
+		return this.suggestionList;
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	@Override
+	public void init(IWorkbenchWindow window) {
+		super.init(window);
+		this.instance = this;
+	}
+	
+	public static RejuvenatePointcutPlugin getInstance() {
+		return instance;
 	}
 }
