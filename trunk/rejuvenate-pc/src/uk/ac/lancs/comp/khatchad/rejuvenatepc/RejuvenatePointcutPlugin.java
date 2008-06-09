@@ -59,7 +59,7 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 		IStructuredContentProvider {
-	
+
 	private static RejuvenatePointcutPlugin instance;
 
 	/**
@@ -152,7 +152,8 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 					suggestedIntentionElementSet.add(intentionElement);
 					System.out.println(intentionElement.toPrettyString() + "\t"
 							+ pattern + "\t" + confidence);
-					Suggestion<IntentionElement<IElement>> suggestion = new Suggestion<IntentionElement<IElement>>(intentionElement, pattern, confidence);
+					Suggestion<IntentionElement<IElement>> suggestion = new Suggestion<IntentionElement<IElement>>(
+							intentionElement, pattern, confidence);
 					this.suggestionList.add(suggestion);
 				}
 			}
@@ -257,8 +258,6 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -276,7 +275,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 		super.init(window);
 		this.instance = this;
 	}
-	
+
 	public static RejuvenatePointcutPlugin getInstance() {
 		return instance;
 	}
