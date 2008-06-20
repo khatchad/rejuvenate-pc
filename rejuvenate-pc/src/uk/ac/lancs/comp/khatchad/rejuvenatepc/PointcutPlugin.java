@@ -544,18 +544,18 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @throws ConversionException
 	 * @throws CoreException
 	 */
-	protected void buildPatternMaps(
-			final IProgressMonitor lMonitor,
-			final IntentionGraph<IntentionNode<IElement>> graph,
-			final WorkingMemory workingMemory,
-			final AdviceElement advElem,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap)
-			throws ConversionException, CoreException {
-		graph.enableElementsAccordingTo(advElem, lMonitor);
-		executeQueries(lMonitor, workingMemory, patternToResultMap,
-				patternToEnabledElementMap);
-	}
+//	protected void buildPatternMaps(
+//			final IProgressMonitor lMonitor,
+//			final IntentionGraph<IntentionNode<IElement>> graph,
+//			final WorkingMemory workingMemory,
+//			final AdviceElement advElem,
+//			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+//			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap)
+//			throws ConversionException, CoreException {
+//		graph.enableElementsAccordingTo(advElem, lMonitor);
+//		executeQueries(lMonitor, workingMemory, patternToResultMap,
+//				patternToEnabledElementMap);
+//	}
 
 	/**
 	 * @param lMonitor
@@ -563,7 +563,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @param patternToResultMap
 	 * @param patternToEnabledElementMap
 	 */
-	private void executeQueries(
+	protected void executeQueries(
 			final IProgressMonitor lMonitor,
 			final WorkingMemory workingMemory,
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,

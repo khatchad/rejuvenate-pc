@@ -150,8 +150,12 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 	public String toDotFormat() {
 		final StringBuilder ret = new StringBuilder();
 		ret.append("digraph {");
-		for (final IntentionNode<IElement> node : this.nodeMap.values())
+		ret.append('\n');
+		for (final IntentionNode<IElement> node : this.nodeMap.values()) {
+			ret.append('\t');
 			ret.append(node.toDotFormat());
+			ret.append('\n');
+		}
 		ret.append('}');
 		return ret.toString();
 	}

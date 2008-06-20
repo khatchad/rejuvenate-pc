@@ -96,14 +96,14 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 			IntentionGraph<IntentionNode<IElement>> graph,
 			WorkingMemory workingMemory) throws ConversionException,
 			CoreException, IOException, JDOMException {
-
+		
 		monitor.beginTask("Retrieving previously analyzed information.",
 				adviceCol.size());
 
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> deriedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
 			//retrieve analysis information.
 			Document document = readXMLFile(advElem);
@@ -111,11 +111,8 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 
 			graph.enableElementsAccordingTo(advisedElements,
 					new SubProgressMonitor(monitor, -1));
-			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
-					+ advElem.getPath().toOSString() + "-");
-
-			buildPatternMaps(monitor, graph, workingMemory, advElem,
-					derivedPatternToResultMap, deriedPatternToEnabledElementMap);
+			executeQueries(monitor, workingMemory, derivedPatternToResultMap,
+				derivedPatternToEnabledElementMap);
 
 			//Retrieve the saved patterns.
 			Map<Pattern<IntentionEdge<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);

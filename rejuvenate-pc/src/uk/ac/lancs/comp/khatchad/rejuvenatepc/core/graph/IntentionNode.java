@@ -122,9 +122,14 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 		if (this.isEnabled())
 			ret.append(",style=filled,color=red,fontcolor=white");
 		ret.append("];");
-
-		for (final IntentionEdge<E> edge : this.edges)
+		ret.append('\n');
+		
+		int edgeCount = 0;
+		for (final IntentionEdge<E> edge : this.edges) {
 			ret.append(edge.toDotFormat());
+			if ( edgeCount++ < this.edges.size()-1 )
+				ret.append('\n');
+		}
 		return ret.toString();
 	}
 
