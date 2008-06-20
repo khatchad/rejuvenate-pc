@@ -176,7 +176,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		ret.append(' ');
 		ret.append("[label=");
 		ret.append("\"");
-		ret.append(this.type);
+		ret.append(this.type.getFullCode());
 		ret.append("\"");
 		if (this.isEnabled())
 			ret.append(",style=bold,color=red,fontcolor=red");
@@ -193,7 +193,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 		//		ret.append(',');
 		//		ret.append(to.getElem().getShortName());
 		//		ret.append(')');
-		ret.append(this.type);
+		ret.append(this.type.getFullCode());
 		return ret.toString();
 	}
 

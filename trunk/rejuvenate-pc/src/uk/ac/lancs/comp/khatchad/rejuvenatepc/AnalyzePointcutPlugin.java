@@ -218,8 +218,9 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
 
-			buildPatternMaps(monitor, graph, workingMemory, advElem,
-					patternToResultMap, patternToEnabledElementMap);
+			graph.enableElementsAccordingTo(advElem, monitor);
+			executeQueries(monitor, workingMemory, patternToResultMap,
+				patternToEnabledElementMap);
 
 			double totalConfidence = 0;
 			for (final Pattern pattern : patternToResultMap.keySet())
@@ -227,8 +228,8 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
 
-//			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
-//					+ advElem.getPath().toOSString() + "-");
+			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+					+ advElem.getPath().toOSString() + "-");
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;

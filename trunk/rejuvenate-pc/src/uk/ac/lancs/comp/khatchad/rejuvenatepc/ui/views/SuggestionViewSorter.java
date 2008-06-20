@@ -78,6 +78,6 @@ public class SuggestionViewSorter extends ViewerSorter {
 	private int compareConfidence(
 			Suggestion<IntentionElement<IElement>> suggestion1,
 			Suggestion<IntentionElement<IElement>> suggestion2) {
-		return Double.compare(suggestion1.getConfidence(), suggestion2.getConfidence());
+		return Double.compare(suggestion1.getConfidence(), suggestion2.getConfidence()) * -1;
 	}
 }
