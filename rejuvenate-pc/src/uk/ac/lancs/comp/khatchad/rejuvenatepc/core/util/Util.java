@@ -51,6 +51,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchParticipant;
@@ -467,19 +468,19 @@ public class Util {
 		return new PrintWriter(resFileOut);
 	}
 
-
 	/**
 	 * @param values
 	 * @return
 	 */
-	public static <E> Collection<E> flattenCollection(Collection<? extends Collection<E>> values) {
+	public static <E> Collection<E> flattenCollection(
+			Collection<? extends Collection<E>> values) {
 		Collection<E> ret = new LinkedHashSet<E>();
 		for (Collection<E> col : values)
 			for (E e : col)
 				ret.add(e);
 		return ret;
 	}
-	
+
 	@SuppressWarnings("restriction")
 	public static PrintWriter getXMLFileWriter(AdviceElement advElem)
 			throws IOException {
@@ -499,7 +500,6 @@ public class Util {
 		fileNameBuilder.append(".rejuv-pc.xml");
 		return fileNameBuilder.toString();
 	}
-	
 
 	/**
 	 * @param advElem
@@ -509,8 +509,9 @@ public class Util {
 	public static File getSavedXMLFile(AdviceElement advElem) {
 		String relativeFileName = getRelativeXMLFileName(advElem);
 		File aFile = new File(WORKSPACE_LOC, relativeFileName);
-		if ( !aFile.exists() )
-			throw new IllegalArgumentException("No XML file found for advice " + advElem.getElementName());
+		if (!aFile.exists())
+			throw new IllegalArgumentException("No XML file found for advice "
+					+ advElem.getElementName());
 		return aFile;
 	}
 
@@ -518,22 +519,23 @@ public class Util {
 	 * @param pattern
 	 * @return
 	 */
-	public static Collection<SearchMatch> search(final SearchPattern pattern) {
+	public static Collection<SearchMatch> search(final SearchPattern pattern,
+			IJavaSearchScope scope, IProgressMonitor monitor) {
 		final SearchEngine engine = new SearchEngine();
 		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
 		try {
 			engine.search(pattern, new SearchParticipant[] { SearchEngine
-					.getDefaultSearchParticipant() }, SearchEngine
-					.createWorkspaceScope(), new SearchRequestor() {
-	
-				@Override
-				public void acceptSearchMatch(final SearchMatch match)
-						throws CoreException {
-					if (match.getAccuracy() == SearchMatch.A_ACCURATE
-							&& !match.isInsideDocComment())
-						results.add(match);
-				}
-			}, null);
+					.getDefaultSearchParticipant() }, scope,
+					new SearchRequestor() {
+
+						@Override
+						public void acceptSearchMatch(final SearchMatch match)
+								throws CoreException {
+							if (match.getAccuracy() == SearchMatch.A_ACCURATE
+									&& !match.isInsideDocComment())
+								results.add(match);
+						}
+					}, monitor);
 		}
 		catch (final NullPointerException e) {
 			System.err.println("Caught " + e
@@ -545,5 +547,41 @@ public class Util {
 			e.printStackTrace();
 		}
 		return results;
+	}
+
+	public static Collection<SearchMatch> search(final SearchPattern pattern,
+			IJavaSearchScope scope, final ISourceRange range, IProgressMonitor monitor) {
+		final SearchEngine engine = new SearchEngine();
+		final Collection<SearchMatch> results = new ArrayList<SearchMatch>();
+		try {
+			engine.search(pattern, new SearchParticipant[] { SearchEngine
+					.getDefaultSearchParticipant() }, scope,
+					new SearchRequestor() {
+
+						@Override
+						public void acceptSearchMatch(final SearchMatch match)
+								throws CoreException {
+							if (match.getAccuracy() == SearchMatch.A_ACCURATE
+									&& !match.isInsideDocComment()
+									&& match.getOffset() == range.getOffset()
+									&& match.getLength() == range.getLength())
+								results.add(match);
+						}
+					}, monitor);
+		}
+		catch (final NullPointerException e) {
+			System.err.println("Caught " + e
+					+ " from search engine. Rethrowing.");
+			throw e;
+		}
+		catch (final CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return results;
+	}
+
+	public static Collection<SearchMatch> search(final SearchPattern pattern, IProgressMonitor monitor) {
+		return search(pattern, SearchEngine.createWorkspaceScope(), monitor);
 	}
 }
