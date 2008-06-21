@@ -85,8 +85,8 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 			final IProgressMonitor monitor) throws ConversionException,
 			CoreException {
 		this.database.enableElementsAccordingTo(advElem,
-				new SubProgressMonitor(monitor, 1));
-		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, 1));
+				new SubProgressMonitor(monitor, -1));
+		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, -1));
 	}
 
 	/**
@@ -223,15 +223,19 @@ public class IntentionGraph<E extends IntentionNode<IElement>> {
 	/**
 	 * @param advisedElements
 	 * @param monitor
-	 * @throws CoreException 
-	 * @throws ConversionException 
-	 * @throws JavaModelException 
+	 * @throws CoreException
+	 * @throws ConversionException
+	 * @throws JavaModelException
 	 */
 	public void enableElementsAccordingTo(
-			Collection<IJavaElement> advisedElements, IProgressMonitor monitor) throws JavaModelException, ConversionException, CoreException {
-		monitor.beginTask("Re-enabling elements according to retrieved information.", advisedElements.size());
-		for ( IJavaElement elem : advisedElements ) {
-			this.database.enableElementsAccordingTo(elem);
+			Collection<IJavaElement> advisedElements, IProgressMonitor monitor)
+			throws JavaModelException, ConversionException, CoreException {
+		monitor.beginTask(
+				"Re-enabling elements according to retrieved information.",
+				advisedElements.size());
+		for (IJavaElement elem : advisedElements) {
+			this.database.enableElementsAccordingTo(elem,
+					new SubProgressMonitor(monitor, -1));
 			monitor.worked(1);
 		}
 		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, 1));

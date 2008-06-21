@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.ajdt.core.javaelements.AJCodeElement;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
@@ -32,6 +33,7 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -559,7 +561,7 @@ public class JayFX {
 
 			if (advice.equals(advisingElement)) {
 				final IJavaElement target = relationship.getTarget();
-				enableElementsAccordingTo(target);
+				enableElementsAccordingTo(target, monitor);
 			}
 			monitor.worked(1);
 		}
@@ -572,7 +574,7 @@ public class JayFX {
 	 * @throws JavaModelException
 	 * @throws CoreException
 	 */
-	public void enableElementsAccordingTo(final IJavaElement advisedElement)
+	public void enableElementsAccordingTo(final IJavaElement advisedElement, IProgressMonitor monitor)
 			throws ConversionException, JavaModelException, CoreException {
 		switch (advisedElement.getElementType()) {
 			case IJavaElement.METHOD: {
@@ -604,50 +606,60 @@ public class JayFX {
 				if (!(advisedElement instanceof IAJCodeElement))
 					throw new IllegalStateException("Something is screwy here.");
 
-				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
-				final StringBuilder targetString = new StringBuilder(ajElem
-						.getElementName());
-				final String type = targetString.substring(0, targetString
-						.indexOf("("));
-				final StringBuilder typeBuilder = new StringBuilder(type
-						.toUpperCase());
-				final int pos = typeBuilder.indexOf("-");
-
-				final String joinPointTypeAsString = typeBuilder.replace(pos,
-						pos + 1, "_").toString();
-
-				final JoinpointType joinPointTypeAsEnum = JoinpointType
-						.valueOf(joinPointTypeAsString);
-
-				switch (joinPointTypeAsEnum) {
-					case FIELD_GET: {
-						this.enableElementsAccordingToFieldGet(targetString);
-						break;
-					}
-
-					case FIELD_SET: {
-						this.enableElementsAccordingToFieldSet(targetString);
-						break;
-					}
-
-					case METHOD_CALL: {
-						this.enableElementsAccordingToMethodCall(targetString);
-						break;
-					}
-
-					case CONSTRUCTOR_CALL: {
-						this
-								.enableElementsAccordingToConstructorCall(targetString);
-						break;
-					}
-
-					case EXCEPTION_HANDLER: {
-						System.out
-								.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
-						break;
-					}
-				}
-
+//				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
+//				final StringBuilder targetString = new StringBuilder(ajElem
+//						.getElementName());
+//				final String type = targetString.substring(0, targetString
+//						.indexOf("("));
+//				final StringBuilder typeBuilder = new StringBuilder(type
+//						.toUpperCase());
+//				final int pos = typeBuilder.indexOf("-");
+//
+//				final String joinPointTypeAsString = typeBuilder.replace(pos,
+//						pos + 1, "_").toString();
+//
+//				final JoinpointType joinPointTypeAsEnum = JoinpointType
+//						.valueOf(joinPointTypeAsString);
+//
+//				if (!(ajElem instanceof AJCodeElement))
+//					throw new IllegalArgumentException(
+//							"Sorry, I need the source code for "
+//									+ ajElem.getElementName());
+//				AJCodeElement ajCodeElem = (AJCodeElement) ajElem;
+//
+//				switch (joinPointTypeAsEnum) {
+//					case FIELD_GET: {
+//						this.enableElementsAccordingToFieldGet(targetString,
+//								ajElem.getParent(), ajCodeElem.getNameRange());
+//						break;
+//					}
+//
+//					case FIELD_SET: {
+//						this.enableElementsAccordingToFieldSet(targetString,
+//								ajElem.getParent(), ajCodeElem.getNameRange());
+//						break;
+//					}
+//
+//					case METHOD_CALL: {
+//						this.enableElementsAccordingToMethodCall(targetString,
+//								ajElem.getParent(), ajCodeElem.getNameRange(), monitor);
+//						break;
+//					}
+//
+//					case CONSTRUCTOR_CALL: {
+//						this.enableElementsAccordingToConstructorCall(
+//								targetString, ajElem.getParent(), ajCodeElem
+//										.getNameRange(), monitor);
+//						break;
+//					}
+//
+//					case EXCEPTION_HANDLER: {
+//						System.out
+//								.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
+//						break;
+//					}
+//				}
+//
 				break;
 			}
 			default:
@@ -659,22 +671,28 @@ public class JayFX {
 
 	/**
 	 * @param targetString
+	 * @param lineStartOffset
+	 * @param lineEndOffset
 	 * @throws ConversionException
 	 */
 	private void enableElementsAccordingToCall(
-			final StringBuilder targetString, final int javaSearchConstant)
-			throws ConversionException {
-		
+			final StringBuilder targetString, final int javaSearchConstant,
+			IJavaElement parent, ISourceRange range, IProgressMonitor monitor) throws ConversionException {
+
 		final SearchPattern pattern = SearchPattern.createPattern(targetString
 				.toString(), javaSearchConstant,
 				IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH
 						| SearchPattern.R_CASE_SENSITIVE);
-		
-		final Collection<SearchMatch> results = Util.search(pattern);
+
+		final Collection<SearchMatch> results = Util.search(pattern,
+				SearchEngine
+						.createJavaSearchScope(new IJavaElement[] { parent }),
+				range, monitor);
 
 		for (final SearchMatch match : results) {
 			final IElement toEnable = this
 					.convertToElement((IJavaElement) match.getElement());
+			//TODO: WRONG!
 			toEnable.enableIncommingRelationsFor(Relation.CALLS);
 		}
 	}
@@ -684,20 +702,23 @@ public class JayFX {
 	 * @throws ConversionException
 	 */
 	private void enableElementsAccordingToConstructorCall(
-			final StringBuilder targetString) throws ConversionException {
+			final StringBuilder targetString, IJavaElement parent,
+			ISourceRange range, IProgressMonitor monitor) throws ConversionException {
 		JayFX.transformTargetStringToConstructorName(targetString);
 		this.enableElementsAccordingToCall(targetString,
-				IJavaSearchConstants.CONSTRUCTOR);
+				IJavaSearchConstants.CONSTRUCTOR, parent, range, monitor);
 	}
 
 	/**
 	 * @param targetString
+	 * @param sourceRange
+	 * @param parent
 	 * @throws CoreException
 	 * @throws ConversionException
 	 */
 	private void enableElementsAccordingToFieldGet(
-			final StringBuilder targetString) throws CoreException,
-			ConversionException {
+			final StringBuilder targetString, IJavaElement parent,
+			ISourceRange sourceRange) throws CoreException, ConversionException {
 		JayFX.transformTargetStringToFieldName(targetString);
 		final SearchPattern pattern = SearchPattern.createPattern(targetString
 				.toString(), IJavaSearchConstants.FIELD,
@@ -734,12 +755,14 @@ public class JayFX {
 
 	/**
 	 * @param targetString
+	 * @param sourceRange
+	 * @param javaElement
 	 * @throws CoreException
 	 * @throws ConversionException
 	 */
 	private void enableElementsAccordingToFieldSet(
-			final StringBuilder targetString) throws CoreException,
-			ConversionException {
+			final StringBuilder targetString, IJavaElement javaElement,
+			ISourceRange sourceRange) throws CoreException, ConversionException {
 		JayFX.transformTargetStringToFieldName(targetString);
 		final SearchPattern pattern = SearchPattern.createPattern(targetString
 				.toString(), IJavaSearchConstants.FIELD,
@@ -779,10 +802,11 @@ public class JayFX {
 	 * @throws ConversionException
 	 */
 	private void enableElementsAccordingToMethodCall(
-			final StringBuilder targetString) throws ConversionException {
+			final StringBuilder targetString, IJavaElement parent,
+			ISourceRange range, IProgressMonitor monitor) throws ConversionException {
 		JayFX.transformTargetStringToMethodName(targetString);
 		this.enableElementsAccordingToCall(targetString,
-				IJavaSearchConstants.METHOD);
+				IJavaSearchConstants.METHOD, parent, range, monitor);
 	}
 
 	/**
@@ -897,8 +921,7 @@ public class JayFX {
 								.getElement(Category.CLASS, this.aConverter
 										.resolveType(lSignature,
 												(IType) lElement).substring(1,
-												lSignature.length() - 1)
-										);
+												lSignature.length() - 1));
 						//						assert lSuperclass instanceof ClassElement;
 						lReturn.add(lSuperclass);
 					}
@@ -949,8 +972,7 @@ public class JayFX {
 														.substring(
 																1,
 																element
-																		.length() - 1)
-												);
+																		.length() - 1));
 								lReturn.add(lInterface);
 							}
 					}
