@@ -45,7 +45,6 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 
-import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -621,7 +620,7 @@ public class JayFX {
 //				final String joinPointTypeAsString = typeBuilder.replace(pos,
 //						pos + 1, "_").toString();
 //
-//				final JoinpointType joinPointTypeAsEnum = JoinpointType
+//				final JoinPointType joinPointTypeAsEnum = JoinPointType
 //						.valueOf(joinPointTypeAsString);
 //
 //				if (!(ajElem instanceof AJCodeElement))
@@ -705,7 +704,7 @@ public class JayFX {
 	 * @param targetString
 	 * @throws ConversionException
 	 */
-	/*
+	@Deprecated
 	private void enableElementsAccordingToConstructorCall(
 			final StringBuilder targetString, IJavaElement parent,
 			ISourceRange range, IProgressMonitor monitor) throws ConversionException {
@@ -713,7 +712,6 @@ public class JayFX {
 		this.enableElementsAccordingToCall(targetString,
 				IJavaSearchConstants.CONSTRUCTOR, parent, range, monitor);
 	}
-	*/
 
 	/**
 	 * @param targetString
@@ -722,7 +720,7 @@ public class JayFX {
 	 * @throws CoreException
 	 * @throws ConversionException
 	 */
-	/*
+	@Deprecated
 	private void enableElementsAccordingToFieldGet(
 			final StringBuilder targetString, IJavaElement parent,
 			ISourceRange sourceRange) throws CoreException, ConversionException {
@@ -759,7 +757,6 @@ public class JayFX {
 			toEnable.enableIncommingRelationsFor(Relation.GETS);
 		}
 	}
-	*/
 
 	/**
 	 * @param targetString
@@ -768,7 +765,7 @@ public class JayFX {
 	 * @throws CoreException
 	 * @throws ConversionException
 	 */
-	/*
+	@Deprecated
 	private void enableElementsAccordingToFieldSet(
 			final StringBuilder targetString, IJavaElement javaElement,
 			ISourceRange sourceRange) throws CoreException, ConversionException {
@@ -805,13 +802,12 @@ public class JayFX {
 			toEnable.enableIncommingRelationsFor(Relation.SETS);
 		}
 	}
-	*/
 
 	/**
 	 * @param targetString
 	 * @throws ConversionException
 	 */
-	/*
+	@Deprecated
 	private void enableElementsAccordingToMethodCall(
 			final StringBuilder targetString, IJavaElement parent,
 			ISourceRange range, IProgressMonitor monitor) throws ConversionException {
@@ -819,7 +815,6 @@ public class JayFX {
 		this.enableElementsAccordingToCall(targetString,
 				IJavaSearchConstants.METHOD, parent, range, monitor);
 	}
-	*/
 
 	/**
 	 * Convenience method that returns the elements declared by an element that
