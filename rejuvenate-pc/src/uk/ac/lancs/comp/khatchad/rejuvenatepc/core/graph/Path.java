@@ -130,12 +130,12 @@ public class Path<E extends IntentionArc<IElement>> extends Stack<E> implements
 		return ret;
 	}
 
-	public IntentionArc<?>[] getEdges() {
+	public IntentionArc<?>[] getArcs() {
 		final IntentionArc<?>[] ret = new IntentionArc[this.size()];
 		return this.toArray(ret);
 	}
 
-	public IntentionArc<?> getFirstEdge() {
+	public IntentionArc<?> getFirstArc() {
 		return this.firstElement();
 	}
 
@@ -143,7 +143,7 @@ public class Path<E extends IntentionArc<IElement>> extends Stack<E> implements
 		return this.firstElement().getFromNode();
 	}
 
-	public IntentionArc<?> getLastEdge() {
+	public IntentionArc<?> getLastArc() {
 		return this.lastElement();
 	}
 

@@ -7,23 +7,23 @@ import ca.mcgill.cs.swevo.jayfx.model.*;
 
 #declare any global variables here
 
-# Two nodes are connected when there is an edge in between them. (base case).
+# Two nodes are connected when there is an arc in between them. (base case).
 rule "connected"
 	when
-		$edge : IntentionEdge()
+		$arc : IntentionArc()
 	then
-		Path<IntentionEdge<IElement>> aPath = new Path<IntentionEdge<IElement>>();
-		aPath.push($edge);
+		Path<IntentionArc<IElement>> aPath = new Path<IntentionArc<IElement>>();
+		aPath.push($arc);
 		insert(aPath);
 end
 
 rule "path building"
 	when
-		$edge : IntentionEdge($source : fromNode, $target : toNode)
+		$arc : IntentionArc($source : fromNode, $target : toNode)
 		$path : Path(size < 2, topNode == $target, tailNodes not contains $source) # more work here?
 	then
 		Path aPath = (Path)$path.clone();
-		aPath.push($edge);
+		aPath.push($arc);
 		insert(aPath);
 end
 
@@ -46,15 +46,15 @@ query "backward suggested execution nodes"
 end
 
 query "forward suggested X arcs" (Relation x)
-	$enabledEdge : IntentionEdge(enabled == true, type == x)
-	$enabledPath : Path(firstEdge == $enabledEdge, $commonNode : lastNode, $enabledSize : size)
-	$intersectingPath : Path($suggestedEdge : firstEdge, lastNode == $commonNode, size == $enabledSize) 
+	$enabledArc : IntentionArc(enabled == true, type == x)
+	$enabledPath : Path(firstArc == $enabledArc, $commonNode : lastNode, $enabledSize : size)
+	$intersectingPath : Path($suggestedArc : firstArc, lastNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end
 
 query "backward suggested X arcs" (Relation x)
-	$enabledEdge : IntentionEdge(enabled == true, type == x)
-	$enabledPath : Path(lastEdge == $enabledEdge, $commonNode : firstNode, $enabledSize : size)
-	$intersectingPath : Path($suggestedEdge : lastEdge, firstNode == $commonNode, size == $enabledSize) 
+	$enabledArc : IntentionArc(enabled == true, type == x)
+	$enabledPath : Path(lastArc == $enabledArc, $commonNode : firstNode, $enabledSize : size)
+	$intersectingPath : Path($suggestedArc : lastArc, firstNode == $commonNode, size == $enabledSize) 
 	eval($enabledPath.typeEquivalent($intersectingPath))
 end

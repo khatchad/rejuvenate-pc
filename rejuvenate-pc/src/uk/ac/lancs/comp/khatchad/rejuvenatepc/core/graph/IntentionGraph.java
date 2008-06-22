@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.ajdt.core.javaelements.AJCodeElement;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
@@ -23,6 +24,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
+import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
@@ -101,7 +103,8 @@ public class IntentionGraph {
 	}
 
 	public void enableElementsAccordingTo(final AdviceElement advisingElement,
-			final IProgressMonitor monitor) throws JavaModelException, ConversionException {
+			final IProgressMonitor monitor) throws JavaModelException,
+			ConversionException {
 
 		this.resetAllElements(new SubProgressMonitor(monitor, -1));
 
@@ -180,71 +183,58 @@ public class IntentionGraph {
 						toEnableNode.enable();
 
 					}
-				
+
 				break;
-				
+
 			}
-			
+
 			case IJavaElement.LOCAL_VARIABLE: {
-				
+
 				// its an aspect element.
 				if (!(advisedElement instanceof IAJCodeElement))
 					throw new IllegalStateException("Something is screwy here.");
 
-				//				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
-				//				final StringBuilder targetString = new StringBuilder(ajElem
-				//						.getElementName());
-				//				final String type = targetString.substring(0, targetString
-				//						.indexOf("("));
-				//				final StringBuilder typeBuilder = new StringBuilder(type
-				//						.toUpperCase());
-				//				final int pos = typeBuilder.indexOf("-");
-				//
-				//				final String joinPointTypeAsString = typeBuilder.replace(pos,
-				//						pos + 1, "_").toString();
-				//
-				//				final JoinpointType joinPointTypeAsEnum = JoinpointType
-				//						.valueOf(joinPointTypeAsString);
-				//
-				//				if (!(ajElem instanceof AJCodeElement))
-				//					throw new IllegalArgumentException(
-				//							"Sorry, I need the source code for "
-				//									+ ajElem.getElementName());
-				//				AJCodeElement ajCodeElem = (AJCodeElement) ajElem;
-				//
-				//				switch (joinPointTypeAsEnum) {
-				//					case FIELD_GET: {
-				//						this.enableElementsAccordingToFieldGet(targetString,
-				//								ajElem.getParent(), ajCodeElem.getNameRange());
-				//						break;
-				//					}
-				//
-				//					case FIELD_SET: {
-				//						this.enableElementsAccordingToFieldSet(targetString,
-				//								ajElem.getParent(), ajCodeElem.getNameRange());
-				//						break;
-				//					}
-				//
-				//					case METHOD_CALL: {
-				//						this.enableElementsAccordingToMethodCall(targetString,
-				//								ajElem.getParent(), ajCodeElem.getNameRange(), monitor);
-				//						break;
-				//					}
-				//
-				//					case CONSTRUCTOR_CALL: {
-				//						this.enableElementsAccordingToConstructorCall(
-				//								targetString, ajElem.getParent(), ajCodeElem
-				//										.getNameRange(), monitor);
-				//						break;
-				//					}
-				//
-				//					case EXCEPTION_HANDLER: {
-				//						System.out
-				//								.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
-				//						break;
-				//					}
-				//				}
-				//
+				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
+				JoinpointType joinPointType = getJoinPointType(ajElem);
+
+				switch (joinPointType) {
+					case FIELD_GET: {
+						IJavaElement source = advisedElement.getParent();
+						
+						String targetString = getTargetString(ajElem);
+						Set<IJavaElement> targetSet = convertTargetStringToTargetSet(targetString);
+						this.enableElementsAccordingToFieldGet(targetString,
+								ajElem.getParent(), ajCodeElem.getNameRange());
+						break;
+					}
+
+					case FIELD_SET: {
+						this.enableElementsAccordingToFieldSet(targetString,
+								ajElem.getParent(), ajCodeElem.getNameRange());
+						break;
+					}
+
+					case METHOD_CALL: {
+						this.enableElementsAccordingToMethodCall(targetString,
+								ajElem.getParent(), ajCodeElem.getNameRange(),
+								monitor);
+						break;
+					}
+
+					case CONSTRUCTOR_CALL: {
+						this.enableElementsAccordingToConstructorCall(
+								targetString, ajElem.getParent(), ajCodeElem
+										.getNameRange(), monitor);
+						break;
+					}
+
+					case EXCEPTION_HANDLER: {
+						System.out
+								.println("Encountered handler-based advice, not sure how to deal with this yet. Nothing enabled.");
+						break;
+					}
+				}
+
 				break;
 			}
 			default:
@@ -252,6 +242,44 @@ public class IntentionGraph {
 						"Unexpected relationship target type: "
 								+ advisedElement.getElementType());
 		}
+	}
+
+	/**
+	 * @param targetString
+	 * @return
+	 */
+	private Set<IJavaElement> convertTargetStringToTargetSet(String targetString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @param ajElem
+	 */
+	private static JoinpointType getJoinPointType(final IAJCodeElement ajElem) {
+		final String joinPointTypeAsString = getTargetString(ajElem);
+
+		final JoinpointType joinPointTypeAsEnum = JoinpointType
+				.valueOf(joinPointTypeAsString);
+
+		return joinPointTypeAsEnum;
+	}
+
+	/**
+	 * @param ajElem
+	 * @return
+	 */
+	private static String getTargetString(final IAJCodeElement ajElem) {
+		final StringBuilder targetString = new StringBuilder(ajElem
+				.getElementName());
+		final String type = targetString
+				.substring(0, targetString.indexOf("("));
+		final StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
+		final int pos = typeBuilder.indexOf("-");
+
+		final String joinPointTypeAsString = typeBuilder.replace(pos, pos + 1,
+				"_").toString();
+		return joinPointTypeAsString;
 	}
 
 	private void resetAllElements(IProgressMonitor monitor) {
@@ -264,15 +292,15 @@ public class IntentionGraph {
 		}
 		monitor.done();
 	}
-	
-	
+
 	private IntentionNode<IElement> getNode(final IElement elem) {
 		if (this.elementToNodeMap.containsKey(elem))
 			return this.elementToNodeMap.get(elem);
 		else {
 			final IntentionNode<IElement> node = new IntentionNode<IElement>(
 					elem);
-			this.nodeSet.add(node);
+			//Let's not consider nodes outside the projects.
+			//			this.nodeSet.add(node);
 			this.elementToNodeMap.put(elem, node);
 			return node;
 		}
