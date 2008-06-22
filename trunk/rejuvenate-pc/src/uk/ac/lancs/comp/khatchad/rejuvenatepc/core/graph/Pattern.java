@@ -22,7 +22,7 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  * @author raffi
  * 
  */
-public class Pattern<E extends IntentionEdge<IElement>> extends Path<E> {
+public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 
 	/**
 	 * The weight assigned to precision, for confidence calculation.
@@ -69,7 +69,7 @@ public class Pattern<E extends IntentionEdge<IElement>> extends Path<E> {
 	 * @return
 	 */
 	public static double calculateConcreteness(
-			final Path<IntentionEdge<IElement>> pattern) {
+			final Path<IntentionArc<IElement>> pattern) {
 		final Collection<IntentionNode<IElement>> allNodes = pattern.getNodes();
 		final Collection<IntentionNode<IElement>> wildNodes = pattern
 				.getWildcardNodes();

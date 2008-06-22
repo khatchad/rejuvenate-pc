@@ -40,7 +40,7 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
@@ -97,8 +97,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			final String queryString,
 			final Relation relation,
 			final WorkingMemory workingMemory,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			final IProgressMonitor lMonitor) {
 
 		final QueryResults suggestedArcs = workingMemory.getQueryResults(
@@ -109,10 +109,10 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 				suggestedArcs.size());
 		for (final Iterator it = suggestedArcs.iterator(); it.hasNext();) {
 			final QueryResult result = (QueryResult) it.next();
-			final IntentionEdge suggestedEdge = (IntentionEdge) result
+			final IntentionArc suggestedEdge = (IntentionArc) result
 					.get("$suggestedEdge");
 
-			final IntentionEdge enabledEdge = (IntentionEdge) result
+			final IntentionArc enabledEdge = (IntentionArc) result
 					.get("$enabledEdge");
 
 			final Path enabledPath = (Path) result.get("$enabledPath");
@@ -147,8 +147,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	private static void executeNodeQuery(
 			final IProgressMonitor lMonitor,
 			final WorkingMemory workingMemory,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			final String queryString) {
 
 		final QueryResults suggestedNodes = workingMemory
@@ -295,7 +295,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	@SuppressWarnings( { "unchecked", "restriction" })
 	protected void analyze(final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor lMonitor) throws Exception {
-		final IntentionGraph<IntentionNode<IElement>> graph = generateIntentionGraph(
+		final IntentionGraph graph = generateIntentionGraph(
 				adviceCol, lMonitor);
 
 		final WorkingMemory workingMemory = generateRulesBase(lMonitor, graph);
@@ -306,7 +306,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	protected abstract void analyzeAdviceCollection(
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor lMonitor,
-			final IntentionGraph<IntentionNode<IElement>> graph,
+			final IntentionGraph graph,
 			final WorkingMemory workingMemory) throws ConversionException,
 			CoreException, IOException, JDOMException;
 
@@ -317,7 +317,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @throws Exception
 	 */
 	private WorkingMemory generateRulesBase(final IProgressMonitor lMonitor,
-			final IntentionGraph<IntentionNode<IElement>> graph)
+			final IntentionGraph graph)
 			throws Exception {
 		final WorkingMemory workingMemory = loadRulesBase(lMonitor, graph);
 		fireRules(lMonitor, workingMemory);
@@ -338,8 +338,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			int pointcutCount,
 			final AdviceElement advElem,
 			Element adviceXMLElement,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
 			final Pattern pattern) throws IOException {
 
 		double precision = Pattern.calculatePrecision(
@@ -430,8 +430,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 			String elementName) {
 		Element ret = new Element(elementName);
 		for (IntentionElement<IElement> enabledElement : set) {
-			if (enabledElement instanceof IntentionEdge)
-				ret.addContent(((IntentionEdge) enabledElement).getXML());
+			if (enabledElement instanceof IntentionArc)
+				ret.addContent(((IntentionArc) enabledElement).getXML());
 			else
 				ret.addContent(enabledElement.getXML());
 		}
@@ -549,8 +549,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 //			final IntentionGraph<IntentionNode<IElement>> graph,
 //			final WorkingMemory workingMemory,
 //			final AdviceElement advElem,
-//			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-//			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap)
+//			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+//			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap)
 //			throws ConversionException, CoreException {
 //		graph.enableElementsAccordingTo(advElem, lMonitor);
 //		executeQueries(lMonitor, workingMemory, patternToResultMap,
@@ -566,8 +566,8 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	protected void executeQueries(
 			final IProgressMonitor lMonitor,
 			final WorkingMemory workingMemory,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap) {
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap) {
 		executeNodeQuery(new SubProgressMonitor(lMonitor, 1,
 				SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK),
 				workingMemory, patternToResultMap, patternToEnabledElementMap,
@@ -638,7 +638,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @throws Exception
 	 */
 	private WorkingMemory loadRulesBase(final IProgressMonitor lMonitor,
-			final IntentionGraph<IntentionNode<IElement>> graph)
+			final IntentionGraph graph)
 			throws Exception {
 		lMonitor.subTask("Loading up the rulebase.");
 		final Reader source = new InputStreamReader(AnalyzePointcutPlugin.class
@@ -664,7 +664,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 	 * @throws JavaModelException
 	 * @throws Exception
 	 */
-	protected IntentionGraph<IntentionNode<IElement>> generateIntentionGraph(
+	protected IntentionGraph generateIntentionGraph(
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor lMonitor) throws JayFXException,
 			ConversionException, JavaModelException, Exception {
@@ -674,7 +674,7 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 				.getProjects(adviceCol);
 
 		lDB.initialize(projectsToAnalyze, lMonitor, true);
-		final IntentionGraph<IntentionNode<IElement>> graph = new IntentionGraph<IntentionNode<IElement>>(
+		final IntentionGraph graph = new IntentionGraph(
 				lDB, lMonitor);
 		return graph;
 	}

@@ -348,7 +348,7 @@ public class Util {
 	}
 
 	public static void makeDotFile(
-			final IntentionGraph<IntentionNode<IElement>> graph,
+			final IntentionGraph graph,
 			final File aFile) throws IOException {
 		final FileWriter resFileOut = new FileWriter(aFile, false);
 		final PrintWriter resOut = new PrintWriter(resFileOut);
@@ -362,7 +362,7 @@ public class Util {
 	 */
 	@SuppressWarnings("unused")
 	public static void makeDotFile(
-			final IntentionGraph<IntentionNode<IElement>> graph,
+			final IntentionGraph graph,
 			final int adviceNumer, final String resultPath) throws IOException {
 		final File file = new File(resultPath + "adv" + adviceNumer + ".dot");
 		Util.makeDotFile(graph, file);
@@ -370,7 +370,7 @@ public class Util {
 
 	@SuppressWarnings("unused")
 	public static void makeDotFile(
-			final IntentionGraph<IntentionNode<IElement>> graph,
+			final IntentionGraph graph,
 			final String resultPath) throws IOException {
 		final File file = new File(resultPath + "intention_graph.dot");
 		Util.makeDotFile(graph, file);

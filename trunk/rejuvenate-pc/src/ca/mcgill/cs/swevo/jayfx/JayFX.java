@@ -213,11 +213,12 @@ public class JayFX {
 	}
 
 	@SuppressWarnings( { "restriction", "unchecked" })
+	@Deprecated
 	public void enableElementsAccordingTo(final AdviceElement advElem,
 			final IProgressMonitor monitor) throws ConversionException,
 			CoreException {
 
-		this.resetAllElements(new SubProgressMonitor(monitor, 1));
+//		this.resetAllElements(new SubProgressMonitor(monitor, 1));
 
 		final List<AJRelationship> relationshipList = Util
 				.getAdviceRelationshipList(advElem);
@@ -547,6 +548,7 @@ public class JayFX {
 	 * @throws ConversionException
 	 * @throws CoreException
 	 */
+	@Deprecated
 	private void enableElementsAccordingTo(final AdviceElement advisingElement,
 			final IProgressMonitor monitor,
 			final List<AJRelationship> relationshipList)
@@ -574,6 +576,7 @@ public class JayFX {
 	 * @throws JavaModelException
 	 * @throws CoreException
 	 */
+	@Deprecated
 	public void enableElementsAccordingTo(final IJavaElement advisedElement, IProgressMonitor monitor)
 			throws ConversionException, JavaModelException, CoreException {
 		switch (advisedElement.getElementType()) {
@@ -585,7 +588,7 @@ public class JayFX {
 				final IElement toEnable = this.convertToElement(meth);
 				if (toEnable == null)
 					throw new IllegalStateException("In trouble!");
-				toEnable.enable();
+//				toEnable.enable();
 				break;
 			}
 			case IJavaElement.TYPE: {
@@ -597,7 +600,7 @@ public class JayFX {
 						final IElement toEnable = this.convertToElement(meth);
 						if (toEnable == null)
 							throw new IllegalStateException("In trouble!");
-						toEnable.enable();
+//						toEnable.enable();
 					}
 				break;
 			}
@@ -675,6 +678,7 @@ public class JayFX {
 	 * @param lineEndOffset
 	 * @throws ConversionException
 	 */
+	@Deprecated
 	private void enableElementsAccordingToCall(
 			final StringBuilder targetString, final int javaSearchConstant,
 			IJavaElement parent, ISourceRange range, IProgressMonitor monitor) throws ConversionException {
@@ -693,7 +697,7 @@ public class JayFX {
 			final IElement toEnable = this
 					.convertToElement((IJavaElement) match.getElement());
 			//TODO: WRONG!
-			toEnable.enableIncommingRelationsFor(Relation.CALLS);
+//			toEnable.enableIncommingRelationsFor(Relation.CALLS);
 		}
 	}
 
@@ -701,6 +705,7 @@ public class JayFX {
 	 * @param targetString
 	 * @throws ConversionException
 	 */
+	/*
 	private void enableElementsAccordingToConstructorCall(
 			final StringBuilder targetString, IJavaElement parent,
 			ISourceRange range, IProgressMonitor monitor) throws ConversionException {
@@ -708,6 +713,7 @@ public class JayFX {
 		this.enableElementsAccordingToCall(targetString,
 				IJavaSearchConstants.CONSTRUCTOR, parent, range, monitor);
 	}
+	*/
 
 	/**
 	 * @param targetString
@@ -716,6 +722,7 @@ public class JayFX {
 	 * @throws CoreException
 	 * @throws ConversionException
 	 */
+	/*
 	private void enableElementsAccordingToFieldGet(
 			final StringBuilder targetString, IJavaElement parent,
 			ISourceRange sourceRange) throws CoreException, ConversionException {
@@ -752,6 +759,7 @@ public class JayFX {
 			toEnable.enableIncommingRelationsFor(Relation.GETS);
 		}
 	}
+	*/
 
 	/**
 	 * @param targetString
@@ -760,6 +768,7 @@ public class JayFX {
 	 * @throws CoreException
 	 * @throws ConversionException
 	 */
+	/*
 	private void enableElementsAccordingToFieldSet(
 			final StringBuilder targetString, IJavaElement javaElement,
 			ISourceRange sourceRange) throws CoreException, ConversionException {
@@ -796,11 +805,13 @@ public class JayFX {
 			toEnable.enableIncommingRelationsFor(Relation.SETS);
 		}
 	}
+	*/
 
 	/**
 	 * @param targetString
 	 * @throws ConversionException
 	 */
+	/*
 	private void enableElementsAccordingToMethodCall(
 			final StringBuilder targetString, IJavaElement parent,
 			ISourceRange range, IProgressMonitor monitor) throws ConversionException {
@@ -808,6 +819,7 @@ public class JayFX {
 		this.enableElementsAccordingToCall(targetString,
 				IJavaSearchConstants.METHOD, parent, range, monitor);
 	}
+	*/
 
 	/**
 	 * Convenience method that returns the elements declared by an element that
@@ -1038,6 +1050,7 @@ public class JayFX {
 	/**
 	 * @param monitor
 	 */
+	/*
 	private void resetAllElements(final IProgressMonitor monitor) {
 		// reset all elements.	
 		monitor.beginTask("Disabling intention elements.", this.aDB
@@ -1049,4 +1062,5 @@ public class JayFX {
 		}
 		monitor.done();
 	}
+	*/
 }

@@ -37,7 +37,7 @@ import org.jdom.output.XMLOutputter;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
@@ -204,7 +204,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	protected void analyzeAdviceCollection(
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor monitor,
-			final IntentionGraph<IntentionNode<IElement>> graph,
+			final IntentionGraph graph,
 			final WorkingMemory workingMemory) throws ConversionException,
 			CoreException, IOException {
 
@@ -215,8 +215,8 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		for (final AdviceElement advElem : adviceCol) {
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
 
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 
 			graph.enableElementsAccordingTo(advElem, monitor);
 			executeQueries(monitor, workingMemory, patternToResultMap,
