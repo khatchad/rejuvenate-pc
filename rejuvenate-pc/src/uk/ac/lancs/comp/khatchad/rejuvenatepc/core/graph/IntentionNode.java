@@ -31,17 +31,13 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 
 	private final E elem;
 	
-	private final Set<IntentionEdge<E>> edges = new HashSet<IntentionEdge<E>>();
+	private final Set<IntentionArc<E>> arcs = new HashSet<IntentionArc<E>>();
 
 	/**
 	 * @param elem
 	 */
 	public IntentionNode(final E elem) {
 		this.elem = elem;
-		if (elem.isEnabled())
-			this.enable();
-		else
-			this.disable();
 	}
 
 	/**
@@ -58,8 +54,8 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	/**
 	 * @param intentionNode
 	 */
-	public void addEdge(final IntentionEdge<E> intentionEdge) {
-		this.edges.add(intentionEdge);
+	public void addArc(final IntentionArc<E> intentionArc) {
+		this.arcs.add(intentionArc);
 	}
 
 	/* (non-Javadoc)
@@ -73,10 +69,10 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	}
 
 	/**
-	 * @return the edges
+	 * @return the arcs
 	 */
-	public Set<IntentionEdge<E>> getEdges() {
-		return this.edges;
+	public Set<IntentionArc<E>> getArcs() {
+		return this.arcs;
 	}
 
 	/**
@@ -90,20 +86,20 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	 * @param advises
 	 * @return
 	 */
-	public boolean hasEdge(final Relation relation) {
-		for (final IntentionEdge<E> edge : this.edges)
-			if (edge.getType().equals(relation))
-				return true;
-		return false;
-	}
+//	public boolean hasEdge(final Relation relation) {
+//		for (final IntentionArc<E> arc : this.arcs)
+//			if (arc.getType().equals(relation))
+//				return true;
+//		return false;
+//	}
 
 	/**
 	 * @param relation
 	 * @return
 	 */
-	public boolean hasEnabledEdgesForIncommingRelation(final Relation relation) {
-		return this.elem.hasEnabledRelationFor(relation);
-	}
+//	public boolean hasEnabledEdgesForIncommingRelation(final Relation relation) {
+//		return this.elem.hasEnabledRelationFor(relation);
+//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -125,9 +121,9 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 		ret.append('\n');
 		
 		int edgeCount = 0;
-		for (final IntentionEdge<E> edge : this.edges) {
+		for (final IntentionArc<E> edge : this.arcs) {
 			ret.append(edge.toDotFormat());
-			if ( edgeCount++ < this.edges.size()-1 )
+			if ( edgeCount++ < this.arcs.size()-1 )
 				ret.append('\n');
 		}
 		return ret.toString();

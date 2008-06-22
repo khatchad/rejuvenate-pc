@@ -4,7 +4,7 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model;
 
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 
@@ -14,7 +14,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
  */
 public class Suggestion<E extends IntentionElement<IElement>> {
 	private E suggestion;
-	private Pattern<IntentionEdge<IElement>> pattern;
+	private Pattern<IntentionArc<IElement>> pattern;
 	private double confidence;
 
 	/**
@@ -23,7 +23,7 @@ public class Suggestion<E extends IntentionElement<IElement>> {
 	 * @param confidence
 	 */
 	public Suggestion(E suggestion,
-			Pattern<IntentionEdge<IElement>> pattern, double confidence) {
+			Pattern<IntentionArc<IElement>> pattern, double confidence) {
 		this.suggestion = suggestion;
 		this.pattern = pattern;
 		this.confidence = confidence;
@@ -39,7 +39,7 @@ public class Suggestion<E extends IntentionElement<IElement>> {
 	/**
 	 * @return the pattern
 	 */
-	public Pattern<IntentionEdge<IElement>> getPattern() {
+	public Pattern<IntentionArc<IElement>> getPattern() {
 		return this.pattern;
 	}
 

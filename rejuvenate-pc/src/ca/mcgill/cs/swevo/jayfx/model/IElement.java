@@ -25,21 +25,7 @@ public interface IElement extends Serializable {
 	 */
 	static final String ID = "id";
 
-	public void disable();
-
-	public void disableAllIncommingRelations();
-	
 	public Element getXML();
-
-	/**
-	 * 
-	 */
-	public void enable();
-
-	/**
-	 * @param calls
-	 */
-	public void enableIncommingRelationsFor(Relation calls);
 
 	/**
 	 * @return The category for this element.
@@ -66,8 +52,4 @@ public interface IElement extends Serializable {
 	 * @return The id of this element without the package.
 	 */
 	public String getShortName();
-
-	public boolean hasEnabledRelationFor(Relation relation);
-
-	public boolean isEnabled();
 }

@@ -43,7 +43,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionEdge;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
@@ -93,7 +93,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 	protected void analyzeAdviceCollection(
 			Collection<? extends AdviceElement> adviceCol,
 			IProgressMonitor monitor,
-			IntentionGraph<IntentionNode<IElement>> graph,
+			IntentionGraph graph,
 			WorkingMemory workingMemory) throws ConversionException,
 			CoreException, IOException, JDOMException {
 		
@@ -102,8 +102,8 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 
 			//retrieve analysis information.
 			Document document = readXMLFile(advElem);
@@ -115,10 +115,10 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 				derivedPatternToEnabledElementMap);
 
 			//Retrieve the saved patterns.
-			Map<Pattern<IntentionEdge<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
+			Map<Pattern<IntentionArc<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
 
 			//Intersect pattern sets.
-			Set<Pattern<IntentionEdge<IElement>>> survingPatternSet = obtainSurvingPatterns(
+			Set<Pattern<IntentionArc<IElement>>> survingPatternSet = obtainSurvingPatterns(
 					derivedPatternToResultMap, recoveredPatternToConfidenceMap);
 
 			//Make suggestions sorted by highest confidence.
@@ -130,7 +130,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 					});
 
 			System.out.println("Suggestion\tPattern\tConfidence");
-			for (Pattern<IntentionEdge<IElement>> pattern : survingPatternSet) {
+			for (Pattern<IntentionArc<IElement>> pattern : survingPatternSet) {
 				//Get the confidence.
 				double confidence = recoveredPatternToConfidenceMap
 						.get(pattern);
@@ -176,15 +176,15 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 	 * @param recoveredPatternToConfidenceMap
 	 * @return
 	 */
-	private Set<Pattern<IntentionEdge<IElement>>> obtainSurvingPatterns(
-			final Map<Pattern<IntentionEdge<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap,
-			Map<Pattern<IntentionEdge<IElement>>, Double> recoveredPatternToConfidenceMap) {
-		Set<Pattern<IntentionEdge<IElement>>> recoveredPatternSet = recoveredPatternToConfidenceMap
+	private Set<Pattern<IntentionArc<IElement>>> obtainSurvingPatterns(
+			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap,
+			Map<Pattern<IntentionArc<IElement>>, Double> recoveredPatternToConfidenceMap) {
+		Set<Pattern<IntentionArc<IElement>>> recoveredPatternSet = recoveredPatternToConfidenceMap
 				.keySet();
-		Set<Pattern<IntentionEdge<IElement>>> derivedPatternSet = derivedPatternToResultMap
+		Set<Pattern<IntentionArc<IElement>>> derivedPatternSet = derivedPatternToResultMap
 				.keySet();
 
-		Set<Pattern<IntentionEdge<IElement>>> survingPatternSet = new LinkedHashSet<Pattern<IntentionEdge<IElement>>>(
+		Set<Pattern<IntentionArc<IElement>>> survingPatternSet = new LinkedHashSet<Pattern<IntentionArc<IElement>>>(
 				derivedPatternSet);
 		survingPatternSet.retainAll(recoveredPatternSet);
 
@@ -196,14 +196,14 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 	 * @return
 	 * @throws DataConversionException
 	 */
-	private Map<Pattern<IntentionEdge<IElement>>, Double> extractPatterns(
+	private Map<Pattern<IntentionArc<IElement>>, Double> extractPatterns(
 			Document document) throws DataConversionException {
-		Map<Pattern<IntentionEdge<IElement>>, Double> ret = new LinkedHashMap<Pattern<IntentionEdge<IElement>>, Double>();
+		Map<Pattern<IntentionArc<IElement>>, Double> ret = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Double>();
 
 		Element root = document.getRootElement();
 		for (Object patternObj : root.getChildren(PATTERN)) {
 			Element patternElem = (Element) patternObj;
-			Pattern<IntentionEdge<IElement>> pattern = new Pattern<IntentionEdge<IElement>>(
+			Pattern<IntentionArc<IElement>> pattern = new Pattern<IntentionArc<IElement>>(
 					patternElem);
 			Attribute confidenceAttribute = patternElem
 					.getAttribute("confidence");

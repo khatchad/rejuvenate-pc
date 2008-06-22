@@ -202,7 +202,7 @@ public class FastConverter {
 					IJavaSearchConstants.DECLARATIONS,
 					SearchPattern.R_EXACT_MATCH
 							| SearchPattern.R_CASE_SENSITIVE);
-			Collection<SearchMatch> matches = Util.search(pattern);
+			Collection<SearchMatch> matches = Util.search(pattern, null);
 			if ( matches.isEmpty() )
 				throw new ConversionException("Cannot find type " + pElement);
 			else

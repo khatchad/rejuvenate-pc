@@ -20,7 +20,7 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * @author raffi
  * 
  */
-public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
+public class IntentionArc<E extends IElement> extends IntentionElement<E> {
 
 	/**
 	 * 
@@ -43,7 +43,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	/**
 	 * 
 	 */
-	public IntentionEdge() {
+	public IntentionArc() {
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 * @param to
 	 * @param type
 	 */
-	public IntentionEdge(final IntentionNode<E> from,
+	public IntentionArc(final IntentionNode<E> from,
 			final IntentionNode<E> to, final Relation type) {
 		this.fromNode = from;
 		this.toNode = to;
@@ -64,7 +64,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 * @param relation
 	 * @param enableEdgesForIncommingRelation
 	 */
-	public IntentionEdge(final IntentionNode<E> from,
+	public IntentionArc(final IntentionNode<E> from,
 			final IntentionNode<E> to, final Relation type,
 			final boolean enabled) {
 		this(from, to, type);
@@ -78,7 +78,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 * @param elem
 	 * @throws DataConversionException 
 	 */
-	public IntentionEdge(Element elem) throws DataConversionException {
+	public IntentionArc(Element elem) throws DataConversionException {
 		super(elem);
 		
 		Element typeElem = elem.getChild(Relation.class.getSimpleName());
@@ -108,10 +108,10 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof IntentionEdge ? this.fromNode
-				.equals(((IntentionEdge) obj).fromNode)
-				&& this.toNode.equals(((IntentionEdge) obj).toNode)
-				&& this.type.equals(((IntentionEdge) obj).type) : false;
+		return obj instanceof IntentionArc ? this.fromNode
+				.equals(((IntentionArc) obj).fromNode)
+				&& this.toNode.equals(((IntentionArc) obj).toNode)
+				&& this.type.equals(((IntentionArc) obj).type) : false;
 	}
 
 	/**
@@ -140,6 +140,8 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 */
 	@Override
 	public int hashCode() {
+		if ( this.fromNode == null || this.toNode == null || this.type == null )
+			throw new IllegalStateException("State can not have null attributes");
 		return this.fromNode.hashCode() + this.toNode.hashCode()
 				+ this.type.hashCode();
 	}
@@ -148,25 +150,25 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 * @param fromNode
 	 *            the fromNode to set
 	 */
-	public void setFromNode(final IntentionNode<E> fromNode) {
-		this.fromNode = fromNode;
-	}
-
-	/**
-	 * @param toNode
-	 *            the toNode to set
-	 */
-	public void setToNode(final IntentionNode<E> toNode) {
-		this.toNode = toNode;
-	}
+//	public void setFromNode(final IntentionNode<E> fromNode) {
+//		this.fromNode = fromNode;
+//	}
+//
+//	/**
+//	 * @param toNode
+//	 *            the toNode to set
+//	 */
+//	public void setToNode(final IntentionNode<E> toNode) {
+//		this.toNode = toNode;
+//	}
 
 	/**
 	 * @param type
 	 *            the type to set
 	 */
-	public void setType(final Relation type) {
-		this.type = type;
-	}
+//	public void setType(final Relation type) {
+//		this.type = type;
+//	}
 
 	public String toDotFormat() {
 		final StringBuilder ret = new StringBuilder();
@@ -230,7 +232,7 @@ public class IntentionEdge<E extends IElement> extends IntentionElement<E> {
 	 */
 
 	public Set<IJavaElement> getJavaElement() {
-		// Need to *somehow* get AJCodeElements here. Perhaps use search engine?
+		//TODO: Need to *somehow* get AJCodeElements here. Perhaps use search engine?
 		return null;
 	}
 
