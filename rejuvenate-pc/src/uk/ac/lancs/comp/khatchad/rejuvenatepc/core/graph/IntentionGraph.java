@@ -23,6 +23,10 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchPattern;
 
 import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
@@ -39,6 +43,7 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
 public class IntentionGraph {
 
 	//	private AdviceElement elementsCurrentlyEnabledAccordingToAdvice;
+	private static final String INIT_STRING = ".<init>";
 
 	private Set<IntentionNode<IElement>> nodeSet = new LinkedHashSet<IntentionNode<IElement>>();
 
@@ -196,35 +201,31 @@ public class IntentionGraph {
 
 				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
 				JoinpointType joinPointType = getJoinPointType(ajElem);
+				IJavaElement source = advisedElement.getParent();
+				String targetString = getTargetString(ajElem);
 
 				switch (joinPointType) {
 					case FIELD_GET: {
-						IJavaElement source = advisedElement.getParent();
-						
-						String targetString = getTargetString(ajElem);
-						Set<IJavaElement> targetSet = convertTargetStringToTargetSet(targetString);
-						this.enableElementsAccordingToFieldGet(targetString,
-								ajElem.getParent(), ajCodeElem.getNameRange());
+						this.enableElementsAccordingToFieldGet(source,
+								targetString, monitor);
 						break;
 					}
 
 					case FIELD_SET: {
-						this.enableElementsAccordingToFieldSet(targetString,
-								ajElem.getParent(), ajCodeElem.getNameRange());
+						this.enableElementsAccordingToFieldSet(source,
+								targetString, monitor);
 						break;
 					}
 
 					case METHOD_CALL: {
-						this.enableElementsAccordingToMethodCall(targetString,
-								ajElem.getParent(), ajCodeElem.getNameRange(),
-								monitor);
+						this.enableElementsAccordingToMethodCall(source,
+								targetString, monitor);
 						break;
 					}
 
 					case CONSTRUCTOR_CALL: {
-						this.enableElementsAccordingToConstructorCall(
-								targetString, ajElem.getParent(), ajCodeElem
-										.getNameRange(), monitor);
+						this.enableElementsAccordingToConstructorCall(source,
+								targetString, monitor);
 						break;
 					}
 
@@ -244,13 +245,90 @@ public class IntentionGraph {
 		}
 	}
 
-	/**
-	 * @param targetString
-	 * @return
-	 */
-	private Set<IJavaElement> convertTargetStringToTargetSet(String targetString) {
-		// TODO Auto-generated method stub
-		return null;
+	private void enableElementsAccordingToFieldGet(IJavaElement parent,
+			String targetString, IProgressMonitor monitor)
+			throws ConversionException {
+		String fieldNameTargetString = transformTargetStringToFieldName(targetString);
+		this.enableElementsAccordingToRelation(parent, fieldNameTargetString,
+				IJavaSearchConstants.FIELD, Relation.GETS, monitor);
+	}
+
+	private void enableElementsAccordingToFieldSet(IJavaElement parent,
+			String targetString, IProgressMonitor monitor)
+			throws ConversionException {
+		String fieldNameTargetString = transformTargetStringToFieldName(targetString);
+		this.enableElementsAccordingToRelation(parent, fieldNameTargetString,
+				IJavaSearchConstants.FIELD, Relation.SETS, monitor);
+	}
+
+	private void enableElementsAccordingToConstructorCall(IJavaElement parent,
+			String targetString, IProgressMonitor monitor)
+			throws ConversionException {
+		String constructorNameTargetString = transformTargetStringToConstructorName(targetString);
+		this.enableElementsAccordingToRelation(parent,
+				constructorNameTargetString, IJavaSearchConstants.METHOD,
+				Relation.CALLS, monitor);
+	}
+
+	private void enableElementsAccordingToMethodCall(IJavaElement parent,
+			String targetString, IProgressMonitor monitor)
+			throws ConversionException {
+		String methodNameTargetString = transformTargetStringToMethodName(targetString);
+		this.enableElementsAccordingToRelation(parent, methodNameTargetString,
+				IJavaSearchConstants.METHOD, Relation.CALLS, monitor);
+	}
+
+	private void enableElementsAccordingToRelation(IJavaElement parent,
+			String targetString, final int javaSearchConstant,
+			Relation relation, IProgressMonitor monitor)
+			throws ConversionException {
+
+		final SearchPattern pattern = SearchPattern.createPattern(targetString,
+				javaSearchConstant, IJavaSearchConstants.DECLARATIONS,
+				SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
+
+		final Collection<SearchMatch> results = Util.search(pattern,
+				SearchEngine.createWorkspaceScope(), monitor);
+
+		IElement sourceElement = this.database.convertToElement(parent);
+		IntentionNode<IElement> sourceNode = this.getNode(sourceElement);
+
+		for (final SearchMatch match : results) {
+
+			final IElement targetElement = this.database
+					.convertToElement((IJavaElement) match.getElement());
+
+			//find the edge connecting the source to the target and enable it.
+			IntentionNode<IElement> targetNode = this.getNode(targetElement);
+			IntentionArc<IElement> arcToEnable = sourceNode.getArc(targetNode,
+					relation);
+			arcToEnable.enable();
+		}
+	}
+
+	private static String transformTargetStringToFieldName(
+			final String targetString) {
+		StringBuilder ret = new StringBuilder(targetString);
+		ret.delete(0, targetString.indexOf(" ") + 1);
+		ret.deleteCharAt(targetString.length() - 1);
+		return ret.toString();
+	}
+
+	private static String transformTargetStringToMethodName(
+			final String targetString) {
+		StringBuilder ret = new StringBuilder(targetString);
+		ret.delete(0, targetString.indexOf(" ") + 1);
+		ret.deleteCharAt(targetString.length() - 1);
+		return ret.toString();
+	}
+
+	private static String transformTargetStringToConstructorName(
+			final String targetString) {
+		String methodTargetString = transformTargetStringToMethodName(targetString);
+		StringBuilder ret = new StringBuilder(methodTargetString);
+		final int initPos = ret.indexOf(INIT_STRING);
+		ret.delete(initPos, initPos + INIT_STRING.length());
+		return ret.toString();
 	}
 
 	/**
