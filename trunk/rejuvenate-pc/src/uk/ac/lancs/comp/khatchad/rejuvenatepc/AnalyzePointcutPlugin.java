@@ -47,6 +47,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 	private static final String DATABASE_FILE_NAME = "rejuv-pc.dat";
+	
 	private PrintWriter benchmarkOut;
 
 	@SuppressWarnings("unused")
@@ -228,8 +229,8 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
 
-			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
-					+ advElem.getPath().toOSString() + "-");
+//			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+//					+ advElem.getPath().toOSString() + "-");
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;

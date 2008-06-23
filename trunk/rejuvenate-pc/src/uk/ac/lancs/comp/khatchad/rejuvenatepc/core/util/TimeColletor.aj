@@ -13,17 +13,21 @@ import java.io.*;
  */
 public aspect TimeColletor {
 	private long collectedTime;
+
 	pointcut toRemove() : 
-		call(* PrintWriter+.print(..)) ||
-		call(* PrintWriter+.println(..)) ||
-		call(* PrintWriter+.close(..)) ||
+		call(* *.print*(..)) ||
+		call(* *.close*(..)) ||
+		call(* Util.readRule(..)) ||
+		call(* Util.makeDotFile(..)) ||
+		call(* Util.get*XML*(..)) ||
+		call(*Writer.new(..)) ||
+		call(File.new(..)) ||
 		call(CompilationUnit getCompilationUnit(ICompilationUnit)) ||
-		call(PrintWriter+ get*StatsWriter(..)) ||
+		call(PrintWriter+ get*Writer(..)) ||
 		call(* ASTParser+.createAST(..)) ||
 		call(* getTotalNumberOfShadows(..)) ||
-		call(* org.jdom..*.*(..)) ||
-		call(* java.io..*.*(..));
-	
+		call(* org.jdom..*.*(..));
+
 	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();
 		final Object ret = proceed();
@@ -31,14 +35,12 @@ public aspect TimeColletor {
 		this.collectedTime += elapsed;
 		return ret;
 	}
-	
-	public long getCollectedTime()
-	{
+
+	public long getCollectedTime() {
 		return this.collectedTime;
 	}
-	
-	public void clear()
-	{
+
+	public void clear() {
 		this.collectedTime = 0;
 	}
 }

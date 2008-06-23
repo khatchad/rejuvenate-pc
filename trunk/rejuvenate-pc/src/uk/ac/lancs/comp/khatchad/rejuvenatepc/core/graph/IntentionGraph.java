@@ -42,7 +42,6 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  */
 public class IntentionGraph {
 
-	//	private AdviceElement elementsCurrentlyEnabledAccordingToAdvice;
 	private static final String INIT_STRING = ".<init>";
 
 	private Set<IntentionNode<IElement>> nodeSet = new LinkedHashSet<IntentionNode<IElement>>();
@@ -75,26 +74,36 @@ public class IntentionGraph {
 	private void buildArcs(IProgressMonitor monitor) {
 
 		monitor.beginTask("Building Intention Arcs", this.nodeSet.size());
-
+		Set<IntentionNode<IElement>> nodesToAdd = new LinkedHashSet<IntentionNode<IElement>>();
 		for (IntentionNode<IElement> node : this.nodeSet) {
 			// now make the edges.
-			this.makeArcs(node, database, Relation.GETS);
-			this.makeArcs(node, database, Relation.SETS);
-			this.makeArcs(node, database, Relation.CALLS);
-			this.makeArcs(node, database, Relation.OVERRIDES);
-			this.makeArcs(node, database, Relation.IMPLEMENTS_METHOD);
-			this.makeArcs(node, database, Relation.DECLARES_METHOD);
-			this.makeArcs(node, database, Relation.DECLARES_FIELD);
-			this.makeArcs(node, database, Relation.DECLARES_TYPE);
-			this.makeArcs(node, database, Relation.EXTENDS_CLASS);
-			this.makeArcs(node, database, Relation.EXTENDS_INTERFACES);
-			this.makeArcs(node, database, Relation.IMPLEMENTS_INTERFACE);
-			this.makeArcs(node, database, Relation.CONTAINS);
-			this.makeArcs(node, database, Relation.ANNOTATES);
-			this.makeArcs(node, database, Relation.ADVISES);
+			nodesToAdd.addAll(this.makeArcs(node, database, Relation.GETS));
+			nodesToAdd.addAll(this.makeArcs(node, database, Relation.SETS));
+			nodesToAdd.addAll(this.makeArcs(node, database, Relation.CALLS));
+			nodesToAdd
+					.addAll(this.makeArcs(node, database, Relation.OVERRIDES));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.IMPLEMENTS_METHOD));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.DECLARES_METHOD));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.DECLARES_FIELD));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.DECLARES_TYPE));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.EXTENDS_CLASS));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.EXTENDS_INTERFACES));
+			nodesToAdd.addAll(this.makeArcs(node, database,
+					Relation.IMPLEMENTS_INTERFACE));
+			nodesToAdd.addAll(this.makeArcs(node, database, Relation.CONTAINS));
+			nodesToAdd
+					.addAll(this.makeArcs(node, database, Relation.ANNOTATES));
+			nodesToAdd.addAll(this.makeArcs(node, database, Relation.ADVISES));
 
 			monitor.worked(1);
 		}
+		this.nodeSet.addAll(nodesToAdd);
 		monitor.done();
 	}
 
@@ -120,7 +129,7 @@ public class IntentionGraph {
 				relationshipList.size());
 
 		for (final AJRelationship relationship : relationshipList) {
-
+			
 			if (relationship.getSource().equals(advisingElement)) {
 				final IJavaElement target = relationship.getTarget();
 				enableElementsAccordingTo(target, new SubProgressMonitor(
@@ -130,10 +139,6 @@ public class IntentionGraph {
 		}
 		monitor.done();
 	}
-
-	//	public AdviceElement getElementsCurrentlyEnabledAccordingToAdvice() {
-	//		return this.elementsCurrentlyEnabledAccordingToAdvice;
-	//	}
 
 	/**
 	 * @param target
@@ -202,7 +207,7 @@ public class IntentionGraph {
 				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
 				JoinpointType joinPointType = getJoinPointType(ajElem);
 				IJavaElement source = advisedElement.getParent();
-				String targetString = getTargetString(ajElem);
+				String targetString = ajElem.getElementName();
 
 				switch (joinPointType) {
 					case FIELD_GET: {
@@ -291,7 +296,11 @@ public class IntentionGraph {
 				SearchEngine.createWorkspaceScope(), monitor);
 
 		IElement sourceElement = this.database.convertToElement(parent);
-		IntentionNode<IElement> sourceNode = this.getNode(sourceElement);
+		if (!this.elementToNodeMap.containsKey(sourceElement))
+			throw new IllegalStateException("Can't find node for IElement "
+					+ sourceElement);
+		IntentionNode<IElement> sourceNode = this.elementToNodeMap
+				.get(sourceElement);
 
 		for (final SearchMatch match : results) {
 
@@ -299,7 +308,11 @@ public class IntentionGraph {
 					.convertToElement((IJavaElement) match.getElement());
 
 			//find the edge connecting the source to the target and enable it.
-			IntentionNode<IElement> targetNode = this.getNode(targetElement);
+			if (!this.elementToNodeMap.containsKey(targetElement))
+				throw new IllegalStateException("Can't find node for IElement "
+						+ targetElement);
+			IntentionNode<IElement> targetNode = this.elementToNodeMap
+					.get(targetElement);
 			IntentionArc<IElement> arcToEnable = sourceNode.getArc(targetNode,
 					relation);
 			arcToEnable.enable();
@@ -309,16 +322,16 @@ public class IntentionGraph {
 	private static String transformTargetStringToFieldName(
 			final String targetString) {
 		StringBuilder ret = new StringBuilder(targetString);
-		ret.delete(0, targetString.indexOf(" ") + 1);
-		ret.deleteCharAt(targetString.length() - 1);
+		ret.delete(0, ret.indexOf(" ") + 1);
+		ret.deleteCharAt(ret.length() - 1);
 		return ret.toString();
 	}
 
 	private static String transformTargetStringToMethodName(
 			final String targetString) {
 		StringBuilder ret = new StringBuilder(targetString);
-		ret.delete(0, targetString.indexOf(" ") + 1);
-		ret.deleteCharAt(targetString.length() - 1);
+		ret.delete(0, ret.indexOf(" ") + 1);
+		ret.deleteCharAt(ret.length() - 1);
 		return ret.toString();
 	}
 
@@ -335,29 +348,18 @@ public class IntentionGraph {
 	 * @param ajElem
 	 */
 	private static JoinpointType getJoinPointType(final IAJCodeElement ajElem) {
-		final String joinPointTypeAsString = getTargetString(ajElem);
-
-		final JoinpointType joinPointTypeAsEnum = JoinpointType
-				.valueOf(joinPointTypeAsString);
-
-		return joinPointTypeAsEnum;
-	}
-
-	/**
-	 * @param ajElem
-	 * @return
-	 */
-	private static String getTargetString(final IAJCodeElement ajElem) {
-		final StringBuilder targetString = new StringBuilder(ajElem
-				.getElementName());
-		final String type = targetString
-				.substring(0, targetString.indexOf("("));
+		final String type = ajElem.getElementName()
+				.substring(0, ajElem.getElementName().indexOf("("));
 		final StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
 		final int pos = typeBuilder.indexOf("-");
 
 		final String joinPointTypeAsString = typeBuilder.replace(pos, pos + 1,
 				"_").toString();
-		return joinPointTypeAsString;
+
+		final JoinpointType joinPointTypeAsEnum = JoinpointType
+				.valueOf(joinPointTypeAsString);
+
+		return joinPointTypeAsEnum;
 	}
 
 	private void resetAllElements(IProgressMonitor monitor) {
@@ -369,19 +371,6 @@ public class IntentionGraph {
 			monitor.worked(1);
 		}
 		monitor.done();
-	}
-
-	private IntentionNode<IElement> getNode(final IElement elem) {
-		if (this.elementToNodeMap.containsKey(elem))
-			return this.elementToNodeMap.get(elem);
-		else {
-			final IntentionNode<IElement> node = new IntentionNode<IElement>(
-					elem);
-			//Let's not consider nodes outside the projects.
-			//			this.nodeSet.add(node);
-			this.elementToNodeMap.put(elem, node);
-			return node;
-		}
 	}
 
 	public Collection<IntentionElement<IElement>> getEnabledElements() {
@@ -435,33 +424,43 @@ public class IntentionGraph {
 		return ret.toString();
 	}
 
-	private void makeArcs(final IntentionNode<IElement> fromNode,
-			JayFX database, final Relation relation) {
+	private Set<IntentionNode<IElement>> makeArcs(
+			final IntentionNode<IElement> fromNode, JayFX database,
+			final Relation relation) {
+		Set<IntentionNode<IElement>> ret = new LinkedHashSet<IntentionNode<IElement>>();
 
 		for (final IElement toElement : database.getRange(fromNode.getElem(),
 				relation)) {
 
-			final IntentionNode<IElement> toNode = this.getNode(toElement);
+			if (!this.elementToNodeMap.containsKey(toElement)) {
+				IntentionNode<IElement> node = new IntentionNode<IElement>(
+						toElement);
+				this.elementToNodeMap.put(toElement, node);
+				ret.add(node);
+			}
 
+			final IntentionNode<IElement> toNode = this.elementToNodeMap
+					.get(toElement);
 			final IntentionArc<IElement> arc = new IntentionArc<IElement>(
 					fromNode, toNode, relation);
 
 			fromNode.addArc(arc);
 		}
+
+		return ret;
 	}
 
 	public void enableElementsAccordingTo(
-			Collection<IJavaElement> advisedElements, IProgressMonitor monitor) {
-		//TODO
-		//			throws JavaModelException, ConversionException, CoreException {
-		//		monitor.beginTask(
-		//				"Re-enabling elements according to retrieved information.",
-		//				advisedElements.size());
-		//		for (IJavaElement elem : advisedElements) {
-		//			this.database.enableElementsAccordingTo(elem,
-		//					new SubProgressMonitor(monitor, -1));
-		//			monitor.worked(1);
-		//		}
-		//		this.updateStateToReflectDatabase(new SubProgressMonitor(monitor, 1));
+			Collection<IJavaElement> advisedElements, IProgressMonitor monitor)
+			throws JavaModelException, ConversionException {
+
+		monitor.beginTask("Enabling graph according the advised elements.",
+				advisedElements.size());
+
+		for (IJavaElement elem : advisedElements) {
+			this.enableElementsAccordingTo(elem, new SubProgressMonitor(
+					monitor, -1));
+			monitor.worked(1);
+		}
 	}
 }
