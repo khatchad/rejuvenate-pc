@@ -4,6 +4,9 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.jdom.Attribute;
@@ -32,6 +35,8 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	private final E elem;
 	
 	private final Set<IntentionArc<E>> arcs = new HashSet<IntentionArc<E>>();
+	
+	private final Map<Relation, Set<IntentionArc<E>>> relationToArcSetMap = new LinkedHashMap<Relation, Set<IntentionArc<E>>>();
 
 	/**
 	 * @param elem
@@ -56,6 +61,11 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	 */
 	public void addArc(final IntentionArc<E> intentionArc) {
 		this.arcs.add(intentionArc);
+		
+		if ( !this.relationToArcSetMap.containsKey(intentionArc.getType()) )
+			this.relationToArcSetMap.put(intentionArc.getType(), new LinkedHashSet<IntentionArc<E>>());
+		
+		this.relationToArcSetMap.get(intentionArc.getType()).add(intentionArc);
 	}
 
 	/* (non-Javadoc)
@@ -165,5 +175,18 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 	@Override
 	public String toPrettyString() {
 		return this.toString();
+	}
+
+	/**
+	 * @param targetNode
+	 * @param calls
+	 * @return
+	 */
+	public IntentionArc<E> getArc(IntentionNode<IElement> targetNode,
+			Relation relation) {	
+		for ( IntentionArc<E> arc : this.relationToArcSetMap.get(relation)) 
+			if ( arc.getToNode().equals(targetNode) )
+				return arc;
+		return null;
 	}
 }
