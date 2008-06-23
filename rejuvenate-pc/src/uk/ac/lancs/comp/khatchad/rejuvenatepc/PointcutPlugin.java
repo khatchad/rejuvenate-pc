@@ -109,28 +109,28 @@ public abstract class PointcutPlugin implements IWorkbenchWindowActionDelegate {
 				suggestedArcs.size());
 		for (final Iterator it = suggestedArcs.iterator(); it.hasNext();) {
 			final QueryResult result = (QueryResult) it.next();
-			final IntentionArc suggestedEdge = (IntentionArc) result
-					.get("$suggestedEdge");
+			final IntentionArc suggestedArc = (IntentionArc) result
+					.get("$suggestedArc");
 
-			final IntentionArc enabledEdge = (IntentionArc) result
-					.get("$enabledEdge");
+			final IntentionArc enabledArc = (IntentionArc) result
+					.get("$enabledArc");
 
 			final Path enabledPath = (Path) result.get("$enabledPath");
 
 			final IntentionNode commonNode = (IntentionNode) result
 					.get("$commonNode");
 			final Pattern pattern = enabledPath.extractPattern(commonNode,
-					enabledEdge);
+					enabledArc);
 
 			if (!patternToResultMap.containsKey(pattern))
 				patternToResultMap.put(pattern,
 						new LinkedHashSet<IntentionElement<IElement>>());
-			patternToResultMap.get(pattern).add(suggestedEdge);
+			patternToResultMap.get(pattern).add(suggestedArc);
 
 			if (!patternToEnabledElementMap.containsKey(pattern))
 				patternToEnabledElementMap.put(pattern,
 						new LinkedHashSet<IntentionElement<IElement>>());
-			patternToEnabledElementMap.get(pattern).add(enabledEdge);
+			patternToEnabledElementMap.get(pattern).add(enabledArc);
 
 			lMonitor.worked(1);
 		}

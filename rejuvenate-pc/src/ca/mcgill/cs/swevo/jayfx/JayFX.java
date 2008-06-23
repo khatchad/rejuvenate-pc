@@ -58,7 +58,7 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * produces a database of the program relations between all the source element
  * in the input project and dependent projects.
  */
-public class JayFX {	
+public class JayFX {
 
 	/**
 	 * Returns all the compilation units in this projects
@@ -724,21 +724,4 @@ public class JayFX {
 		 */
 		return lReturn;
 	}
-
-	/**
-	 * @param monitor
-	 */
-	/*
-	private void resetAllElements(final IProgressMonitor monitor) {
-		// reset all elements.	
-		monitor.beginTask("Disabling intention elements.", this.aDB
-				.getAllElements().size());
-		for (final IElement elem : this.aDB.getAllElements()) {
-			elem.disable();
-			elem.disableAllIncommingRelations();
-			monitor.worked(1);
-		}
-		monitor.done();
-	}
-	*/
 }
