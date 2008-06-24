@@ -129,7 +129,7 @@ public class IntentionGraph {
 				relationshipList.size());
 
 		for (final AJRelationship relationship : relationshipList) {
-			
+
 			if (relationship.getSource().equals(advisingElement)) {
 				final IJavaElement target = relationship.getTarget();
 				enableElementsAccordingTo(target, new SubProgressMonitor(
@@ -296,9 +296,14 @@ public class IntentionGraph {
 				SearchEngine.createWorkspaceScope(), monitor);
 
 		IElement sourceElement = this.database.convertToElement(parent);
-		if (!this.elementToNodeMap.containsKey(sourceElement))
-			throw new IllegalStateException("Can't find node for IElement "
-					+ sourceElement);
+		if (!this.elementToNodeMap.containsKey(sourceElement)) {
+			IntentionNode<IElement> newNode = new IntentionNode<IElement>(
+					sourceElement);
+			this.elementToNodeMap.put(sourceElement, newNode);
+			this.nodeSet.add(newNode);
+			//			throw new IllegalStateException("Can't find node for IElement "
+			//					+ sourceElement);
+		}
 		IntentionNode<IElement> sourceNode = this.elementToNodeMap
 				.get(sourceElement);
 
@@ -308,9 +313,14 @@ public class IntentionGraph {
 					.convertToElement((IJavaElement) match.getElement());
 
 			//find the edge connecting the source to the target and enable it.
-			if (!this.elementToNodeMap.containsKey(targetElement))
-				throw new IllegalStateException("Can't find node for IElement "
-						+ targetElement);
+			if (!this.elementToNodeMap.containsKey(targetElement)) {
+				IntentionNode<IElement> newNode = new IntentionNode<IElement>(
+						targetElement);
+				this.elementToNodeMap.put(targetElement, newNode);
+				this.nodeSet.add(newNode);
+				//				throw new IllegalStateException("Can't find node for IElement "
+				//						+ targetElement);
+			}
 			IntentionNode<IElement> targetNode = this.elementToNodeMap
 					.get(targetElement);
 			IntentionArc<IElement> arcToEnable = sourceNode.getArc(targetNode,
@@ -348,8 +358,8 @@ public class IntentionGraph {
 	 * @param ajElem
 	 */
 	private static JoinpointType getJoinPointType(final IAJCodeElement ajElem) {
-		final String type = ajElem.getElementName()
-				.substring(0, ajElem.getElementName().indexOf("("));
+		final String type = ajElem.getElementName().substring(0,
+				ajElem.getElementName().indexOf("("));
 		final StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
 		final int pos = typeBuilder.indexOf("-");
 
