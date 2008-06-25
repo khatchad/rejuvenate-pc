@@ -1,0 +1,995 @@
+Benchmark	Advice#	Advice	#Shadows	#Patterns	#Results	#Enabled	Confidence	
+agent	1	ServiceErrorHandling.afterThrowing()	0	0	0	0	NaN	
+agent	2	OptionalBeanRecovery.around(OptionalBean)	4	27	167	4	0.5614757113052083	
+agent	3	OptionalBeanRecovery.around(OptionalBean)	6	48	1019	6	0.39171287806446586	
+agent	4	DefaultPluginManager.around()	1	54	499	1	0.1998366294499243	
+agent	5	DefaultPluginManager.around(OperationDescription, OperationTracker)	1	90	589	1	0.2607848115086253	
+agent	6	ThreadMonitorIntegration.afterReturning(Response)	1	9	147	1	0.17199981777047196	
+agent	7	ThreadMonitorIntegration.afterReturning(Response, StatsSummarizer)	1	9	147	1	0.17199981777047196	
+agent	8	ThreadMonitorIntegration.afterReturning(PerfStats, Response, StatsSummarizer)	1	17	166	1	0.3249228359190645	
+agent	9	ThreadMonitorIntegration.before(PerfStats, StatsSummarizer)	1	17	166	1	0.3249228359190645	
+agent	10	ThreadMonitorIntegration.afterReturning(ThreadMonitor)	2	13	201	2	0.3210371960582845	
+agent	11	ResponseTracer.afterReturning(PerfStats, Response, StatsSummarizer)	1	9	147	1	0.17199981777047196	
+agent	12	ResponseTracer.afterReturning(Response, StatsSummarizer)	1	17	166	1	0.3249228359190645	
+agent	13	ResponseTracer.afterReturning(PerfStats, Response, StatsSummarizer)	1	17	166	1	0.3249228359190645	
+agent	14	ResponseTracer.DebugData.afterReturning()	0	0	0	0	NaN	
+agent	15	StatsSummarizer.SummarizeTopLevelStats.afterReturning(PerfStats, Response, StatsSummarizer)	1	17	166	1	0.3249228359190645	
+agent	16	ThreadSummarization.afterReturning(CompositePerfStats)	4	10	174	1	0.34398815548486605	
+agent	17	EnforceContracts.afterReturning()	6	200	1308	6	0.2702866332112962	
+agent	18	StatsJmxManagement.around()	3	13	97	3	0.42048385686493106	
+agent	19	StatsJmxManagement.afterReturning(PerfStatsImpl)	3	47	736	3	0.3719265594109467	
+agent	20	StatsJmxManagement.afterReturning()	3	77	998	3	0.2843297583001531	
+agent	21	CheckSummarization.before(PerfStats, OperationSample)	1	60	467	1	0.4774228685375966	
+agent	22	CheckSummarization.before(OperationPerfStats, glassbox.track.api.PerOperationStruct)	1	43	812	1	0.2574852127084863	
+agent	23	ThreadMonitorIntegrationTest.MultiThreadTestController.after()	1	0	0	0	NaN	
+agent	24	ThreadMonitorIntegrationTest.MultiThreadTestController.before()	0	0	0	0	NaN	
+agent	25	ThreadMonitorIntegrationTest.MultiThreadTestController.after()	0	0	0	0	NaN	
+agent	26	ThreadMonitorIntegrationTest.MultiThreadTestController.before()	1	0	0	0	NaN	
+agent	27	ThreadMonitorIntegrationTest.MultiThreadTestController.after()	1	0	0	0	NaN	
+agent	28	ThreadMonitorIntegrationTest.MultiThreadTestController.before()	0	0	0	0	NaN	
+agent	29	EnforceContractsInTest.before()	0	0	0	0	NaN	
+agent	30	EnforceContractsInTest.afterReturning(StatisticsRegistry)	46	984	1807	46	0.3614983782767665	
+agent	31	TimingTestHelper.TraceTiming.afterReturning(PerfStats, long)	3	53	898	3	0.3090904089507149	
+agent	32	ForceEarlyInit.before()	2	22	54	2	0.6545402735562309	
+agent	33	ForceEarlyInit.before()	0	0	0	0	NaN	
+agent	34	ForceEarlyInit.before()	2	22	54	2	0.6545402735562309	
+agent	35	ForceEarlyInit.before()	2	22	54	2	0.6545402735562309	
+agent	36	ForceEarlyInit.after()	2	10	63	2	0.2626531434252023	
+agent	37	TraceAllocations.before(Serializable, StatisticsRegistry)	1	82	881	1	0.30246611229543074	
+AJHotDraw	1	CommandObserver.afterReturning(AbstractCommand)	1	72	865	1	0.4820238843490901	
+AJHotDraw	2	CommandObserver.after(AbstractCommand, DrawingView, DrawingView)	1	38	746	1	0.23999366898066168	
+AJHotDraw	3	CommandObserver.after(CTXCommandMenu, JMenuItem)	1	14	569	1	0.3743145556977252	
+AJHotDraw	4	CommandObserver.after(CommandMenu, Command, JMenuItem)	1	32	545	1	0.2670244683575887	
+AJHotDraw	5	UndoableCommand.around(AbstractCommand, DrawingView)	0	0	0	0	NaN	
+AJHotDraw	6	UndoableCommand.around(AbstractCommand)	12	260	1745	12	0.3033669173275393	
+AJHotDraw	7	UndoableCommand.around(AbstractCommand)	1	145	1183	1	0.35423637202490815	
+AJHotDraw	8	UndoableCommand.around(AbstractCommand)	1	83	844	1	0.2534518317349071	
+AJHotDraw	9	UndoableCommand.around(AbstractCommand)	1	94	1014	1	0.2332872769438998	
+AJHotDraw	10	UndoableCommand.around(AbstractCommand)	0	0	0	0	NaN	
+AJHotDraw	11	UndoableCommand.around(AbstractCommand, Undoable)	0	0	0	0	NaN	
+AJHotDraw	12	CommandContracts.before(AbstractCommand)	26	667	2227	21	0.413819964459891	
+AJHotDraw	13	CommandContracts.afterReturning(AbstractCommand)	21	398	1783	16	0.3412807814668203	
+AJHotDraw	14	GroupCommandUndo.before(GroupCommand)	1	44	676	1	0.2177315183791972	
+AJHotDraw	15	GroupCommandUndo.after(Figure)	1	4	39	1	0.18645833333333334	
+AJHotDraw	16	GroupCommandUndo.before(GroupCommand)	1	44	676	1	0.2177315183791972	
+AJHotDraw	17	GroupCommandUndo.after(GroupCommand)	1	44	676	1	0.2177315183791972	
+AJHotDraw	18	DuplicateCommandUndo.before(DuplicateCommand)	1	78	1197	1	0.24327719633897715	
+AJHotDraw	19	DuplicateCommandUndo.before(DuplicateCommand)	1	78	1197	1	0.24327719633897715	
+AJHotDraw	20	DuplicateCommandUndo.afterReturning(DuplicateCommand)	1	0	0	0	NaN	
+AJHotDraw	21	BringToFrontCommandUndo.before(BringToFrontCommand)	1	73	1069	1	0.17215504347051108	
+AJHotDraw	22	BringToFrontCommandUndo.before(BringToFrontCommand)	1	73	1069	1	0.17215504347051108	
+AJHotDraw	23	ChangeAttributeCommandUndo.before(ChangeAttributeCommand)	1	69	1054	1	0.17865263999377862	
+AJHotDraw	24	ChangeAttributeCommandUndo.before(ChangeAttributeCommand)	1	69	1054	1	0.17865263999377862	
+AJHotDraw	25	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	26	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	27	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	28	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	29	UndoRedoActivity.around(Undoable, boolean)	0	0	0	0	NaN	
+AJHotDraw	30	UndoRedoActivity.around(Undoable, boolean)	0	0	0	0	NaN	
+AJHotDraw	31	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	32	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	33	UndoRedoActivity.around(Undoable, FigureEnumeration)	0	0	0	0	NaN	
+AJHotDraw	34	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	35	UndoRedoActivity.around(Undoable)	0	0	0	0	NaN	
+AJHotDraw	36	PasteCommandUndo.afterReturning(PasteCommand)	1	10	360	1	0.22986065321031285	
+AJHotDraw	37	PasteCommandUndo.afterReturning(Command)	1	0	0	0	NaN	
+AJHotDraw	38	PasteCommandUndo.after(PasteCommand)	1	99	1331	1	0.23194768998509624	
+AJHotDraw	39	CutCommandUndo.before(CutCommand)	1	123	1272	1	0.20104068610403522	
+AJHotDraw	40	CutCommandUndo.before(CutCommand)	1	123	1272	1	0.20104068610403522	
+AJHotDraw	41	DeleteCommandUndo.before(DeleteCommand)	1	54	1108	1	0.20135286600188115	
+AJHotDraw	42	DeleteCommandUndo.before(DeleteCommand)	1	54	1108	1	0.20135286600188115	
+AJHotDraw	43	AlignCommandUndo.before(AlignCommand)	1	88	1158	1	0.20130733614975566	
+AJHotDraw	44	AlignCommandUndo.before(AlignCommand)	1	88	1158	1	0.20130733614975566	
+AJHotDraw	45	FigureSelectionSubjectRole.after(StandardDrawingView)	1	95	1497	1	0.49258315369792705	
+AJHotDraw	46	FigureSelectionSubjectRole.after(StandardDrawingView)	1	22	996	1	0.3265261573381294	
+AJHotDraw	47	SelectionChangedNotification.after(StandardDrawingView)	2	7	502	2	0.28642551757545126	
+AJHotDraw	48	SelectionChangedNotification.after(StandardDrawingView)	2	220	1740	2	0.2009262541614021	
+Ants	1	Comment.around(Command)	8	37	72	8	0.4188736873519483	
+Ants	2	Comment.afterReturning(parser.CommandParser)	1	86	54	1	0.6754964819166462	
+Ants	3	Resting.after(Ant)	1	8	50	1	0.5600303951367781	
+Ants	4	Resting.around(Ant)	2	15	36	1	0.8180555555555556	
+Ants	5	Resting.around(Ant)	1	15	98	1	0.32264179891577593	
+Ants	6	Combat.after(Cell)	1	8	50	1	0.5600303951367781	
+Ants	7	NoNewInCmd.before(Command)	134	0	0	0	NaN	
+Ants	8	LiveAnts.after()	1	15	71	1	0.5392429792429793	
+Ants	9	CheckScores.after(Ant, Command)	1	62	64	9	0.712071713057863	
+Ants	10	WorldDumper.before(String[])	1	32	22	1	0.5124627976190476	
+Ants	11	WorldDumper.after()	1	58	125	1	0.40081293227844955	
+Ants	12	WorldDumper.after()	1	15	71	1	0.5392429792429793	
+Ants	13	CommandTracer.before(String[])	1	32	22	1	0.5124627976190476	
+Ants	14	CommandTracer.after(Command, Ant)	1	62	64	9	0.712071713057863	
+Ants	15	NoNewInRound.before()	2	7	11	2	0.5904761904761905	
+Ants	16	NoNewInRound.before()	133	0	0	0	NaN	
+Ants	17	NoNewInRound.after()	2	7	11	2	0.5904761904761905	
+Ants	18	Update.after(Ant)	1	62	64	9	0.712071713057863	
+Ants	19	Update.after(Ant)	0	0	0	0	NaN	
+Ants	20	Update.around(Ant)	1	62	64	9	0.712071713057863	
+Ants	21	Update.before()	1	62	64	9	0.712071713057863	
+Ants	22	Update.before()	1	15	71	1	0.5392429792429793	
+Ants	23	Update.around(Ant)	1	62	64	9	0.712071713057863	
+Ants	24	Update.around(Ant)	0	0	0	0	NaN	
+Bean	1	BoundPoint.around(Point)	2	8	27	2	0.455954071969697	
+Bean	2	BoundPoint.around(Point)	2	8	27	2	0.45595407196969695	
+bootstrap	1	BeanConfigurator.afterReturning(Object)	0	0	0	0	NaN	
+bootstrap	2	BeanConfigurator.afterReturning(ValidateConfiguration)	0	0	0	0	NaN	
+bootstrap	3	AutoInitialization.before()	0	0	0	0	NaN	
+cactus	1	LogAspect.around()	4	49	231	3	0.5753814859969155	
+cactus	2	LogAspect.around()	126	941	1067	114	0.574217813922886	
+cactus	3	LogAspect.around()	32	405	896	29	0.42525179530224155	
+cactus	4	LogAspect.around()	60	756	1020	59	0.5693647563039576	
+contract4j	1	InvariantFieldConditions.around(Invar, Object, Object)	36	36	99	5	0.5046823656363127	
+contract4j	2	InvariantFieldConditions.around(Invar, Object)	14	18	71	5	0.6796763149704327	
+contract4j	3	InvariantTypeConditions.around(Invar, Object)	62	230	462	61	0.5888174028194607	
+contract4j	4	InvariantTypeConditions.afterReturning(Invar, Object)	14	166	436	14	0.4671091878385536	
+contract4j	5	ConstructorBoundaryConditions.before(Pre)	21	179	446	21	0.4795788436313496	
+contract4j	6	ConstructorBoundaryConditions.after(Post, Object)	21	184	533	21	0.4364059098883464	
+contract4j	7	MethodBoundaryConditions.before(Pre, Object)	20	148	462	18	0.4083629759283072	
+contract4j	8	MethodBoundaryConditions.around(Post, Object)	18	102	404	18	0.3577928958855372	
+contract4j	9	MethodBoundaryConditions.around(Post, Object)	2	12	308	1	0.19111739298146976	
+contract4j	10	InvariantMethodConditions.around(Invar, Object)	14	82	398	13	0.3521802822579485	
+contract4j	11	InvariantFieldCtorConditions.InvariantFieldCtorConditionsPerCtor.afterReturning(Invar, Object, Object)	36	36	99	5	0.5046823656363127	
+contract4j	12	InvariantFieldCtorConditions.InvariantFieldCtorConditionsPerCtor.afterReturning(Object)	57	423	685	55	0.4517166379077005	
+contract4j	13	InvariantCtorConditions.afterReturning(Invar, Object)	6	85	397	5	0.35379331008760784	
+contract4j	14	ReporterDependencyInitializer.around()	16	49	259	10	0.40464082288625	
+contract4j	15	Contract4JConfigurationEnsurer.before(Contract4J)	13	59	103	3	0.34777232651883255	
+contract4j	16	ReportThrows.afterThrowing(Object)	0	0	0	0	NaN	
+contract4j	17	ReportIllegalAccessExceptions.before(IllegalAccessException)	0	0	0	0	NaN	
+DCM	1	ClassRelationship.before()	2	77	148	2	0.4169921181638803	
+DCM	2	AllocFree.after()	39	309	209	39	0.5912530427747519	
+DCM	3	AllocFree.after()	2	77	148	2	0.4169921181638803	
+DCM	4	Metrics.after()	39	309	209	39	0.5912530427747519	
+DCM	5	Metrics.around()	39	309	209	39	0.5912530427747519	
+DCM	6	Metrics.after()	110	657	215	108	0.7756344204044908	
+DCM	7	Metrics.around()	110	657	215	108	0.7756344204044908	
+DCM	8	Metrics.after()	2	77	148	2	0.4169921181638802	
+Figure	1	DisplayUpdating.afterReturning()	6	22	23	5	0.7437499999999999	
+HealthWatcherAO_01_Base	1	HWLocalSynchronization.around(Object)	19	76	207	19	0.49169166383117163	
+HealthWatcherAO_01_Base	2	HWTimestamp.after(Complaint)	1	81	180	1	0.4102179839045076	
+HealthWatcherAO_01_Base	3	HWTimestamp.afterReturning()	1	97	183	1	0.29874372281308725	
+HealthWatcherAO_01_Base	4	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	51	173	1	0.22474423576223587	
+HealthWatcherAO_01_Base	5	HWManagedSynchronization.before(Employee)	1	41	122	1	0.4462588874742482	
+HealthWatcherAO_01_Base	6	HWManagedSynchronization.before(Employee)	1	41	122	1	0.4462588874742482	
+HealthWatcherAO_01_Base	7	HWClientDistribution.around()	19	52	401	19	0.4345799590039695	
+HealthWatcherAO_01_Base	8	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_01_Base	9	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_01_Base	10	HWPersistenceExceptionHandler.around(HttpServletResponse)	8	131	163	8	0.561421110913324	
+HealthWatcherAO_01_Base	11	HWTransactionExceptionHandler.around(HttpServletResponse)	8	131	163	8	0.561421110913324	
+HealthWatcherAO_01_Base	12	HWTransactionManagement.before()	16	138	163	16	0.7260644995735492	
+HealthWatcherAO_01_Base	13	HWTransactionManagement.afterReturning()	16	138	163	16	0.7260644995735492	
+HealthWatcherAO_01_Base	14	HWTransactionManagement.afterThrowing()	16	138	163	16	0.7260644995735492	
+HealthWatcherAO_01_Base	15	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_01_Base	16	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_02_Command	1	HWLocalSynchronization.around(Object)	19	76	207	19	0.49169166383117174	
+HealthWatcherAO_02_Command	2	HWTimestamp.after(Complaint)	1	81	189	1	0.4101106301739654	
+HealthWatcherAO_02_Command	3	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_02_Command	4	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	51	173	1	0.22474423576223587	
+HealthWatcherAO_02_Command	5	HWManagedSynchronization.before(Employee)	1	41	122	1	0.44625888747424836	
+HealthWatcherAO_02_Command	6	HWManagedSynchronization.before(Employee)	1	41	122	1	0.44625888747424836	
+HealthWatcherAO_02_Command	7	HWClientDistribution.around()	19	54	409	19	0.42518532956070226	
+HealthWatcherAO_02_Command	8	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_02_Command	9	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_02_Command	10	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	36	4	0.5500877594627593	
+HealthWatcherAO_02_Command	11	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	36	4	0.5500877594627593	
+HealthWatcherAO_02_Command	12	ServletCommanding.after()	1	10	9	1	0.506547619047619	
+HealthWatcherAO_02_Command	13	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	9	2	0.4955357142857143	
+HealthWatcherAO_02_Command	14	HWTransactionManagement.afterReturning()	16	140	163	16	0.7180179942028185	
+HealthWatcherAO_02_Command	15	HWTransactionManagement.afterThrowing()	16	140	163	16	0.7180179942028185	
+HealthWatcherAO_02_Command	16	HWTransactionManagement.before()	16	140	163	16	0.7180179942028185	
+HealthWatcherAO_02_Command	17	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_02_Command	18	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_02_Command	19	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_02_Command	20	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_02_Command	21	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_03_State	1	HWManagedSynchronization.before(Employee)	1	41	122	1	0.44625888747424836	
+HealthWatcherAO_03_State	2	HWManagedSynchronization.before(Employee)	1	41	122	1	0.44625888747424836	
+HealthWatcherAO_03_State	3	HWLocalSynchronization.around(Object)	19	77	215	19	0.48900541624465194	
+HealthWatcherAO_03_State	4	HWTimestamp.after(Complaint)	1	84	195	1	0.41349140005490576	
+HealthWatcherAO_03_State	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_03_State	6	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	180	1	0.2394810486716599	
+HealthWatcherAO_03_State	7	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_03_State	8	HWClientDistribution.around()	19	54	410	19	0.4251350074995106	
+HealthWatcherAO_03_State	9	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_03_State	10	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	36	4	0.5500877594627593	
+HealthWatcherAO_03_State	11	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	36	4	0.5500877594627593	
+HealthWatcherAO_03_State	12	ServletCommanding.after()	1	10	9	1	0.506547619047619	
+HealthWatcherAO_03_State	13	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	9	2	0.49553571428571436	
+HealthWatcherAO_03_State	14	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	163	1	0.20235940893165508	
+HealthWatcherAO_03_State	15	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	122	1	0.21517003320539344	
+HealthWatcherAO_03_State	16	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	156	1	0.24186897097926613	
+HealthWatcherAO_03_State	17	FoodComplaintStateAspect.after(FoodComplaint)	1	9	163	1	0.19705514075973987	
+HealthWatcherAO_03_State	18	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	123	1	0.20805582388530172	
+HealthWatcherAO_03_State	19	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.24219704978047205	
+HealthWatcherAO_03_State	20	ComplaintStateAspect.after(Complaint)	4	29	229	4	0.29886660820943045	
+HealthWatcherAO_03_State	21	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	157	1	0.372174802803314	
+HealthWatcherAO_03_State	22	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	154	1	0.5261607533801168	
+HealthWatcherAO_03_State	23	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	163	1	0.2014450933621671	
+HealthWatcherAO_03_State	24	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	123	1	0.2144697530933486	
+HealthWatcherAO_03_State	25	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.2513281300972141	
+HealthWatcherAO_03_State	26	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_03_State	27	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_03_State	28	HWTransactionManagement.afterReturning()	16	140	164	16	0.7179985842649304	
+HealthWatcherAO_03_State	29	HWTransactionManagement.afterThrowing()	16	140	164	16	0.7179985842649304	
+HealthWatcherAO_03_State	30	HWTransactionManagement.before()	16	140	164	16	0.7179985842649304	
+HealthWatcherAO_03_State	31	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_03_State	32	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_03_State	33	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_04_Observer	1	HWManagedSynchronization.before(Employee)	1	41	122	1	0.4462588874742483	
+HealthWatcherAO_04_Observer	2	HWManagedSynchronization.before(Employee)	1	41	122	1	0.4462588874742483	
+HealthWatcherAO_04_Observer	3	HWLocalSynchronization.around(Object)	19	77	215	19	0.48900541624465194	
+HealthWatcherAO_04_Observer	4	HWTimestamp.after(Complaint)	1	84	195	1	0.41349140005490587	
+HealthWatcherAO_04_Observer	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_04_Observer	6	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	180	1	0.23948104867165987	
+HealthWatcherAO_04_Observer	7	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_04_Observer	8	HWClientDistribution.around()	16	45	353	16	0.41852667065354804	
+HealthWatcherAO_04_Observer	9	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_04_Observer	10	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	37	4	0.5497877720938065	
+HealthWatcherAO_04_Observer	11	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_04_Observer	12	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	37	4	0.5497877720938065	
+HealthWatcherAO_04_Observer	13	HWUpdateObserverExceptionHandler.around(CommandServlet)	3	78	120	3	0.3854738593302592	
+HealthWatcherAO_04_Observer	14	UpdateStateObserver.after(Subject)	3	7	53	3	0.30529336734693885	
+HealthWatcherAO_04_Observer	15	ServletCommanding.after()	1	10	9	1	0.506547619047619	
+HealthWatcherAO_04_Observer	16	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	9	2	0.4955357142857143	
+HealthWatcherAO_04_Observer	17	FoodComplaintStateAspect.after(FoodComplaint)	1	9	163	1	0.19705514075973987	
+HealthWatcherAO_04_Observer	18	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	123	1	0.20805582388530178	
+HealthWatcherAO_04_Observer	19	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.24219704978047205	
+HealthWatcherAO_04_Observer	20	ComplaintStateAspect.after(Complaint)	4	29	229	4	0.2988666082094304	
+HealthWatcherAO_04_Observer	21	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	157	1	0.372174802803314	
+HealthWatcherAO_04_Observer	22	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	153	1	0.5264211700467836	
+HealthWatcherAO_04_Observer	23	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	163	1	0.20235940893165508	
+HealthWatcherAO_04_Observer	24	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	122	1	0.21517003320539344	
+HealthWatcherAO_04_Observer	25	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	155	1	0.24225959597926613	
+HealthWatcherAO_04_Observer	26	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	163	1	0.2014450933621671	
+HealthWatcherAO_04_Observer	27	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	123	1	0.2144697530933486	
+HealthWatcherAO_04_Observer	28	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.2513281300972141	
+HealthWatcherAO_04_Observer	29	HWTransactionManagement.afterReturning()	16	134	151	16	0.7417627729218385	
+HealthWatcherAO_04_Observer	30	HWTransactionManagement.afterThrowing()	16	134	151	16	0.7417627729218385	
+HealthWatcherAO_04_Observer	31	HWTransactionManagement.before()	16	134	151	16	0.7417627729218385	
+HealthWatcherAO_04_Observer	32	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_04_Observer	33	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_04_Observer	34	ObserverProtocol.after(Subject)	7	32	132	8	0.4549963882180438	
+HealthWatcherAO_04_Observer	35	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_04_Observer	36	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_04_Observer	37	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	1	HWManagedSynchronization.before(Employee)	1	41	122	1	0.4462588874742483	
+HealthWatcherAO_05_Adapter	2	HWManagedSynchronization.before(Employee)	1	41	122	1	0.4462588874742483	
+HealthWatcherAO_05_Adapter	3	HWLocalSynchronization.around(Object)	19	77	215	19	0.48900541624465194	
+HealthWatcherAO_05_Adapter	4	HWTimestamp.after(Complaint)	1	84	195	1	0.41349140005490587	
+HealthWatcherAO_05_Adapter	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	6	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	180	1	0.23948104867165987	
+HealthWatcherAO_05_Adapter	7	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	8	HWClientDistribution.around()	16	45	353	16	0.41852667065354804	
+HealthWatcherAO_05_Adapter	9	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	10	HWUpdateObserverExceptionHandler.around(CommandServlet)	3	78	120	3	0.3854738593302592	
+HealthWatcherAO_05_Adapter	11	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	12	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	37	4	0.5497877720938065	
+HealthWatcherAO_05_Adapter	13	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	37	4	0.5497877720938065	
+HealthWatcherAO_05_Adapter	14	UpdateStateObserver.after(Subject)	3	7	53	3	0.30529336734693885	
+HealthWatcherAO_05_Adapter	15	ServletCommanding.after()	1	10	9	1	0.506547619047619	
+HealthWatcherAO_05_Adapter	16	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	9	2	0.4955357142857143	
+HealthWatcherAO_05_Adapter	17	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	163	1	0.2014450933621671	
+HealthWatcherAO_05_Adapter	18	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	123	1	0.2144697530933486	
+HealthWatcherAO_05_Adapter	19	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.2513281300972141	
+HealthWatcherAO_05_Adapter	20	FoodComplaintStateAspect.after(FoodComplaint)	1	9	163	1	0.19705514075973987	
+HealthWatcherAO_05_Adapter	21	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	123	1	0.20805582388530178	
+HealthWatcherAO_05_Adapter	22	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.24219704978047205	
+HealthWatcherAO_05_Adapter	23	ComplaintStateAspect.after(Complaint)	4	29	229	4	0.2988666082094304	
+HealthWatcherAO_05_Adapter	24	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	157	1	0.372174802803314	
+HealthWatcherAO_05_Adapter	25	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	153	1	0.5264211700467836	
+HealthWatcherAO_05_Adapter	26	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	163	1	0.20235940893165508	
+HealthWatcherAO_05_Adapter	27	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	122	1	0.21517003320539344	
+HealthWatcherAO_05_Adapter	28	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	155	1	0.24225959597926613	
+HealthWatcherAO_05_Adapter	29	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	30	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	31	HWTransactionManagement.afterReturning()	16	134	151	16	0.7417627729218385	
+HealthWatcherAO_05_Adapter	32	HWTransactionManagement.afterThrowing()	16	134	151	16	0.7417627729218385	
+HealthWatcherAO_05_Adapter	33	HWTransactionManagement.before()	16	134	151	16	0.7417627729218385	
+HealthWatcherAO_05_Adapter	34	ObserverProtocol.after(Subject)	7	32	132	8	0.4549963882180438	
+HealthWatcherAO_05_Adapter	35	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	36	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_05_Adapter	37	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	1	HWManagedSynchronization.before(Employee)	1	41	123	1	0.4462588874742483	
+HealthWatcherAO_06_Factory	2	HWManagedSynchronization.before(Employee)	1	41	123	1	0.4462588874742483	
+HealthWatcherAO_06_Factory	3	HWLocalSynchronization.around(Object)	19	77	215	19	0.48900541624465194	
+HealthWatcherAO_06_Factory	4	HWTimestamp.after(Complaint)	1	84	195	1	0.4134914000549059	
+HealthWatcherAO_06_Factory	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	6	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	180	1	0.23948104867165992	
+HealthWatcherAO_06_Factory	7	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	8	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	9	HWClientDistribution.around()	16	45	353	16	0.41852667065354804	
+HealthWatcherAO_06_Factory	10	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	11	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	37	4	0.5497877720938065	
+HealthWatcherAO_06_Factory	12	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	37	4	0.5497877720938065	
+HealthWatcherAO_06_Factory	13	HWUpdateObserverExceptionHandler.around(CommandServlet)	3	78	120	3	0.3854738593302592	
+HealthWatcherAO_06_Factory	14	UpdateStateObserver.after(Subject)	3	7	53	3	0.3052933673469388	
+HealthWatcherAO_06_Factory	15	ServletCommanding.after()	1	10	9	1	0.506547619047619	
+HealthWatcherAO_06_Factory	16	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	9	2	0.4955357142857143	
+HealthWatcherAO_06_Factory	17	ComplaintStateAspect.after(Complaint)	4	29	229	4	0.2988666082094304	
+HealthWatcherAO_06_Factory	18	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	157	1	0.37217480280331405	
+HealthWatcherAO_06_Factory	19	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	153	1	0.5264211700467835	
+HealthWatcherAO_06_Factory	20	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	163	1	0.20235940893165508	
+HealthWatcherAO_06_Factory	21	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	122	1	0.21517003320539344	
+HealthWatcherAO_06_Factory	22	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	155	1	0.2422595959792661	
+HealthWatcherAO_06_Factory	23	FoodComplaintStateAspect.after(FoodComplaint)	1	9	163	1	0.19705514075973984	
+HealthWatcherAO_06_Factory	24	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	123	1	0.20805582388530178	
+HealthWatcherAO_06_Factory	25	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.24219704978047205	
+HealthWatcherAO_06_Factory	26	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	163	1	0.2014450933621671	
+HealthWatcherAO_06_Factory	27	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	123	1	0.2144697530933486	
+HealthWatcherAO_06_Factory	28	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.25132813009721405	
+HealthWatcherAO_06_Factory	29	HWTransactionManagement.afterReturning()	16	134	151	16	0.7417627729218382	
+HealthWatcherAO_06_Factory	30	HWTransactionManagement.afterThrowing()	16	134	151	16	0.7417627729218382	
+HealthWatcherAO_06_Factory	31	HWTransactionManagement.before()	16	134	151	16	0.7417627729218382	
+HealthWatcherAO_06_Factory	32	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_06_Factory	33	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_06_Factory	34	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_06_Factory	35	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	36	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_06_Factory	37	ObserverProtocol.after(Subject)	7	32	132	8	0.4549963882180438	
+HealthWatcherAO_07_Adapter	1	HWManagedSynchronization.before(Employee)	1	41	126	1	0.4432101069864434	
+HealthWatcherAO_07_Adapter	2	HWManagedSynchronization.before(Employee)	1	41	126	1	0.4432101069864434	
+HealthWatcherAO_07_Adapter	3	HWTimestamp.after(Complaint)	1	84	195	1	0.41349140005490576	
+HealthWatcherAO_07_Adapter	4	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	5	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	180	1	0.2394810486716599	
+HealthWatcherAO_07_Adapter	6	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	7	HWLocalSynchronization.around(Object)	19	77	215	19	0.48900541624465194	
+HealthWatcherAO_07_Adapter	8	HWServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	9	HWClientDistribution.around()	16	45	373	16	0.416792589272185	
+HealthWatcherAO_07_Adapter	10	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	11	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	46	4	0.5836514778325123	
+HealthWatcherAO_07_Adapter	12	HWUpdateObserverExceptionHandler.around(CommandServlet)	3	92	130	3	0.39566520062219795	
+HealthWatcherAO_07_Adapter	13	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	46	4	0.5836514778325123	
+HealthWatcherAO_07_Adapter	14	UpdateStateObserver.after(Subject)	3	7	62	3	0.29965538847117795	
+HealthWatcherAO_07_Adapter	15	ServletCommanding.after()	1	10	18	1	0.5005208333333334	
+HealthWatcherAO_07_Adapter	16	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	18	2	0.48046875	
+HealthWatcherAO_07_Adapter	17	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	163	1	0.2014450933621671	
+HealthWatcherAO_07_Adapter	18	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	124	1	0.2138431866773085	
+HealthWatcherAO_07_Adapter	19	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.2513281300972141	
+HealthWatcherAO_07_Adapter	20	ComplaintStateAspect.after(Complaint)	4	29	229	4	0.29886660820943045	
+HealthWatcherAO_07_Adapter	21	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	159	1	0.3651509932795046	
+HealthWatcherAO_07_Adapter	22	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	158	1	0.5253795033801169	
+HealthWatcherAO_07_Adapter	23	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	163	1	0.20235940893165508	
+HealthWatcherAO_07_Adapter	24	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	123	1	0.2144697530933486	
+HealthWatcherAO_07_Adapter	25	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	160	1	0.24069709597926608	
+HealthWatcherAO_07_Adapter	26	FoodComplaintStateAspect.after(FoodComplaint)	1	9	163	1	0.19705514075973987	
+HealthWatcherAO_07_Adapter	27	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	124	1	0.20742925746926164	
+HealthWatcherAO_07_Adapter	28	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.242197049780472	
+HealthWatcherAO_07_Adapter	29	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	30	HWTransactionManagement.afterReturning()	16	134	156	16	0.7411804321594401	
+HealthWatcherAO_07_Adapter	31	HWTransactionManagement.afterThrowing()	16	134	156	16	0.7411804321594401	
+HealthWatcherAO_07_Adapter	32	HWTransactionManagement.before()	16	134	156	16	0.7411804321594401	
+HealthWatcherAO_07_Adapter	33	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	34	ObserverProtocol.after(Subject)	7	32	141	8	0.45210952324478176	
+HealthWatcherAO_07_Adapter	35	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	36	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_07_Adapter	37	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	1	HWManagedSynchronization.before(Employee)	1	41	124	1	0.4432914982341712	
+HealthWatcherAO_08_Factory	2	HWManagedSynchronization.before(Employee)	1	41	124	1	0.4432914982341712	
+HealthWatcherAO_08_Factory	3	HWLocalSynchronization.around(Object)	19	77	215	19	0.48900541624465194	
+HealthWatcherAO_08_Factory	4	HWTimestamp.after(Complaint)	1	84	195	1	0.4134936859154865	
+HealthWatcherAO_08_Factory	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	6	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	180	1	0.23948460445478556	
+HealthWatcherAO_08_Factory	7	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	8	RMIServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	9	RMIClientDistribution.around()	16	45	373	16	0.416792589272185	
+HealthWatcherAO_08_Factory	10	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	11	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	46	4	0.5836514778325123	
+HealthWatcherAO_08_Factory	12	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	46	4	0.5836514778325123	
+HealthWatcherAO_08_Factory	13	HWUpdateObserverExceptionHandler.around(CommandServlet)	3	92	130	3	0.39566520062219784	
+HealthWatcherAO_08_Factory	14	ServletCommanding.after()	1	10	18	1	0.5005208333333334	
+HealthWatcherAO_08_Factory	15	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	18	2	0.48046875	
+HealthWatcherAO_08_Factory	16	UpdateStateObserver.after(Subject)	3	7	62	3	0.29965538847117795	
+HealthWatcherAO_08_Factory	17	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	163	1	0.2014450933621671	
+HealthWatcherAO_08_Factory	18	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	124	1	0.2138431866773085	
+HealthWatcherAO_08_Factory	19	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.2513281300972141	
+HealthWatcherAO_08_Factory	20	FoodComplaintStateAspect.after(FoodComplaint)	1	9	163	1	0.19705514075973984	
+HealthWatcherAO_08_Factory	21	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	124	1	0.2074292574692617	
+HealthWatcherAO_08_Factory	22	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.24219704978047205	
+HealthWatcherAO_08_Factory	23	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	163	1	0.20235940893165508	
+HealthWatcherAO_08_Factory	24	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	123	1	0.21446975309334862	
+HealthWatcherAO_08_Factory	25	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	160	1	0.2406970959792661	
+HealthWatcherAO_08_Factory	26	ComplaintStateAspect.after(Complaint)	4	29	229	4	0.2988666082094304	
+HealthWatcherAO_08_Factory	27	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	159	1	0.3651509932795046	
+HealthWatcherAO_08_Factory	28	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	158	1	0.5253795033801169	
+HealthWatcherAO_08_Factory	29	HWDataCollection.around()	5	0	0	0	NaN	
+HealthWatcherAO_08_Factory	30	HWTransactionManagement.afterReturning()	16	134	156	16	0.7411804321594402	
+HealthWatcherAO_08_Factory	31	HWTransactionManagement.afterThrowing()	16	134	156	16	0.7411804321594402	
+HealthWatcherAO_08_Factory	32	HWTransactionManagement.before()	16	134	156	16	0.7411804321594402	
+HealthWatcherAO_08_Factory	33	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_08_Factory	34	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_08_Factory	35	CommandProtocol.after(CommandInvoker, Command)	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	36	CommandProtocol.after(CommandInvoker)	0	0	0	0	NaN	
+HealthWatcherAO_08_Factory	37	ObserverProtocol.after(Subject)	7	32	141	8	0.45210952324478176	
+HealthWatcherAO_09_Evolution	1	HWManagedSynchronization.before(Object)	3	94	160	3	0.5457600015325395	
+HealthWatcherAO_09_Evolution	2	HWManagedSynchronization.before(Object)	3	94	160	3	0.5457600015325395	
+HealthWatcherAO_09_Evolution	3	HWLocalSynchronization.around(Object)	19	77	227	19	0.4883624223807877	
+HealthWatcherAO_09_Evolution	4	HWTimestamp.after(Complaint)	1	84	219	1	0.41033378656002806	
+HealthWatcherAO_09_Evolution	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_09_Evolution	6	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	54	199	1	0.23387144285696926	
+HealthWatcherAO_09_Evolution	7	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_09_Evolution	8	RMIClientDistribution.around()	24	68	541	24	0.42159182230336967	
+HealthWatcherAO_09_Evolution	9	RMIServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_09_Evolution	10	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	56	4	0.5815147150420429	
+HealthWatcherAO_09_Evolution	11	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	56	4	0.5815147150420429	
+HealthWatcherAO_09_Evolution	12	HWUpdateObserverExceptionHandler.around(CommandServlet)	5	100	144	5	0.42550938521783316	
+HealthWatcherAO_09_Evolution	13	HWDistributionExceptionHandler.around(HttpServletResponse)	0	0	0	0	NaN	
+HealthWatcherAO_09_Evolution	14	ServletCommanding.after()	1	10	18	1	0.5005208333333334	
+HealthWatcherAO_09_Evolution	15	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	18	2	0.48046875000000006	
+HealthWatcherAO_09_Evolution	16	UpdateStateObserver.after(Subject)	5	11	102	5	0.25735645933014356	
+HealthWatcherAO_09_Evolution	17	FoodComplaintStateAspect.after(FoodComplaint)	1	9	164	1	0.1970447370976508	
+HealthWatcherAO_09_Evolution	18	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	125	1	0.20741588133229003	
+HealthWatcherAO_09_Evolution	19	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.24219704978047205	
+HealthWatcherAO_09_Evolution	20	ComplaintStateAspect.after(Complaint)	4	29	230	4	0.29885369331856126	
+HealthWatcherAO_09_Evolution	21	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	160	1	0.3651447510822511	
+HealthWatcherAO_09_Evolution	22	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	158	1	0.5253795033801169	
+HealthWatcherAO_09_Evolution	23	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	164	1	0.20143468970007805	
+HealthWatcherAO_09_Evolution	24	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	125	1	0.21382981054033687	
+HealthWatcherAO_09_Evolution	25	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.25132813009721405	
+HealthWatcherAO_09_Evolution	26	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	164	1	0.20234900526956603	
+HealthWatcherAO_09_Evolution	27	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	124	1	0.21445637695637695	
+HealthWatcherAO_09_Evolution	28	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	160	1	0.2406970959792661	
+HealthWatcherAO_09_Evolution	29	HWDataCollection.around()	6	0	0	0	NaN	
+HealthWatcherAO_09_Evolution	30	HWTransactionManagement.afterReturning()	25	193	186	25	0.7771657780353729	
+HealthWatcherAO_09_Evolution	31	HWTransactionManagement.afterThrowing()	25	193	186	25	0.7771657780353728	
+HealthWatcherAO_09_Evolution	32	HWTransactionManagement.before()	25	193	186	25	0.7771657780353728	
+HealthWatcherAO_09_Evolution	33	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_09_Evolution	34	ObserverProtocol.after(Subject)	12	52	236	13	0.4172310291492853	
+HealthWatcherAO_09_Evolution	35	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	1	HWLocalSynchronization.around(Object)	19	77	228	19	0.48845057827251503	
+HealthWatcherAO_10_ExceptionHandling	2	HWTimestamp.after(Complaint)	1	84	197	1	0.4096263231812933	
+HealthWatcherAO_10_ExceptionHandling	3	HWTimestamp.afterReturning()	1	106	201	1	0.2866028123226433	
+HealthWatcherAO_10_ExceptionHandling	4	HWTimestamp.around(Complaint, ComplaintRepositoryRDB)	1	24	163	1	0.32332056746346355	
+HealthWatcherAO_10_ExceptionHandling	5	HWTimestamp.after(Complaint)	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	6	HWManagedSynchronization.before(Object)	3	95	165	3	0.5422124662065235	
+HealthWatcherAO_10_ExceptionHandling	7	HWManagedSynchronization.after(Object)	3	95	165	3	0.5422124662065235	
+HealthWatcherAO_10_ExceptionHandling	8	RMIClientDistribution.around()	24	68	494	24	0.42405747252905124	
+HealthWatcherAO_10_ExceptionHandling	9	RMIServerDistribution.around()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	10	HWDistributionExceptionHandler.around(HttpServletResponse)	4	26	56	4	0.6044715153267783	
+HealthWatcherAO_10_ExceptionHandling	11	HWPersistenceExceptionHandler.around(HttpServletResponse)	4	26	56	4	0.6044715153267783	
+HealthWatcherAO_10_ExceptionHandling	12	HWPersistenceExceptionHandler.before(String)	1	7	201	1	0.17588450200234984	
+HealthWatcherAO_10_ExceptionHandling	13	HWPersistenceExceptionHandler.afterThrowing()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	14	HWPersistenceExceptionHandler.afterThrowing()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	15	HWPersistenceExceptionHandler.afterThrowing()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	16	HWPersistenceExceptionHandler.before(String)	1	4	268	1	0.1883325821314103	
+HealthWatcherAO_10_ExceptionHandling	17	HWPersistenceExceptionHandler.afterThrowing()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	18	HWPersistenceExceptionHandler.afterThrowing()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	19	HWPersistenceExceptionHandler.before(String)	1	4	293	1	0.17359048297602842	
+HealthWatcherAO_10_ExceptionHandling	20	HWPersistenceExceptionHandler.afterThrowing()	0	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	21	HWPersistenceExceptionHandler.around(PersistenceMechanism)	1	66	242	1	0.26397274878962884	
+HealthWatcherAO_10_ExceptionHandling	22	HWPersistenceExceptionHandler.around(PersistenceMechanism)	1	121	373	1	0.19426764272218425	
+HealthWatcherAO_10_ExceptionHandling	23	HWTransactionExceptionHandler.around(HttpServletResponse)	4	26	56	4	0.6044715153267783	
+HealthWatcherAO_10_ExceptionHandling	24	HWUpdateObserverExceptionHandler.around(CommandServlet)	5	96	148	5	0.43332136459980286	
+HealthWatcherAO_10_ExceptionHandling	25	HWLogging.before()	1	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	26	ServletCommanding.after()	1	10	18	1	0.5005208333333334	
+HealthWatcherAO_10_ExceptionHandling	27	ServletCommanding.before(HttpServletRequest, HttpServletResponse)	2	8	18	2	0.48046875	
+HealthWatcherAO_10_ExceptionHandling	28	UpdateStateObserver.after(Subject)	5	11	91	5	0.26130236185383243	
+HealthWatcherAO_10_ExceptionHandling	29	SpecialComplaintStateAspect.after(SpecialComplaint)	1	9	167	1	0.20211285627952297	
+HealthWatcherAO_10_ExceptionHandling	30	SpecialComplaintStateAspect.after(SpecialComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, String, String, Address)	1	7	122	1	0.2159444721944722	
+HealthWatcherAO_10_ExceptionHandling	31	SpecialComplaintStateAspect.after(int, SpecialComplaint, SpecialComplaintState)	1	8	162	1	0.2406220659672613	
+HealthWatcherAO_10_ExceptionHandling	32	FoodComplaintStateAspect.after(FoodComplaint)	1	9	167	1	0.19666969921871885	
+HealthWatcherAO_10_ExceptionHandling	33	FoodComplaintStateAspect.after(FoodComplaint, String, String, String, String, Employee, int, Date, Date, Address, int, int, int, int, String, String, Address)	1	7	124	1	0.20804244774833008	
+HealthWatcherAO_10_ExceptionHandling	34	FoodComplaintStateAspect.after(int, FoodComplaint, FoodComplaintState)	1	6	134	1	0.242197049780472	
+HealthWatcherAO_10_ExceptionHandling	35	AnimalComplaintStateAspect.after(AnimalComplaint)	1	9	167	1	0.20119854071003496	
+HealthWatcherAO_10_ExceptionHandling	36	AnimalComplaintStateAspect.after(AnimalComplaint, String, String, String, String, Employee, int, Date, Date, Address, short, Date, String, Address)	1	7	123	1	0.2151566570684218	
+HealthWatcherAO_10_ExceptionHandling	37	AnimalComplaintStateAspect.after(int, AnimalComplaint, AnimalComplaintState)	1	6	134	1	0.25132813009721405	
+HealthWatcherAO_10_ExceptionHandling	38	ComplaintStateAspect.after(Complaint)	4	29	233	4	0.2985364181301127	
+HealthWatcherAO_10_ExceptionHandling	39	ComplaintStateAspect.after(Complaint, String, String, String, String, Employee, int, Date, Date, Address)	1	15	160	1	0.3651447510822511	
+HealthWatcherAO_10_ExceptionHandling	40	ComplaintStateAspect.after(int, Complaint, ComplaintState)	1	12	160	1	0.5253294833721136	
+HealthWatcherAO_10_ExceptionHandling	41	HWTransactionManagement.afterReturning()	25	193	186	25	0.7779428927903156	
+HealthWatcherAO_10_ExceptionHandling	42	HWTransactionManagement.afterThrowing()	25	193	186	25	0.7779428927903156	
+HealthWatcherAO_10_ExceptionHandling	43	HWTransactionManagement.before()	25	193	186	25	0.7779428927903156	
+HealthWatcherAO_10_ExceptionHandling	44	HWPersistence.before()	1	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	45	HWDataCollection.around()	6	0	0	0	NaN	
+HealthWatcherAO_10_ExceptionHandling	46	ObserverProtocol.after(Subject)	12	52	223	13	0.4190653708639815	
+HealthWatcherAO_10_ExceptionHandling	47	CommandProtocol.after(CommandInvoker)	1	0	0	0	NaN	
+LawOfDemeter	1	Pertarget.before(Object)	48	80	122	34	0.7063132960483499	
+LawOfDemeter	2	Check.afterReturning()	9	14	185	7	0.4945738864401757	
+LawOfDemeter	3	Check.after(Object, Object)	0	0	0	0	NaN	
+LawOfDemeter	4	Check.after()	1	28	64	1	0.38832629642766187	
+LawOfDemeter	5	Percflow.before()	78	365	205	77	0.6939432276868538	
+LawOfDemeter	6	Percflow.afterReturning()	28	40	57	15	0.8214546130952382	
+MobilePhoto_v2	1	SCreensAspectEH.around(AlbumData, String)	1	16	31	1	0.43063423645320204	
+MobilePhoto_v2	2	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v2	3	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v2	4	DataModelAspectEH.around()	1	3	68	1	0.20695929887106357	
+MobilePhoto_v2	5	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v2	6	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v2	7	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v2	8	DataModelAspectEH.around()	1	16	42	1	0.3748511904761904	
+MobilePhoto_v2	9	DataModelAspectEH.afterThrowing()	1	25	90	1	0.5654833777333778	
+MobilePhoto_v2	10	DataModelAspectEH.around(String, AlbumData)	1	10	22	1	0.3900297619047619	
+MobilePhoto_v2	11	DataModelAspectEH.around(String, String, AlbumData)	1	18	84	1	0.34330478447803014	
+MobilePhoto_v2	12	DataModelAspectEH.around()	1	16	90	1	0.30715694895382395	
+MobilePhoto_v2	13	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v2	14	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v2	15	UtilAspectEH.afterThrowing()	1	27	53	1	0.5473324514991181	
+MobilePhoto_v2	16	UtilAspectEH.afterThrowing()	1	22	52	1	0.492060212514758	
+MobilePhoto_v2	17	ControllerAspectEH.around(String, BaseController)	1	6	95	1	0.45665613508355446	
+MobilePhoto_v2	18	ControllerAspectEH.around(BaseController)	1	23	71	1	0.3445343431041371	
+MobilePhoto_v2	19	ControllerAspectEH.around(String, BaseController)	1	32	79	1	0.4743639698203842	
+MobilePhoto_v2	20	ControllerAspectEH.around(BaseController)	1	36	72	1	0.42891545994616165	
+MobilePhoto_v3	1	SCreensAspectEH.around(AlbumData, String)	1	16	32	1	0.4305803571428572	
+MobilePhoto_v3	2	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v3	3	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v3	4	DataModelAspectEH.around()	1	4	70	1	0.2110119047619048	
+MobilePhoto_v3	5	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v3	6	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v3	7	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v3	8	DataModelAspectEH.around()	1	16	46	1	0.3615699404761904	
+MobilePhoto_v3	9	DataModelAspectEH.afterThrowing()	1	27	102	1	0.5342585307883273	
+MobilePhoto_v3	10	DataModelAspectEH.around(String, AlbumData)	1	10	23	1	0.33494047619047623	
+MobilePhoto_v3	11	DataModelAspectEH.around(String, String, AlbumData)	1	18	92	1	0.33420307521870024	
+MobilePhoto_v3	12	DataModelAspectEH.around()	1	16	104	1	0.3002219849910166	
+MobilePhoto_v3	13	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v3	14	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v3	15	UtilAspectEH.afterThrowing()	1	20	54	1	0.5296098602484473	
+MobilePhoto_v3	16	UtilAspectEH.afterThrowing()	1	22	57	1	0.42440182100508184	
+MobilePhoto_v3	17	ControllerAspectEH.around(String, BaseController)	1	6	103	1	0.4532465523338048	
+MobilePhoto_v3	18	ControllerAspectEH.around(BaseController)	1	23	90	1	0.3419717466489088	
+MobilePhoto_v3	19	ControllerAspectEH.around(String, BaseController)	1	39	114	1	0.46917179594994934	
+MobilePhoto_v3	20	ControllerAspectEH.around(BaseController)	1	30	92	1	0.43078945020860776	
+MobilePhoto_v3	21	CountViewsAspect.after(BaseController, String)	1	30	92	1	0.43078945020860776	
+MobilePhoto_v3	22	CountViewsAspect.around(BaseController, Command, Displayable)	1	175	108	1	0.6098139057500472	
+MobilePhoto_v3	23	CountViewsAspect.before(BaseController, ImageData[], PhotoListScreen)	1	9	136	1	0.3287454355310629	
+MobilePhoto_v3	24	CountViewsAspect.after(PhotoListScreen)	1	16	100	1	0.32155840124930785	
+MobilePhoto_v3	25	CountViewsAspect.around(ImageUtil, String, String, String, int, String)	1	17	40	1	0.4550560224089636	
+MobilePhoto_v3	26	CountViewsAspect.around(ImageData)	1	22	57	1	0.42440182100508184	
+MobilePhoto_v4	1	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v4	2	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v4	3	DataModelAspectEH.around()	1	4	70	1	0.21101190476190476	
+MobilePhoto_v4	4	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v4	5	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v4	6	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v4	7	DataModelAspectEH.around()	1	16	52	1	0.35287746108058615	
+MobilePhoto_v4	8	DataModelAspectEH.afterThrowing()	1	28	105	1	0.5185602406863566	
+MobilePhoto_v4	9	DataModelAspectEH.around(String, AlbumData)	1	10	24	1	0.30639880952380955	
+MobilePhoto_v4	10	DataModelAspectEH.around(String, String, AlbumData)	1	18	93	1	0.33420307521870024	
+MobilePhoto_v4	11	DataModelAspectEH.around()	1	16	106	1	0.2980394715257996	
+MobilePhoto_v4	12	SCreensAspectEH.around(AlbumData, String)	1	16	33	1	0.43052995391705073	
+MobilePhoto_v4	13	ControllerAspectEH.around(String, BaseController)	1	6	106	1	0.45211834733893547	
+MobilePhoto_v4	14	ControllerAspectEH.around(BaseController)	1	28	92	1	0.3274827442711274	
+MobilePhoto_v4	15	ControllerAspectEH.around(String, BaseController)	1	40	117	1	0.45572548686594205	
+MobilePhoto_v4	16	ControllerAspectEH.around(BaseController)	1	30	93	1	0.42964857719273475	
+MobilePhoto_v4	17	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v4	18	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v4	19	UtilAspectEH.afterThrowing()	1	20	56	1	0.5087170031055901	
+MobilePhoto_v4	20	UtilAspectEH.afterThrowing()	1	22	59	1	0.4167719508752116	
+MobilePhoto_v4	21	PersisteFavoritesAspect.around(ImageData)	1	22	59	1	0.4167719508752116	
+MobilePhoto_v4	22	FavouritesAspect.around(BaseController, Command, Displayable)	1	176	110	1	0.5883916208210231	
+MobilePhoto_v4	23	FavouritesAspect.around(BaseController, ImageData)	1	9	114	1	0.3391106442577031	
+MobilePhoto_v4	24	FavouritesAspect.after(BaseController, ImageData[], PhotoListScreen)	1	9	134	1	0.30780081012528826	
+MobilePhoto_v4	25	FavouritesAspect.after(PhotoListScreen)	1	17	100	1	0.31049515939073574	
+MobilePhoto_v4	26	FavouritesAspect.around(ImageUtil, String, String, String, int, String)	1	17	40	1	0.4550560224089636	
+MobilePhoto_v4	27	CountViewsAspect.after(BaseController, String)	1	30	93	1	0.42964857719273475	
+MobilePhoto_v4	28	CountViewsAspect.around(BaseController, Command, Displayable)	1	176	110	1	0.5883916208210231	
+MobilePhoto_v4	29	CountViewsAspect.before(BaseController, ImageData[], PhotoListScreen)	1	9	134	1	0.30780081012528826	
+MobilePhoto_v4	30	CountViewsAspect.after(PhotoListScreen)	1	17	100	1	0.31049515939073574	
+MobilePhoto_v4	31	CountViewsAspect.around(ImageUtil, String, String, String, int, String)	1	17	40	1	0.4550560224089636	
+MobilePhoto_v4	32	CountViewsAspect.around(ImageData)	1	22	59	1	0.4167719508752116	
+MobilePhoto_v5	1	ControllerAspectEH.around(String, AlbumController)	1	6	151	1	0.4518506944444445	
+MobilePhoto_v5	2	ControllerAspectEH.around(AlbumController)	1	30	104	1	0.3154962977357474	
+MobilePhoto_v5	3	ControllerAspectEH.around(String, PhotoListController)	1	55	127	1	0.42731569462802566	
+MobilePhoto_v5	4	ControllerAspectEH.around(PhotoController)	1	31	96	1	0.43387445887445886	
+MobilePhoto_v5	5	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v5	6	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v5	7	DataModelAspectEH.around()	1	4	69	1	0.21105072463768115	
+MobilePhoto_v5	8	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v5	9	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v5	10	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v5	11	DataModelAspectEH.around()	1	17	49	1	0.345920868347339	
+MobilePhoto_v5	12	DataModelAspectEH.afterThrowing()	1	29	100	1	0.4993773893851846	
+MobilePhoto_v5	13	DataModelAspectEH.around(String, AlbumData)	1	10	26	1	0.28773809523809524	
+MobilePhoto_v5	14	DataModelAspectEH.around(String, String, AlbumData)	1	18	103	1	0.32599431349431346	
+MobilePhoto_v5	15	DataModelAspectEH.around()	1	16	92	1	0.29303232285320696	
+MobilePhoto_v5	16	SCreensAspectEH.around(AlbumData, String)	1	16	36	1	0.43043831168831176	
+MobilePhoto_v5	17	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v5	18	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v5	19	UtilAspectEH.afterThrowing()	1	20	58	1	0.49309200310559015	
+MobilePhoto_v5	20	UtilAspectEH.afterThrowing()	1	25	86	1	0.3938975951584648	
+MobilePhoto_v5	21	CopyPhotoAspect.before(PhotoController, String, PhotoViewScreen)	1	5	113	1	0.3663461538461539	
+MobilePhoto_v5	22	CopyPhotoAspect.afterReturning(Image)	1	0	0	0	NaN	
+MobilePhoto_v5	23	PersisteFavoritesAspect.around(ImageData)	1	25	86	1	0.3938975951584648	
+MobilePhoto_v5	24	FavouritesAspect.around(PhotoController, Command)	1	160	117	1	0.4541519044962711	
+MobilePhoto_v5	25	FavouritesAspect.around(PhotoListController, ImageData)	1	9	52	1	0.33485495985495983	
+MobilePhoto_v5	26	FavouritesAspect.after(PhotoListController, ImageData[], PhotoListScreen)	1	10	97	1	0.28233121381306864	
+MobilePhoto_v5	27	FavouritesAspect.after(PhotoListScreen)	1	18	93	1	0.29655658393025414	
+MobilePhoto_v5	28	FavouritesAspect.around(ImageUtil, String, String, String, int, String)	1	17	40	1	0.4550560224089636	
+MobilePhoto_v5	29	CountViewsAspect.after(PhotoController, String)	1	31	96	1	0.43387445887445886	
+MobilePhoto_v5	30	CountViewsAspect.around(PhotoController, Command)	1	160	117	1	0.4541519044962711	
+MobilePhoto_v5	31	CountViewsAspect.before(PhotoListController, ImageData[], PhotoListScreen)	1	10	97	1	0.28233121381306864	
+MobilePhoto_v5	32	CountViewsAspect.after(PhotoListScreen)	1	18	93	1	0.29655658393025414	
+MobilePhoto_v5	33	CountViewsAspect.around(ImageUtil, String, String, String, int, String)	1	17	40	1	0.4550560224089636	
+MobilePhoto_v5	34	CountViewsAspect.around(ImageData)	1	25	86	1	0.3938975951584648	
+MobilePhoto_v6	1	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v6	2	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v6	3	UtilAspectEH.afterThrowing()	1	20	61	1	0.4830920031055901	
+MobilePhoto_v6	4	UtilAspectEH.afterThrowing()	1	28	70	1	0.3505275166086502	
+MobilePhoto_v6	5	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v6	6	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v6	7	DataModelAspectEH.around()	1	4	69	1	0.21105072463768115	
+MobilePhoto_v6	8	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v6	9	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v6	10	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v6	11	DataModelAspectEH.around()	1	19	83	1	0.3257083543839837	
+MobilePhoto_v6	12	DataModelAspectEH.afterThrowing()	1	28	95	1	0.5027084220468528	
+MobilePhoto_v6	13	DataModelAspectEH.around(String, AlbumData)	1	10	28	1	0.27488365800865805	
+MobilePhoto_v6	14	DataModelAspectEH.around(String, String, AlbumData)	1	18	122	1	0.31580555190468984	
+MobilePhoto_v6	15	DataModelAspectEH.around()	1	16	98	1	0.2885251113147455	
+MobilePhoto_v6	16	ControllerAspectEH.around(String, AlbumController)	1	6	195	1	0.45008508022774335	
+MobilePhoto_v6	17	ControllerAspectEH.around(AlbumController)	1	30	128	1	0.3017793725204102	
+MobilePhoto_v6	18	ControllerAspectEH.around(String, PhotoListController)	1	53	151	1	0.4216688389753936	
+MobilePhoto_v6	19	ControllerAspectEH.around(PhotoController)	1	34	125	1	0.3242958370652336	
+MobilePhoto_v6	20	SCreensAspectEH.around(AlbumData, String)	1	16	39	1	0.4029085497835498	
+MobilePhoto_v6	21	CopyPhotoAspect.around(PhotoController, String)	1	4	103	1	0.3973349567099567	
+MobilePhoto_v6	22	CopyPhotoAspect.afterReturning(Image)	2	0	0	0	NaN	
+MobilePhoto_v6	23	FavouritesAspect.around(PhotoController, Command)	1	160	147	1	0.43847154627879303	
+MobilePhoto_v6	24	FavouritesAspect.around(PhotoListController, ImageData)	1	9	56	1	0.33032245532245536	
+MobilePhoto_v6	25	FavouritesAspect.after(PhotoListController, ImageData[], PhotoListScreen)	1	9	88	1	0.29139657012640885	
+MobilePhoto_v6	26	FavouritesAspect.after(PhotoListScreen)	1	17	83	1	0.299214404962997	
+MobilePhoto_v6	27	FavouritesAspect.around(ImageUtil, String, String, String, int, String)	1	17	42	1	0.41920168067226893	
+MobilePhoto_v6	28	PersisteFavoritesAspect.around(ImageData)	1	28	70	1	0.3505275166086502	
+MobilePhoto_v6	29	SMSAspect.afterReturning(Image)	2	0	0	0	NaN	
+MobilePhoto_v6	30	SMSAspect.around(PhotoViewScreen)	1	14	64	1	0.3346590909090909	
+MobilePhoto_v6	31	SMSAspect.after(MainUIMidlet)	1	40	39	1	0.5067349837662338	
+MobilePhoto_v6	32	SMSAspect.around(PhotoController, String)	1	4	103	1	0.3973349567099567	
+MobilePhoto_v6	33	SMSAspect.after(PhotoViewController, AddPhotoToAlbum)	1	16	98	1	0.42948900955366476	
+MobilePhoto_v6	34	SMSAspect.around(PhotoViewController, ImageAccessor, String, String)	1	17	117	1	0.24815161174187536	
+MobilePhoto_v6	35	SMSAspect.around()	1	23	106	1	0.2729597457764624	
+MobilePhoto_v6	36	CountViewsAspect.after(PhotoController, String)	1	34	125	1	0.3242958370652336	
+MobilePhoto_v6	37	CountViewsAspect.around(PhotoController, Command)	1	160	147	1	0.43847154627879303	
+MobilePhoto_v6	38	CountViewsAspect.before(PhotoListController, ImageData[], PhotoListScreen)	1	9	88	1	0.29139657012640885	
+MobilePhoto_v6	39	CountViewsAspect.after(PhotoListScreen)	1	17	83	1	0.299214404962997	
+MobilePhoto_v6	40	CountViewsAspect.around(ImageUtil, String, String, String, int, String)	1	17	42	1	0.41920168067226893	
+MobilePhoto_v6	41	CountViewsAspect.around(ImageData)	1	28	70	1	0.3505275166086502	
+MobilePhoto_v7	1	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v7	2	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v7	3	DataModelAspectEH.around()	1	5	78	1	0.2057418699186992	
+MobilePhoto_v7	4	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v7	5	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v7	6	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v7	7	DataModelAspectEH.around()	1	22	99	1	0.31683695092786	
+MobilePhoto_v7	8	DataModelAspectEH.afterThrowing()	1	30	92	1	0.2984009868982696	
+MobilePhoto_v7	9	DataModelAspectEH.around()	1	26	114	1	0.31401858557080986	
+MobilePhoto_v7	10	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v7	11	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v7	12	UtilAspectEH.afterThrowing()	1	25	35	1	0.4522261904761905	
+MobilePhoto_v7	13	UtilAspectEH.afterThrowing()	2	61	123	2	0.5314704307532178	
+MobilePhoto_v7	14	ControllerAspectEH.around(String, AlbumController)	1	6	208	1	0.44981290735567975	
+MobilePhoto_v7	15	ControllerAspectEH.around(AlbumController)	1	32	143	1	0.2833508211281545	
+MobilePhoto_v7	16	ControllerAspectEH.around(String, MediaListController)	1	53	156	1	0.430076195948162	
+MobilePhoto_v7	17	ControllerAspectEH.around(MediaController)	0	0	0	0	NaN	
+MobilePhoto_v7	18	SCreensAspectEH.around(AlbumData, String)	1	16	27	1	0.4295092468805704	
+MobilePhoto_v7	19	MusicAspect.before(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v7	20	MusicAspect.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v7	21	MusicAspect.around(MediaController, Command)	1	138	159	1	0.42664674752034915	
+MobilePhoto_v7	22	MusicAspect.after(AlbumData, MediaController)	1	6	211	1	0.24858359293487597	
+MobilePhoto_v7	23	MusicAspect.after(MediaListScreen)	1	16	73	1	0.28037576818317306	
+MobilePhoto_v7	24	MusicAspect.afterReturning(AbstractController)	1	0	0	0	NaN	
+MobilePhoto_v7	25	MusicAspect.afterReturning()	3	0	0	0	NaN	
+MobilePhoto_v7	26	PhotoAspect.before(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v7	27	PhotoAspect.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v7	28	PhotoAspect.around(MediaController, Command)	1	138	159	1	0.42664674752034915	
+MobilePhoto_v7	29	PhotoAspect.after(MediaListScreen)	1	16	73	1	0.28037576818317306	
+MobilePhoto_v7	30	PhotoAspect.afterReturning(AbstractController)	1	0	0	0	NaN	
+MobilePhoto_v7	31	PhotoAndMusicAspect.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v7	32	PhotoAndMusicAspect.around(BaseController)	1	37	149	1	0.22572564613586288	
+MobilePhoto_v7	33	PhotoOrMusicAspect.before(AlbumListScreen)	1	12	53	1	0.31365891053391054	
+MobilePhoto_v7	34	CopyPhotoAspect.around(MediaController, String)	0	0	0	0	NaN	
+MobilePhoto_v7	35	CopyPhotoAspect.afterReturning(Image)	1	0	0	0	NaN	
+MobilePhoto_v7	36	CopyPhotoAspect.after(MusicPlayController, String)	0	0	0	0	NaN	
+MobilePhoto_v7	37	CopyPhotoAspect.around(MusicPlayController, Command)	1	43	151	1	0.3140108852195247	
+MobilePhoto_v7	38	CopyPhotoAspect.before(PlayMediaScreen)	1	14	59	1	0.3889101473922903	
+MobilePhoto_v7	39	FavouritesAspect.around(MediaController, Command)	1	138	159	1	0.42664674752034915	
+MobilePhoto_v7	40	FavouritesAspect.around(MediaListController, MediaData)	1	9	64	1	0.3175346984170514	
+MobilePhoto_v7	41	FavouritesAspect.after(MediaListController, MediaData[], MediaListScreen)	1	9	78	1	0.2905003561253562	
+MobilePhoto_v7	42	FavouritesAspect.after(MediaListScreen)	1	16	73	1	0.28037576818317306	
+MobilePhoto_v7	43	FavouritesAspect.around(MediaUtil, String, String, String, int, String)	1	19	42	1	0.3890953344900714	
+MobilePhoto_v7	44	FavouritesAspect.after(MultiMediaData, MediaData, String)	1	26	61	1	0.28501984126984126	
+MobilePhoto_v7	45	PersisteFavoritesAspect.around(MediaData)	2	61	123	2	0.5314704307532178	
+MobilePhoto_v7	46	SMSAspect.afterReturning(Image)	1	0	0	0	NaN	
+MobilePhoto_v7	47	SMSAspect.around(PhotoViewScreen)	1	14	49	1	0.33569996180290307	
+MobilePhoto_v7	48	SMSAspect.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v7	49	SMSAspect.around(MediaController, String)	0	0	0	0	NaN	
+MobilePhoto_v7	50	SMSAspect.after(PhotoViewController, AddMediaToAlbum)	1	16	96	1	0.3239302809450951	
+MobilePhoto_v7	51	SMSAspect.around(PhotoViewController, String, String)	1	12	116	1	0.2431700919349422	
+MobilePhoto_v7	52	SMSAspect.around()	0	0	0	0	NaN	
+MobilePhoto_v7	53	CountViewsAspect.after(MediaController, String)	0	0	0	0	NaN	
+MobilePhoto_v7	54	CountViewsAspect.around(MediaController, Command)	1	138	159	1	0.42664674752034915	
+MobilePhoto_v7	55	CountViewsAspect.before(MediaListController, MediaData[], MediaListScreen)	1	9	78	1	0.2905003561253562	
+MobilePhoto_v7	56	CountViewsAspect.after(MediaListScreen)	1	16	73	1	0.28037576818317306	
+MobilePhoto_v7	57	CountViewsAspect.around(MediaUtil, String, String, String, int, String)	1	19	42	1	0.3890953344900714	
+MobilePhoto_v7	58	CountViewsAspect.around(MediaData)	2	61	123	2	0.5314704307532178	
+MobilePhoto_v7	59	CountViewsAspect.after(MultiMediaData, MediaData, String)	1	26	61	1	0.28501984126984126	
+MobilePhoto_v8	1	ControllerAspectEH.around(String, AlbumController)	1	6	242	1	0.449076482663296	
+MobilePhoto_v8	2	ControllerAspectEH.around(AlbumController)	1	37	155	1	0.2779777689935284	
+MobilePhoto_v8	3	ControllerAspectEH.around(String, MediaListController)	1	53	169	1	0.4213054769236112	
+MobilePhoto_v8	4	ControllerAspectEH.around(MediaController)	0	0	0	0	NaN	
+MobilePhoto_v8	5	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v8	6	UtilAspectEH.afterThrowing(String)	0	0	0	0	NaN	
+MobilePhoto_v8	7	UtilAspectEH.afterThrowing()	1	25	37	1	0.44995346320346313	
+MobilePhoto_v8	8	UtilAspectEH.afterThrowing()	2	61	131	2	0.5148960841071499	
+MobilePhoto_v8	9	SCreensAspectEH.around(AlbumData, String)	1	16	33	1	0.4267258782883784	
+MobilePhoto_v8	10	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v8	11	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v8	12	DataModelAspectEH.around()	1	6	86	1	0.2017811412601016	
+MobilePhoto_v8	13	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v8	14	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v8	15	DataModelAspectEH.afterThrowing()	0	0	0	0	NaN	
+MobilePhoto_v8	16	DataModelAspectEH.around()	1	25	120	1	0.30681736868501586	
+MobilePhoto_v8	17	DataModelAspectEH.afterThrowing()	1	31	98	1	0.2675448848086792	
+MobilePhoto_v8	18	DataModelAspectEH.around()	1	29	128	1	0.3390248492429372	
+MobilePhoto_v8	19	MusicAspect.before(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v8	20	MusicAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	21	MusicAspect.after(AlbumData, MediaController)	1	6	244	1	0.3353961878503353	
+MobilePhoto_v8	22	MusicAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	23	MusicAspect.afterReturning(AbstractController)	1	0	0	0	NaN	
+MobilePhoto_v8	24	MusicAspect.afterReturning()	5	0	0	0	NaN	
+MobilePhoto_v8	25	PhotoAspect.before(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v8	26	PhotoAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	27	PhotoAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	28	PhotoAspect.afterReturning(AbstractController)	1	0	0	0	NaN	
+MobilePhoto_v8	29	PhotoOrMusicAspect.before(AlbumListScreen)	1	11	56	1	0.315269167591302	
+MobilePhoto_v8	30	PhotoAndMusicAspect.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v8	31	PhotoAndMusicAspect.around(BaseController)	1	38	160	1	0.21585963042381656	
+MobilePhoto_v8	32	PhotoAndMusicAndVideo.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v8	33	PhotoAndMusicAndVideo.around(BaseController)	1	38	160	1	0.21585963042381656	
+MobilePhoto_v8	34	PhotoOrMusicOrVideo.before(AlbumListScreen)	1	11	56	1	0.315269167591302	
+MobilePhoto_v8	35	VideoAspect.before(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v8	36	VideoAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	37	VideoAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	38	VideoAspect.afterReturning(AbstractController)	1	0	0	0	NaN	
+MobilePhoto_v8	39	CapturePhotoAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	40	CapturePhotoAspect.around(PhotoViewController, Command)	1	82	171	1	0.2728667667533352	
+MobilePhoto_v8	41	CapturePhotoAspect.afterReturning()	2	0	0	0	NaN	
+MobilePhoto_v8	42	CapturePhotoAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	43	CaptureVideoAspect.afterReturning()	2	0	0	0	NaN	
+MobilePhoto_v8	44	CaptureVideoAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	45	CaptureVideoAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	46	CopyPhotoAndMusic.before(PlayMediaScreen)	1	14	54	1	0.3893610853432282	
+MobilePhoto_v8	47	CopyPhotoAndVideo.before(PlayVideoScreen)	0	0	0	0	NaN	
+MobilePhoto_v8	48	CopyPhotoAspect.around(MediaController, String)	0	0	0	0	NaN	
+MobilePhoto_v8	49	CopyPhotoAspect.afterReturning(Image)	1	0	0	0	NaN	
+MobilePhoto_v8	50	CopyPhotoAspect.afterReturning(String)	0	0	0	0	NaN	
+MobilePhoto_v8	51	CopyPhotoAspect.around(CopyPhotoTargets, Command)	2	52	175	2	0.365020933593841	
+MobilePhoto_v8	52	FavouritesAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	53	FavouritesAspect.around(MediaListController, MediaData)	1	10	72	1	0.29583766562384983	
+MobilePhoto_v8	54	FavouritesAspect.after(MediaListController, MediaData[], MediaListScreen)	1	9	82	1	0.2893307654820813	
+MobilePhoto_v8	55	FavouritesAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	56	FavouritesAspect.around(MediaUtil, String, String, String, int, String)	1	19	43	1	0.38821814150761524	
+MobilePhoto_v8	57	FavouritesAspect.after(MultiMediaData, MediaData, String)	1	29	58	1	0.2776087871596038	
+MobilePhoto_v8	58	PersisteFavoritesAspect.around(MediaData)	2	61	131	2	0.5148960841071499	
+MobilePhoto_v8	59	SMSAspect.afterReturning(Image)	1	0	0	0	NaN	
+MobilePhoto_v8	60	SMSAspect.around(PhotoViewScreen)	1	14	56	1	0.3295531849103278	
+MobilePhoto_v8	61	SMSAspect.after(MainUIMidlet)	1	3	4	1	0.5555555555555556	
+MobilePhoto_v8	62	SMSAspect.around(MediaController, String)	0	0	0	0	NaN	
+MobilePhoto_v8	63	SmsOrCapturePhotoOrVideo.after(PhotoViewController, AddMediaToAlbum)	1	16	114	1	0.2616978873375585	
+MobilePhoto_v8	64	SmsOrCapturePhotoOrVideo.around(PhotoViewController, String, String)	1	12	139	1	0.22793660813406338	
+MobilePhoto_v8	65	CountViewsAspect.after(MediaController, String)	0	0	0	0	NaN	
+MobilePhoto_v8	66	CountViewsAspect.around(MediaController, Command)	1	138	175	1	0.4166961306367011	
+MobilePhoto_v8	67	CountViewsAspect.before(MediaListController, MediaData[], MediaListScreen)	1	9	82	1	0.2893307654820813	
+MobilePhoto_v8	68	CountViewsAspect.after(MediaListScreen)	1	16	75	1	0.27811760967501453	
+MobilePhoto_v8	69	CountViewsAspect.around(MediaUtil, String, String, String, int, String)	1	19	43	1	0.38821814150761524	
+MobilePhoto_v8	70	CountViewsAspect.around(MediaData)	2	61	131	2	0.5148960841071499	
+MobilePhoto_v8	71	CountViewsAspect.after(MultiMediaData, MediaData, String)	1	29	58	1	0.2776087871596038	
+monitor	1	ErrorContainment.around()	6	0	0	0	NaN	
+monitor	2	MethodMonitor.before()	9	18	26	2	0.4613479478611057	
+monitor	3	MethodMonitor.afterReturning(Object)	7	10	23	1	0.4854263061499903	
+monitor	4	MethodMonitor.afterThrowing(Object)	7	10	23	1	0.4854263061499903	
+monitor	5	MethodMonitor.afterReturning()	2	9	9	1	0.4018518518518519	
+monitor	6	MethodMonitor.afterThrowing()	2	9	9	1	0.4018518518518519	
+monitor	7	AbstractMonitor.before(Object)	0	0	0	0	NaN	
+monitor	8	AbstractMonitor.before(Object)	4	19	93	1	0.4297747903572679	
+monitor	9	AbstractMonitor.afterThrowing()	69	64	144	7	0.5403889057013291	
+monitor	10	AbstractMonitor.afterReturning()	69	64	144	7	0.5403889057013291	
+monitor	11	AbstractMonitorControl.before()	29	52	129	4	0.4930033080032135	
+monitor	12	AbstractMonitorControl.after()	29	52	129	4	0.4930033080032135	
+monitor	13	AbstractMonitorControl.RuntimeControl.around()	2	0	0	0	NaN	
+monitor	14	JakartaFtpMonitor.before(Object, int)	0	0	0	0	NaN	
+monitor	15	EjbOperationMonitor.before(Object)	0	0	0	0	NaN	
+monitor	16	JndiMonitor.afterReturning(Object)	0	0	0	0	NaN	
+monitor	17	BerkeleyXmlDbMonitor.before(String)	0	0	0	0	NaN	
+monitor	18	BerkeleyXmlDbMonitor.before(String)	0	0	0	0	NaN	
+monitor	19	BerkeleyXmlDbMonitor.before(IXmlContainer, String)	0	0	0	0	NaN	
+monitor	20	BerkeleyXmlDbMonitor.before(IXmlContainer, String)	0	0	0	0	NaN	
+monitor	21	BerkeleyXmlDbMonitor.before(IXmlContainer)	0	0	0	0	NaN	
+monitor	22	BerkeleyXmlDbMonitor.before(String)	0	0	0	0	NaN	
+monitor	23	BerkeleyXmlDbMonitor.before(String)	0	0	0	0	NaN	
+monitor	24	BerkeleyXmlDbMonitor.before(IXmlQueryExpression)	0	0	0	0	NaN	
+monitor	25	BerkeleyXmlDbMonitor.before(IXmlResults)	0	0	0	0	NaN	
+monitor	26	BerkeleyDbMonitor.before(IDatabase)	0	0	0	0	NaN	
+monitor	27	BerkeleyDbMonitor.before(IDb)	0	0	0	0	NaN	
+monitor	28	BerkeleyDbMonitor.before(IDatabase)	0	0	0	0	NaN	
+monitor	29	JdbcMonitor.afterReturning(Statement, String)	1	0	0	0	NaN	
+monitor	30	JdbcMonitor.afterReturning(Statement)	1	0	0	0	NaN	
+monitor	31	JdbcMonitor.before(DataSource)	0	0	0	0	NaN	
+monitor	32	JdbcMonitor.before(String)	1	0	0	0	NaN	
+monitor	33	JdbcMonitor.before(PreparedStatement)	3	0	0	0	NaN	
+monitor	34	JdbcMonitor.before(Statement)	0	0	0	0	NaN	
+monitor	35	JdbcMonitor.before(Statement, String)	9	0	0	0	NaN	
+monitor	36	JdbcMonitor.before(String, Connection)	10	0	0	0	NaN	
+monitor	37	JdbcMonitor.before(Connection)	4	0	0	0	NaN	
+monitor	38	JdbcMonitor.before(ResultSet)	0	0	0	0	NaN	
+monitor	39	JdbcMonitor.afterReturning(DataSource)	0	0	0	0	NaN	
+monitor	40	JdbcMonitor.afterReturning(String)	1	0	0	0	NaN	
+monitor	41	JdbcMonitor.afterReturning(Connection, String)	10	0	0	0	NaN	
+monitor	42	JdbcMonitor.afterReturning(PreparedStatement)	1	0	0	0	NaN	
+monitor	43	JdbcMonitor.afterReturning(Connection)	4	0	0	0	NaN	
+monitor	44	JdbcMonitor.afterReturning(PreparedStatement, int, Object)	48	0	0	0	NaN	
+monitor	45	JdbcMonitor.after(PreparedStatement)	1	0	0	0	NaN	
+monitor	46	RemoteCallMonitor.before(Remote)	1	0	0	0	NaN	
+monitor	47	CommonsHttpMonitor.before(Object)	1	0	0	0	NaN	
+monitor	48	CommonsHttpMonitor.before(Object)	1	0	0	0	NaN	
+monitor	49	CommonsHttpMonitor.before(Object)	0	0	0	0	NaN	
+monitor	50	JxtaSocketMonitor.before(Object, Object)	0	0	0	0	NaN	
+monitor	51	JxtaSocketMonitor.before(Object, Object)	0	0	0	0	NaN	
+monitor	52	SftpMonitor.before(Object, String)	0	0	0	0	NaN	
+monitor	53	EjbCallMonitor.before(Remote)	0	0	0	0	NaN	
+monitor	54	EjbCallMonitor.before(Remote)	0	0	0	0	NaN	
+monitor	55	ServletRequestMonitor.before(Object, Object)	20	16	42	2	0.5910528273809526	
+monitor	56	ServletRequestMonitor.before(Object, Object)	2	23	45	1	0.3701567722297297	
+monitor	57	ServletRequestMonitor.before(Object)	1	0	0	0	NaN	
+monitor	58	ServletRequestMonitor.before(Object)	4	19	93	1	0.4297747903572679	
+monitor	59	ServletRequestMonitor.before(Object, Object)	2	0	0	0	NaN	
+monitor	60	ServletRequestMonitor.afterThrowing(Object)	1	0	0	0	NaN	
+monitor	61	ServletRequestMonitor.afterThrowing(Object, Object)	1	0	0	0	NaN	
+monitor	62	MvcFrameworkMonitor.before(Object)	2	5	16	1	0.46320512820512827	
+monitor	63	MvcFrameworkMonitor.before(Object)	3	10	19	2	0.6882692307692307	
+monitor	64	MvcFrameworkMonitor.before(Object, String)	0	0	0	0	NaN	
+monitor	65	DwrMonitor.before(Method, Object, Object[])	0	0	0	0	NaN	
+monitor	66	PortletMonitor.before(Object)	0	0	0	0	NaN	
+monitor	67	PortletMonitor.before(Object)	0	0	0	0	NaN	
+monitor	68	PortletMonitor.before(Object)	0	0	0	0	NaN	
+monitor	69	GwtMonitor.before(Object)	2	0	0	0	NaN	
+monitor	70	ResponseInvariants.before(Response)	2	36	170	2	0.32358787284935375	
+monitor	71	DefaultResponseFactory.ResponseFactoryObserver.afterReturning(Response)	3	14	100	2	0.4537038941450707	
+monitor	72	DefaultResponseFactory.ResponseFactoryObserver.afterReturning(Response)	2	28	138	2	0.39289203297869274	
+monitor	73	MonitorContextLoaderManagement.around()	0	0	0	0	NaN	
+monitor	74	SimpleObserverProtocol.afterReturning(Subject)	0	0	0	0	NaN	
+monitor	75	LogManagement.around()	5	3	15	1	0.46388888888888885	
+monitor	76	LogManagement.around()	9	0	0	0	NaN	
+monitor	77	LogManagement.around()	0	0	0	0	NaN	
+monitor	78	LogManagement.around(String)	9	0	0	0	NaN	
+monitor	79	LogManagement.around(String, Throwable)	9	0	0	0	NaN	
+monitor	80	LogManagement.around(String)	8	0	0	0	NaN	
+monitor	81	LogManagement.around(String, Throwable)	3	0	0	0	NaN	
+monitor	82	LogManagement.around(String)	7	0	0	0	NaN	
+monitor	83	LogManagement.around(String, Throwable)	0	0	0	0	NaN	
+monitor	84	LogManagement.around(String)	17	0	0	0	NaN	
+monitor	85	LogManagement.around(String, Throwable)	3	0	0	0	NaN	
+monitor	86	TraceAdvice.before(AbstractMonitor)	2	0	0	0	NaN	
+monitor	87	TraceAdvice.afterReturning(AbstractMonitor)	2	0	0	0	NaN	
+monitor	88	TraceAdvice.afterThrowing(AbstractMonitor)	2	0	0	0	NaN	
+monitor	89	MultipleMonitorOrderingTest.AbstractCustomMonitor.before()	1	19	93	1	0.4297747903572679	
+monitor	90	MultipleMonitorOrderingTest.CustomMonitor.after()	1	19	93	1	0.4297747903572679	
+monitor	91	TestExceptionHandling.before(RuntimeException)	0	0	0	0	NaN	
+monitor	92	TestExceptionHandling.before(Error)	0	0	0	0	NaN	
+monitor	93	VirtualMockAspect.around()	11	4	112	2	0.39084821428571426	
+monitor	94	VirtualMockAspect.CflowTracking.before()	1	0	0	0	NaN	
+monitor	95	VirtualMockAspect.CflowTracking.after()	1	0	0	0	NaN	
+monitor	96	VirtualDynamicMock.MockProcessing.afterReturning(VirtualDynamicMock)	1	0	0	0	NaN	
+monitor	97	VirtualDynamicMock.MockProcessing.around()	0	0	0	0	NaN	
+mysql-connector-java	1	Tracer.before()	1508	8782	4048	1505	0.7395266166753506	
+mysql-connector-java	2	Tracer.afterReturning()	1508	8782	4048	1505	0.7395266166753506	
+NullCheck	1	EnforceCodingStandards.around()	112	92	277	26	0.6222221322849678	
+NVersion	1	Dispatcher.around(Version)	1	10	18	4	0.806547619047619	
+NVersion	2	VoteLogger.afterReturning(int, Voter)	3	18	57	3	0.4702776390276391	
+NVersion	3	VoteLogger.afterReturning(Collection, Voter)	2	34	64	2	0.646506679594915	
+NVersion	4	VoteLogger.afterReturning(Collection, long, TimeUnit, Voter)	2	0	0	0	NaN	
+NVersion	5	VoteLogger.afterThrowing(Collection, long, TimeUnit, Voter)	2	0	0	0	NaN	
+NVersion	6	Voter.RangeEnforcer.around(int, Voter)	3	18	57	3	0.4702776390276391	
+Quicksort	1	Stats.before()	1	8	5	1	0.7140625	
+Quicksort	2	Stats.before()	2	4	5	1	0.5114583333333333	
+Quicksort	3	Stats.before()	2	22	23	2	0.537121212121212	
+Quicksort	4	Stats.afterReturning()	2	22	23	2	0.537121212121212	
+RacerAJ	1	Racer.before(Object)	1	3	5	1	0.3888888888888889	
+RacerAJ	2	Racer.before()	2	4	6	2	0.5104166666666667	
+RacerAJ	3	Racer.before(Object)	1	3	5	1	0.3888888888888889	
+RacerAJ	4	Racer.before()	5	5	6	3	0.7	
+RacerAJ	5	Locking.before(Object)	0	0	0	0	NaN	
+RacerAJ	6	Locking.after(Object)	0	0	0	0	NaN	
+RecoveryCache	1	Checkpoints.before(Object)	0	0	0	0	NaN	
+RecoveryCache	2	Checkpoints.before()	8	9	5	5	1.0	
+RecoveryCache	3	Recoverables.before()	2	21	7	2	0.7265873015873016	
+RecoveryCache	4	Recoverables.afterReturning()	2	21	7	2	0.7265873015873016	
+RecoveryCache	5	Recoverables.afterThrowing()	2	21	7	2	0.7265873015873016	
+Spacewar	1	Coordinator.before()	16	65	177	15	0.6004058061039664	
+Spacewar	2	Coordinator.after()	16	65	177	15	0.6004058061039664	
+Spacewar	3	Display1.SpaceObjectPainting.afterReturning(Pilot)	4	19	81	4	0.5730528973950026	
+Spacewar	4	EnsureShipIsAlive.around(Ship)	12	13	36	6	0.7755439005439004	
+Spacewar	5	Registry.RegistrationProtection.afterReturning()	2	7	39	2	0.4259834368530021	
+Spacewar	6	Display.DisplayAspect.afterReturning(String)	2	0	0	0	NaN	
+Spacewar	7	Display.DisplayAspect.afterReturning()	1	0	0	0	NaN	
+Spacewar	8	Display.DisplayAspect.afterReturning()	2	0	0	0	NaN	
+Spacewar	9	Display.DisplayAspect.afterReturning(Display)	1	0	0	0	NaN	
+Spacewar	10	Display.DisplayAspect.afterReturning()	1	6	14	1	0.6361111111111111	
+Spacewar	11	Display2.SpaceObjectPainting.afterReturning(Pilot)	4	19	81	4	0.5730528973950026	
+StarJ-Pool	1	EventPooling.around(int)	3	67	470	1	0.3704767225186709	
+Telecom	1	Billing.afterReturning(Customer)	2	0	0	0	NaN	
+Telecom	2	Billing.after(Connection)	1	8	28	1	0.47182088744588746	
+Telecom	3	Timing.after(Connection)	1	8	28	1	0.5077583874458874	
+Telecom	4	Timing.after(Connection)	1	8	28	1	0.47182088744588746	
+Telecom	5	TimerLog.after(Timer)	1	0	0	0	NaN	
+Telecom	6	TimerLog.after(Timer)	1	0	0	0	NaN	
+Tetris	1	TestAspect.before(String)	2	19	41	2	0.6870069911621158	
+Tetris	2	GameInfo.before()	1	60	71	1	0.8026249841088229	
+Tetris	3	Menu.after()	1	60	71	1	0.8026249841088229	
+Tetris	4	Menu.before(IEventListner)	0	0	0	0	NaN	
+Tetris	5	Levels.after()	1	60	71	1	0.8026249841088229	
+Tetris	6	Levels.after(int)	3	0	0	0	NaN	
+Tetris	7	Levels.before(Timer, IEventListner, int)	1	10	46	1	0.39887784090909084	
+Tetris	8	Levels.before()	1	25	65	1	0.3312624496022666	
+Tetris	9	Counter.after()	1	60	71	1	0.8026249841088229	
+Tetris	10	Counter.before()	2	18	55	1	0.34115050609615827	
+Tetris	11	Counter.after()	2	18	55	1	0.34115050609615827	
+Tetris	12	Counter.before()	1	6	54	1	0.5136300897170463	
+Tetris	13	Counter.before()	1	25	65	1	0.3312624496022666	
+Tetris	14	Counter.after()	1	10	62	1	0.3564894573389997	
+Tetris	15	NextBlock.after()	1	60	71	1	0.8026249841088229	
+Tetris	16	NextBlock.around()	2	15	75	2	0.5441486415313647	
+Tetris	17	NewBlocks.around()	3	5	81	1	0.28921875	
+Tetris	18	NewBlocks.around(int)	4	24	68	2	0.6087116207432283	
+Tetris	19	NewBlocks.around(int)	1	12	65	1	0.36796887640709147	
+Tetris	20	NewBlocks.around(int)	1	11	22	1	0.4441188197767145	
+Tetris	21	NewBlocks.around(int)	0	0	0	0	NaN	
+TollSystemDemonstrator	1	DiscountChargeComponent.DiscountChargeInstance.around(String, double)	1	8	74	1	0.28226978768867067	
+TollSystemDemonstrator	2	DiscountChargeComponent.DiscountCharger.after(DiscountChargeComponent)	1	0	0	0	NaN	
+TollSystemDemonstrator	3	DiscountChargeComponent.DiscountCharger.around(ChargingRecord)	1	44	176	1	0.3839725485729686	
+TollSystemDemonstrator	4	PenaltyChargeComponent.PenaltyChargeInstance.around(String, double)	1	8	74	1	0.28226978768867067	
+TollSystemDemonstrator	5	PenaltyChargeComponent.PenaltyCharger.after(PenaltyChargeComponent)	1	0	0	0	NaN	
+TollSystemDemonstrator	6	PenaltyChargeComponent.PenaltyCharger.around(ChargingRecord)	1	44	176	1	0.3839725485729686	
+TollSystemDemonstrator	7	FactoryBase.around()	1	73	216	1	0.42781489737708733	
+TollSystemDemonstrator	8	FactoryBase.after(TariffComponent)	3	0	0	0	NaN	
+TollSystemDemonstrator	9	FactoryBase.after(String, String)	1	8	74	1	0.28226978768867067	
+TollSystemDemonstrator	10	CostPerUnitComponent.CostPerUnitInstance.around(String, double)	1	8	74	1	0.28226978768867067	
+TollSystemDemonstrator	11	CostPerUnitComponent.CostPerUnitCharger.after(CostPerUnitComponent)	1	0	0	0	NaN	
+TollSystemDemonstrator	12	CostPerUnitComponent.CostPerUnitCharger.around(ChargingSection, double, ChargingRecord)	1	11	98	1	0.22066853600944514	
+TollSystemDemonstrator	13	CentralChargingConfigurationEtbo.around(DataStorage, TariffModelConfiguration)	1	0	0	0	NaN	
+TollSystemDemonstrator	14	CentralChargingConfigurationObu.around()	1	8	99	1	0.24161034488025415	
+TollSystemDemonstrator	15	JourneyPipe.after(ChargingRecordProcessor)	21	293	534	18	0.5266324019746597	
+TollSystemDemonstrator	16	JourneyPipe.around(Journey, JourneyProcessor)	1	14	39	1	0.3005952380952381	
+TollSystemDemonstrator	17	ChargingRecordPipe.after(ChargingRecordProcessor)	21	293	534	18	0.5266324019746597	
+TollSystemDemonstrator	18	ChargingRecordPipe.around(int, ChargingRecord)	2	52	167	2	0.3912172771221009	
+TollSystemDemonstrator	19	EtboServer.ServerProcessor.before()	1	8	62	1	0.30551470588235297	
+TollSystemDemonstrator	20	EtboServer.ServerProcessor.after(EtboRemoteCommunication)	1	11	84	1	0.44787661993544353	
+TollSystemDemonstrator	21	ETBOLogger.DeliverInstance.around()	1	73	291	1	0.22788201711656858	
+TollSystemDemonstrator	22	SimulationGUIAspect.after(OnBoardUnit)	1	100	160	1	0.5638500366735196	
+TollSystemDemonstrator	23	SimulationGUIAspect.around()	1	43	96	1	0.2935347602933462	
+TollSystemDemonstrator	24	SimulationGUIAspect.around()	1	43	98	1	0.29338086152453635	
+TollSystemDemonstrator	25	ObuGUIAspect.after(OnBoardUnit)	1	100	160	1	0.5638500366735196	
+TollSystemDemonstrator	26	ObuGUIAspect.after(double)	1	7	41	1	0.3797348484848485	
+TollSystemDemonstrator	27	ObuGUIAspect.after(String)	1	4	5	1	0.49583333333333335	
+TollSystemDemonstrator	28	ObuGUIAspect.afterReturning()	2	10	27	1	0.2829545454545455	
+TollSystemDemonstrator	29	ObuGUIAspect.after()	1	32	225	1	0.2512511317797619	
+TollSystemDemonstrator	30	EtboGUIAspect.after(ElectronicTollingBackOffice)	1	100	126	1	0.5545149858333098	
+TollSystemDemonstrator	31	EtboGUIAspect.after()	1	32	157	1	0.3437340067577225	
+TollSystemDemonstrator	32	EtboGUIAspect.around()	1	15	35	1	0.5576850437144555	
+TollSystemDemonstrator	33	DecentralJourneyObserver.after(ChargingRecord)	1	38	185	1	0.2965243112048285	
+TollSystemDemonstrator	34	BuildClientConnection.after(Configuration)	1	19	123	1	0.4550640048618615	
+TollSystemDemonstrator	35	BuildClientConnection.around(List<Journey>)	1	4	12	1	0.29071969696969696	
+TollSystemDemonstrator	36	BuildClientConnection.around(List<ChargingRecord>)	1	4	12	1	0.29071969696969696	
+TollSystemDemonstrator	37	ObserverProtocol.after(Subject)	7	17	199	7	0.2729418198945418	
+TollSystemDemonstrator	38	CentralJourneyObserver.after(Journey)	3	43	160	3	0.4180641671749742	
+TollSystemDemonstrator	39	AsynchronousExecution.around()	1	37	113	1	0.5171985432278302	
+TollSystemDemonstrator	40	OBULogger.DeliverInstance.around()	1	73	291	1	0.22788201711656858	
+Tracing	1	AbstractTrace.before()	2	26	28	2	0.5800033300033299	
+Tracing	2	AbstractTrace.after()	2	26	28	2	0.5800033300033299	
+Tracing	3	AbstractTrace.before()	10	49	33	9	0.5725030921459497	
+Tracing	4	AbstractTrace.after()	10	49	33	9	0.5725030921459497	
+Tracing	5	TraceMyClasses.before()	9	48	28	9	0.7235299422799425	
+Tracing	6	TraceMyClasses.after()	9	48	28	9	0.7235299422799425	
+Tracing	7	TraceMyClasses.before()	10	49	33	9	0.5725030921459497	
+Tracing	8	TraceMyClasses.after()	10	49	33	9	0.5725030921459497	
+Tracing	9	Trace.before()	9	48	28	9	0.7235299422799425	
+Tracing	10	Trace.after()	9	48	28	9	0.7235299422799425	
+Tracing	11	Trace.before()	10	49	33	9	0.5725030921459497	
+Tracing	12	Trace.after()	10	49	33	9	0.5725030921459497	
+Tracing	13	Trace.before(Object)	9	48	28	9	0.7235299422799425	
+Tracing	14	Trace.after(Object)	9	48	28	9	0.7235299422799425	
+Tracing	15	Trace.before(Object)	7	21	26	6	0.4783910533910534	
+Tracing	16	Trace.after(Object)	7	21	26	6	0.4783910533910534	
+webClient	1	WebClientPluginHandler.around(ProblemAnalysis)	1	47	251	1	0.6835693018332992	
+webClient	2	WebClientPluginHandler.around(OperationDescription)	1	6	220	1	0.2659298509393087	
+webClient	3	WebClientPluginHandler.around(OperationAnalysis)	1	5	220	1	0.21911582112717043	
+webClient	4	WebClientPluginHandler.around()	1	11	277	1	0.3625843299944855	
+webClient	5	WebClientPluginHandler.around()	1	0	0	0	NaN	
+webClient	6	PersistChanges.afterReturning()	6	35	130	5	0.4176616389562818	
+webClient	7	ErrorHandling.afterThrowing()	0	0	0	0	NaN	
+webClient	8	TechnologyDetailsTest.TestHelper.afterReturning(TechnologyDetailsTest)	3	7	13	3	0.7413919413919413	
