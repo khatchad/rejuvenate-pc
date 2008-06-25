@@ -165,8 +165,18 @@ public class IntentionGraph {
 				if (toEnableElement == null)
 					throw new IllegalStateException("In trouble!");
 
+				if (!this.elementToNodeMap.containsKey(toEnableElement)) {
+										IntentionNode<IElement> newNode = new IntentionNode<IElement>(toEnableElement);
+										this.elementToNodeMap.put(toEnableElement, newNode);
+										this.nodeSet.add(newNode);
+//					throw new IllegalStateException(
+//							"No target node found for element "
+//									+ toEnableElement);
+				}
+
 				IntentionNode<IElement> toEnableNode = this.elementToNodeMap
 						.get(toEnableElement);
+
 				toEnableNode.enable();
 
 				break;
@@ -297,12 +307,12 @@ public class IntentionGraph {
 
 		IElement sourceElement = this.database.convertToElement(parent);
 		if (!this.elementToNodeMap.containsKey(sourceElement)) {
-			IntentionNode<IElement> newNode = new IntentionNode<IElement>(
-					sourceElement);
-			this.elementToNodeMap.put(sourceElement, newNode);
-			this.nodeSet.add(newNode);
-			//			throw new IllegalStateException("Can't find node for IElement "
-			//					+ sourceElement);
+						IntentionNode<IElement> newNode = new IntentionNode<IElement>(
+								sourceElement);
+						this.elementToNodeMap.put(sourceElement, newNode);
+						this.nodeSet.add(newNode);
+//			throw new IllegalStateException("Can't find node for IElement "
+//					+ sourceElement);
 		}
 		IntentionNode<IElement> sourceNode = this.elementToNodeMap
 				.get(sourceElement);
@@ -314,17 +324,26 @@ public class IntentionGraph {
 
 			//find the edge connecting the source to the target and enable it.
 			if (!this.elementToNodeMap.containsKey(targetElement)) {
-				IntentionNode<IElement> newNode = new IntentionNode<IElement>(
-						targetElement);
-				this.elementToNodeMap.put(targetElement, newNode);
-				this.nodeSet.add(newNode);
-				//				throw new IllegalStateException("Can't find node for IElement "
-				//						+ targetElement);
+								IntentionNode<IElement> newNode = new IntentionNode<IElement>(
+										targetElement);
+								this.elementToNodeMap.put(targetElement, newNode);
+								this.nodeSet.add(newNode);
+//				throw new IllegalStateException("Can't find node for IElement "
+//						+ targetElement);
 			}
 			IntentionNode<IElement> targetNode = this.elementToNodeMap
 					.get(targetElement);
+			
 			IntentionArc<IElement> arcToEnable = sourceNode.getArc(targetNode,
 					relation);
+			
+			if (arcToEnable == null) {
+//				throw new IllegalStateException(
+//						"Can't find arc for target node " + targetNode
+//								+ " and relation " + relation);
+								arcToEnable = new IntentionArc<IElement>(sourceNode, targetNode, relation);
+								sourceNode.addArc(arcToEnable);
+			}
 			arcToEnable.enable();
 		}
 	}

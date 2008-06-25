@@ -24,37 +24,8 @@ public class WildcardElement implements IElement {
 	private static final String QUESTION_MARK = "?";
 
 	private static final long serialVersionUID = -4175380054692252185L;
-	
-	private boolean enabled;
 
 	public WildcardElement() {
-	}
-
-	public WildcardElement(final boolean enabled) {
-		this.enabled = enabled;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
-	 */
-	public void disable() {
-		this.enabled = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-	}
-
-	public void enableIncommingRelationsFor(final Relation calls) {
 	}
 
 	public Category getCategory() {
@@ -74,7 +45,7 @@ public class WildcardElement implements IElement {
 	public String getId() {
 		return QUESTION_MARK;
 	}
-	
+
 	public static boolean isWildcardIdentifier(String identifier) {
 		return identifier.equals(QUESTION_MARK);
 	}
@@ -100,13 +71,6 @@ public class WildcardElement implements IElement {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
-	}
-	
 	public Element getXML() {
 		Element ret = new Element(IElement.class.getSimpleName());
 		ret.setAttribute(new Attribute(ID, this.getId()));

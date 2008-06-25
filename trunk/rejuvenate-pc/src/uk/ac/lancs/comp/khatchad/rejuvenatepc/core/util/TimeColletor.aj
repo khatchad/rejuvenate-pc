@@ -15,18 +15,15 @@ public aspect TimeColletor {
 	private long collectedTime;
 
 	pointcut toRemove() : 
-		call(* *.print*(..)) ||
-		call(* *.close*(..)) ||
-		call(* Util.readRule(..)) ||
-		call(* Util.makeDotFile(..)) ||
-		call(* Util.get*XML*(..)) ||
-		call(*Writer.new(..)) ||
-		call(File.new(..)) ||
-		call(CompilationUnit getCompilationUnit(ICompilationUnit)) ||
-		call(PrintWriter+ get*Writer(..)) ||
-		call(* ASTParser+.createAST(..)) ||
-		call(* getTotalNumberOfShadows(..)) ||
-		call(* org.jdom..*.*(..));
+		execution(* Util.readRule(..)) ||
+		execution(* Util.makeDotFile(..)) ||
+		execution(* Util.get*XML*(..)) ||
+		execution(CompilationUnit getCompilationUnit(ICompilationUnit)) ||
+		execution(PrintWriter+ get*Writer(..)) ||
+		execution(* ASTParser+.createAST(..)) ||
+		execution(* getTotalNumberOfShadows(..)) ||
+		execution(* org.jdom..*.*(..)) ||
+		(execution(* *.*(..)) && within(java.io..*));
 
 	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();

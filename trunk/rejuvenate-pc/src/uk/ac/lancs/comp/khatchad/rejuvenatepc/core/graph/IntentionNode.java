@@ -30,19 +30,37 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 			new WildcardElement());
 
 	public static final IntentionNode<IElement> ENABLED_WILDCARD = new IntentionNode<IElement>(
-			new WildcardElement(true));
+			new WildcardElement(), true);
 
-	private final E elem;
+	private E elem;
 	
 	private final Set<IntentionArc<E>> arcs = new HashSet<IntentionArc<E>>();
 	
 	private final Map<Relation, Set<IntentionArc<E>>> relationToArcSetMap = new LinkedHashMap<Relation, Set<IntentionArc<E>>>();
+	
+	private IntentionNode() {
+		initializeRelationToArcSetMap();
+	}
+	
+	private void initializeRelationToArcSetMap() {
+		for ( Relation relation : Relation.values() )
+			this.relationToArcSetMap.put(relation, new LinkedHashSet<IntentionArc<E>>());
+	}
 
 	/**
 	 * @param elem
 	 */
 	public IntentionNode(final E elem) {
+		this();
 		this.elem = elem;
+	}
+	
+	public IntentionNode(E elem, boolean enabled) {
+		this(elem);
+		if ( enabled )
+			this.enable();
+		else
+			this.disable();
 	}
 
 	/**
@@ -54,6 +72,7 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 		super(xmlElem);
 		Element elementXML = xmlElem.getChild(IElement.class.getSimpleName());
 		this.elem = FlyweightElementFactory.getElement(elementXML);
+		initializeRelationToArcSetMap();
 	}
 
 	/**

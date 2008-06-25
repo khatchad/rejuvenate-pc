@@ -54,14 +54,6 @@ public abstract class AbstractElement implements IElement {
 		return this.aId;
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#getJavaElement()
-	 */
-//	public IJavaElement getJavaElement() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
 	/**
 	 * @return The id of this element without the package.
 	 */
@@ -76,11 +68,11 @@ public abstract class AbstractElement implements IElement {
 	public String toString() {
 		return this.getId();
 	}
-	
+
 	public Element getXML() {
 		Element ret = new Element(IElement.class.getSimpleName());
 		ret.setAttribute(new Attribute(IElement.ID, this.getId()));
 		ret.addContent(this.getCategory().getXML());
 		return ret;
-	}	
+	}
 }

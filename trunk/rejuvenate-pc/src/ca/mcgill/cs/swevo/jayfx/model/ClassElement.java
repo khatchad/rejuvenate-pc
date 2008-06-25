@@ -20,10 +20,6 @@ public class ClassElement extends AbstractElement {
 	
 	private static final long serialVersionUID = 8565762363075921025L;
 
-	private boolean enabled;
-
-	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
-
 	/**
 	 * Initialize a class element with its fully qualified name Class elements
 	 * should only be created by a FlyweightElementFactory.
@@ -33,34 +29,6 @@ public class ClassElement extends AbstractElement {
 	 */
 	protected ClassElement(final String pId) {
 		super(pId);
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
-	 */
-	public void disable() {
-		this.enabled = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
-		this.enabledIncommingRelations.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public void enableIncommingRelationsFor(final Relation relation) {
-		this.enabledIncommingRelations.add(relation);
 	}
 
 	/**
@@ -118,25 +86,11 @@ public class ClassElement extends AbstractElement {
 			return this.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public boolean hasEnabledRelationFor(final Relation relation) {
-		return this.enabledIncommingRelations.contains(relation);
-	}
-
 	/**
 	 * @return A hash code for this element.
 	 */
 	@Override
 	public int hashCode() {
 		return this.getId().hashCode();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
 	}
 }

@@ -25,12 +25,6 @@ public class PackageElement extends AbstractElement {
 	 */
 	private static final long serialVersionUID = -3606792222309273813L;
 
-//	private final IJavaElement elem;
-
-	private boolean enabled;
-
-	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
-
 	/**
 	 * Initialize a class element with its fully qualified name Class elements
 	 * should only be created by a FlyweightElementFactory.
@@ -40,38 +34,6 @@ public class PackageElement extends AbstractElement {
 	 */
 	protected PackageElement(final String pId) {
 		super(pId);
-	}
-//	protected PackageElement(final String pId, final IJavaElement elem) {
-//		super(pId);
-//		this.elem = elem;
-//	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
-	 */
-	public void disable() {
-		this.enabled = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
-		this.enabledIncommingRelations.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public void enableIncommingRelationsFor(final Relation relation) {
-		this.enabledIncommingRelations.add(relation);
 	}
 
 	/**
@@ -137,25 +99,11 @@ public class PackageElement extends AbstractElement {
 		return this.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public boolean hasEnabledRelationFor(final Relation relation) {
-		return this.enabledIncommingRelations.contains(relation);
-	}
-
 	/**
 	 * @return A hash code for this element.
 	 */
 	@Override
 	public int hashCode() {
 		return this.getId().hashCode();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
 	}
 }

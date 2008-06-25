@@ -23,43 +23,11 @@ public class AspectElement extends AbstractElement {
 
 	private static final long serialVersionUID = 6987988981321889202L;
 
-	private boolean enabled;
-
-	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
-
 	/**
 	 * @param id
 	 */
 	public AspectElement(final String id) {
 		super(id);
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
-	 */
-	public void disable() {
-		this.enabled = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
-		this.enabledIncommingRelations.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public void enableIncommingRelationsFor(final Relation relation) {
-		this.enabledIncommingRelations.add(relation);
 	}
 
 	/* (non-Javadoc)
@@ -114,24 +82,10 @@ public class AspectElement extends AbstractElement {
 	}
 
 	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public boolean hasEnabledRelationFor(final Relation relation) {
-		return this.enabledIncommingRelations.contains(relation);
-	}
-
-	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return this.getId().hashCode();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
 	}
 }

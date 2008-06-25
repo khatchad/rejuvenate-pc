@@ -20,10 +20,6 @@ public class FieldElement extends AbstractElement {
 	
 	private static final long serialVersionUID = -7741801515115590408L;
 
-	private boolean enabled;
-
-	Set<Relation> enabledIncommingRelations = new HashSet<Relation>();
-
 	/**
 	 * Creates a field element. This constructor should not be used directly.
 	 * FieldElements should be obtained through the
@@ -36,35 +32,6 @@ public class FieldElement extends AbstractElement {
 	 */
 	protected FieldElement(final String pId) {
 		super(pId);
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disable()
-	 */
-	public void disable() {
-		this.enabled = false;
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#disableAllIncommingRelations()
-	 */
-	public void disableAllIncommingRelations() {
-		this.enabledIncommingRelations.clear();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enable()
-	 */
-	public void enable() {
-		this.enabled = true;
-
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#enableIncommingRelationsFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public void enableIncommingRelationsFor(final Relation relation) {
-		this.enabledIncommingRelations.add(relation);
 	}
 
 	/**
@@ -126,25 +93,11 @@ public class FieldElement extends AbstractElement {
 				this.getId().length());
 	}
 
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#hasEnabledRelationFor(ca.mcgill.cs.swevo.jayfx.model.Relation)
-	 */
-	public boolean hasEnabledRelationFor(final Relation relation) {
-		return this.enabledIncommingRelations.contains(relation);
-	}
-
 	/**
 	 * @return a hash code for this object.
 	 */
 	@Override
 	public int hashCode() {
 		return this.getId().hashCode();
-	}
-
-	/* (non-Javadoc)
-	 * @see ca.mcgill.cs.swevo.jayfx.model.IElement#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return this.enabled;
 	}
 }
