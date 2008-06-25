@@ -24,6 +24,9 @@ import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
@@ -47,7 +50,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 	private static final String DATABASE_FILE_NAME = "rejuv-pc.dat";
-	
+
 	private PrintWriter benchmarkOut;
 
 	@SuppressWarnings("unused")
@@ -69,12 +72,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 		return Util.getPrintWriter(aFile, true);
 	}
 
-	/**
-	 * The main method invoked when the plug-in is clicked.
-	 */
-	public void run(final IAction action) {
-		final IProgressMonitor monitor = getProgressMonitor();
-
+	private void run(IProgressMonitor monitor) {
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
 		final Collection<IJavaProject> selectedProjectCol = this
@@ -103,8 +101,25 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 				printBenchmarkStatistics(proj, toAnalyze, numShadows, secs);
 			}
 		}
-		monitor.done();
 		this.closeConnections();
+	}
+
+	/**
+	 * The main method invoked when the plug-in is clicked.
+	 */
+	public void run(final IAction action) {
+//		final IProgressMonitor monitor = getProgressMonitor();
+		Job job = new Job("Analyzing pointcut expressions.") {
+
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				AnalyzePointcutPlugin.this.run(monitor);
+				monitor.done();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setPriority(Job.LONG);
+		job.schedule();
 	}
 
 	/**
@@ -204,8 +219,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	 */
 	protected void analyzeAdviceCollection(
 			final Collection<? extends AdviceElement> adviceCol,
-			final IProgressMonitor monitor,
-			final IntentionGraph graph,
+			final IProgressMonitor monitor, final IntentionGraph graph,
 			final WorkingMemory workingMemory) throws ConversionException,
 			CoreException, IOException {
 
@@ -221,7 +235,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 
 			graph.enableElementsAccordingTo(advElem, monitor);
 			executeQueries(monitor, workingMemory, patternToResultMap,
-				patternToEnabledElementMap);
+					patternToEnabledElementMap);
 
 			double totalConfidence = 0;
 			for (final Pattern pattern : patternToResultMap.keySet())
@@ -229,8 +243,8 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
 
-//			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
-//					+ advElem.getPath().toOSString() + "-");
+			//			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+			//					+ advElem.getPath().toOSString() + "-");
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;
