@@ -24,12 +24,8 @@ import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.jdom.DocType;
 import org.jdom.Document;
@@ -47,32 +43,20 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
-public class AnalyzePointcutPlugin extends PointcutPlugin {
+public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
-	private static final String DATABASE_FILE_NAME = "rejuv-pc.dat";
+	@SuppressWarnings("unused")
+	private static final String DATABASE_FILE_NAME = "rejuv-pc.xml";
 
 	private PrintWriter benchmarkOut;
 
-	@SuppressWarnings("unused")
-	private static PrintWriter getAdviceStatusWriter() throws IOException {
-		final File aFile = new File(PointcutPlugin.RESULT_PATH + "advice.csv");
-		return Util.getPrintWriter(aFile, true);
-	}
-
 	private static PrintWriter getBenchmarkStatsWriter() throws IOException {
-		final File aFile = new File(PointcutPlugin.RESULT_PATH
+		final File aFile = new File(PointcutRefactoringPlugin.RESULT_PATH
 				+ "benchmarks.csv");
 		return Util.getPrintWriter(aFile, true);
 	}
 
-	@SuppressWarnings("unused")
-	private static PrintWriter getSuggestionWriter() throws IOException {
-		final File aFile = new File(PointcutPlugin.RESULT_PATH
-				+ "suggestion.csv");
-		return Util.getPrintWriter(aFile, true);
-	}
-
-	private void run(IProgressMonitor monitor) {
+	protected void run(IProgressMonitor monitor) {
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
 		final Collection<IJavaProject> selectedProjectCol = this
@@ -83,14 +67,14 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 					"For test runs, select *either* project or advice but not both.");
 
 		if (!selectedAdvice.isEmpty())
-			analyzeAdvice(monitor, selectedAdvice);
+			analyzeAdvice(selectedAdvice, monitor);
 
 		else if (!selectedProjectCol.isEmpty()) {
 			for (final IJavaProject proj : selectedProjectCol) {
 				final long start = System.currentTimeMillis();
 
 				Collection<? extends AdviceElement> toAnalyze = analyzeAdviceInProject(
-						monitor, proj);
+						proj, monitor);
 
 				int numShadows = 0;
 				if (!toAnalyze.isEmpty())
@@ -105,30 +89,12 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	}
 
 	/**
-	 * The main method invoked when the plug-in is clicked.
-	 */
-	public void run(final IAction action) {
-//		final IProgressMonitor monitor = getProgressMonitor();
-		Job job = new Job("Analyzing pointcut expressions.") {
-
-			@Override
-			protected IStatus run(IProgressMonitor monitor) {
-				AnalyzePointcutPlugin.this.run(monitor);
-				monitor.done();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setPriority(Job.LONG);
-		job.schedule();
-	}
-
-	/**
-	 * @param lMonitor
 	 * @param proj
+	 * @param lMonitor
 	 * @return
 	 */
 	private Collection<? extends AdviceElement> analyzeAdviceInProject(
-			final IProgressMonitor lMonitor, final IJavaProject proj) {
+			final IJavaProject proj, final IProgressMonitor lMonitor) {
 		Collection<? extends AdviceElement> toAnalyze = null;
 		try {
 			toAnalyze = Util.extractValidAdviceElements(proj);
@@ -243,8 +209,8 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
 
-			//			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
-			//					+ advElem.getPath().toOSString() + "-");
+						Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+								+ advElem.getPath().toOSString() + "-");
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;
@@ -260,7 +226,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	}
 
 	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#closeConnections()
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#closeConnections()
 	 */
 	@Override
 	protected void closeConnections() {
@@ -269,7 +235,7 @@ public class AnalyzePointcutPlugin extends PointcutPlugin {
 	}
 
 	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#openConnections()
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#openConnections()
 	 */
 	@Override
 	protected void openConnections() throws IOException {

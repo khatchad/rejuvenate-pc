@@ -57,8 +57,8 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  * @author raffi
  * 
  */
-public class RejuvenatePointcutPlugin extends PointcutPlugin implements
-		IStructuredContentProvider {
+public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
+		implements IStructuredContentProvider {
 
 	private static RejuvenatePointcutPlugin instance;
 
@@ -73,30 +73,35 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 
 	private List<Suggestion<IntentionElement<IElement>>> suggestionList = new ArrayList<Suggestion<IntentionElement<IElement>>>();
 
-	public void run(IAction action) {
+	@Override
+	protected void run(IProgressMonitor monitor) {
 		this.suggestionList.clear();
-		final IProgressMonitor monitor = getProgressMonitor();
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
 
 		if (!selectedAdvice.isEmpty())
-			analyzeAdvice(monitor, selectedAdvice);
+			analyzeAdvice(selectedAdvice, monitor);
 
 		monitor.done();
 	}
 
+	@Override
+	public void run(IAction action) {
+		final IProgressMonitor monitor = getProgressMonitor();
+		this.run(monitor);
+	}
+
 	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#analyzeAdviceCollection(java.util.Collection, org.eclipse.core.runtime.IProgressMonitor, uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph, org.drools.WorkingMemory, java.io.PrintWriter)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#analyzeAdviceCollection(java.util.Collection, org.eclipse.core.runtime.IProgressMonitor, uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph, org.drools.WorkingMemory, java.io.PrintWriter)
 	 */
 	@SuppressWarnings("restriction")
 	@Override
 	protected void analyzeAdviceCollection(
 			Collection<? extends AdviceElement> adviceCol,
-			IProgressMonitor monitor,
-			IntentionGraph graph,
+			IProgressMonitor monitor, IntentionGraph graph,
 			WorkingMemory workingMemory) throws ConversionException,
 			CoreException, IOException, JDOMException {
-		
+
 		monitor.beginTask("Retrieving previously analyzed information.",
 				adviceCol.size());
 
@@ -112,7 +117,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 			graph.enableElementsAccordingTo(advisedElements,
 					new SubProgressMonitor(monitor, -1));
 			executeQueries(monitor, workingMemory, derivedPatternToResultMap,
-				derivedPatternToEnabledElementMap);
+					derivedPatternToEnabledElementMap);
 
 			//Retrieve the saved patterns.
 			Map<Pattern<IntentionArc<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
@@ -265,7 +270,7 @@ public class RejuvenatePointcutPlugin extends PointcutPlugin implements
 	}
 
 	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutPlugin#init(org.eclipse.ui.IWorkbenchWindow)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	@Override
 	public void init(IWorkbenchWindow window) {

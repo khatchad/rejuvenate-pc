@@ -250,7 +250,8 @@ public class ProgramDatabase {
 		//		assert (pElement != null);
 		//		assert (pRelation != null);
 		if (!this.contains(pElement))
-			throw new ElementNotFoundException(pElement.getId());
+//			throw new ElementNotFoundException(pElement.getId());
+			return new HashSet<IElement>();
 
 		final Set<IElement> lReturn = new HashSet<IElement>();
 		final Map<Relation, Set<IElement>> lRelations = this.aElements.get(

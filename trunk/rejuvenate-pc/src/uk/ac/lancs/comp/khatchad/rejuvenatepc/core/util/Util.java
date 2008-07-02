@@ -15,6 +15,7 @@ import java.util.Set;
 import org.aspectj.asm.IProgramElement;
 import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
+import org.drools.compiler.DroolsParserException;
 import org.drools.compiler.PackageBuilder;
 import org.eclipse.ajdt.core.AspectJPlugin;
 import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
@@ -298,6 +299,7 @@ public class Util {
 
 	/**
 	 * @return
+	 * @throws Exception 
 	 * @throws Exception
 	 */
 	public static RuleBase readRule(final Reader source) throws Exception {

@@ -76,4 +76,15 @@ public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 		return (double) (allNodes.size() - wildNodes.size())
 				/ allNodes.size();
 	}
+
+	/**
+	 * @param advisedJavaElements
+	 * @param set
+	 * @return
+	 */
+	public static double calculateCoverage(
+			Set<IJavaElement> advisedJavaElements,
+			Set<IntentionElement<IElement>> enabledElements) {
+		return advisedJavaElements.size() / enabledElements.size();
+	}
 }

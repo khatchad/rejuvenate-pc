@@ -18,7 +18,7 @@ import org.jdom.Element;
  * Abtract class for the various program elements in the model.
  */
 public abstract class AbstractElement implements IElement {
-	private final String aId;
+	private String aId = "java.lang.Object";
 
 	/**
 	 * Builds an abstract element.
@@ -31,7 +31,8 @@ public abstract class AbstractElement implements IElement {
 	 *            fully-qualified name of the declaring class for methods.
 	 */
 	protected AbstractElement(final String pId) {
-		this.aId = pId;
+		if ( pId != null )
+			this.aId = pId;
 	}
 
 	/**
@@ -52,6 +53,10 @@ public abstract class AbstractElement implements IElement {
 	 */
 	public String getId() {
 		return this.aId;
+	}
+	
+	public void setId(String val) {
+		this.aId = val;
 	}
 
 	/**
