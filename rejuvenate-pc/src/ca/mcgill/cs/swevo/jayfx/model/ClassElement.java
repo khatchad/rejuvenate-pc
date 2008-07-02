@@ -17,7 +17,7 @@ import java.util.Set;
  * Represents a class program element.
  */
 public class ClassElement extends AbstractElement {
-	
+
 	private static final long serialVersionUID = 8565762363075921025L;
 
 	/**
@@ -91,6 +91,8 @@ public class ClassElement extends AbstractElement {
 	 */
 	@Override
 	public int hashCode() {
+		if (this.getId() == null)
+			this.setId("java.lang.Object");
 		return this.getId().hashCode();
 	}
 }
