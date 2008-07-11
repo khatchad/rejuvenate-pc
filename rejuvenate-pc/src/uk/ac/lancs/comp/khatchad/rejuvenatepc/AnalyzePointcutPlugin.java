@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.jdom.DocType;
 import org.jdom.Document;
@@ -57,6 +58,9 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	}
 
 	protected void run(IProgressMonitor monitor) {
+		//TODO: Don't know why I should have to call this manually.
+		this.init(null);
+
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
 		final Collection<IJavaProject> selectedProjectCol = this
@@ -183,6 +187,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	 * @throws CoreException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("restriction")
 	protected void analyzeAdviceCollection(
 			final Collection<? extends AdviceElement> adviceCol,
 			final IProgressMonitor monitor, final IntentionGraph graph,
@@ -200,6 +205,10 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 
 			graph.enableElementsAccordingTo(advElem, monitor);
+
+			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+					+ advElem.getPath().toOSString() + "-");
+
 			executeQueries(monitor, workingMemory, patternToResultMap,
 					patternToEnabledElementMap);
 
@@ -208,9 +217,6 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 				totalConfidence += calculatePatternStatistics(pointcutCount,
 						advElem, adviceXMLElement, patternToResultMap,
 						patternToEnabledElementMap, pattern);
-
-						Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
-								+ advElem.getPath().toOSString() + "-");
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;
@@ -234,12 +240,8 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		this.benchmarkOut.close();
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#openConnections()
-	 */
 	@Override
 	protected void openConnections() throws IOException {
-		// TODO Auto-generated method stub
 		super.openConnections();
 		benchmarkOut = generateBenchmarkStatsWriter();
 	}

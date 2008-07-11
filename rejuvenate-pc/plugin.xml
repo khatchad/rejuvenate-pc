@@ -45,6 +45,13 @@
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.popup">
          </action>
          <action
+               label="Analyze Shadows"
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ShadowAnalyzerPlugin"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.analyze.shadows.popup">
+         </action>
+         <action
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin"
                id="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut.popup"
                label="Rejuvenate Pointcut..."
@@ -61,6 +68,13 @@
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.popup">
+         </action>
+         <action
+               label="Analyze Shadows"
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ShadowAnalyzerPlugin"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.analyze.shadows.project.popup">
          </action>
       </objectContribution>
    </extension>
