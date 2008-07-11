@@ -281,7 +281,7 @@ public class IntentionGraph {
 			throws ConversionException {
 		String constructorNameTargetString = transformTargetStringToConstructorName(targetString);
 		this.enableElementsAccordingToRelation(parent,
-				constructorNameTargetString, IJavaSearchConstants.METHOD,
+				constructorNameTargetString, IJavaSearchConstants.CONSTRUCTOR,
 				Relation.CALLS, monitor);
 	}
 

@@ -8,12 +8,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -65,8 +68,16 @@ public abstract class Plugin implements IWorkbenchWindowActionDelegate {
 		final Iterator i = this.aSelection.iterator();
 		while (i.hasNext()) {
 			final Object lNext = i.next();
-			if (lNext instanceof IJavaProject)
-				ret.add((IJavaProject) lNext);
+			if (lNext instanceof IProject) {
+				IProject proj = (IProject) lNext;
+				IJavaProject jProj = JavaCore.create(proj);
+				if (jProj != null)
+					ret.add(jProj);
+			}
+			else if (lNext instanceof IJavaProject) {
+				IJavaProject jProj = (IJavaProject)lNext;
+				ret.add(jProj);
+			}
 		}
 
 		return ret;

@@ -247,6 +247,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 		}
 		catch (IOException e) {
 			//TODO: More robustness here.
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}
