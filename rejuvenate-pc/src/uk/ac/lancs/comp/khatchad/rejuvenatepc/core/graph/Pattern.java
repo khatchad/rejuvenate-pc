@@ -24,11 +24,6 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 
-	/**
-	 * The weight assigned to precision, for confidence calculation.
-	 */
-	public static final double WEIGHT_PRECISION = 0.75;
-
 	private static final long serialVersionUID = -8126850132892419370L;
 
 	/**
@@ -42,20 +37,11 @@ public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 	public Pattern() {
 	}
 
-	public static double calculateConfidence(final double precision,
-			final double concreteness, final double weight_precision) {
-		final double result = precision * weight_precision + (1 - concreteness)
-				* (1 - weight_precision);
-		return max(result, precision);
+	public static double calculateConfidence(final double precision, final double coverage,
+			final double concreteness) {
+		return (precision * concreteness) + (coverage * (1 - concreteness));
 	}
 	
-	public static double calculateConfidence(final double precision,
-			final double concreteness) {
-		final double result = precision * WEIGHT_PRECISION + (1 - concreteness)
-				* (1 - WEIGHT_PRECISION);
-		return Math.max(result, precision);
-	}
-
 	public static double calculatePrecision(
 			final Set<IntentionElement<IElement>> searchedFor,
 			final Set<IntentionElement<IElement>> found) {
@@ -75,16 +61,5 @@ public class Pattern<E extends IntentionArc<IElement>> extends Path<E> {
 				.getWildcardNodes();
 		return (double) (allNodes.size() - wildNodes.size())
 				/ allNodes.size();
-	}
-
-	/**
-	 * @param advisedJavaElements
-	 * @param set
-	 * @return
-	 */
-	public static double calculateCoverage(
-			Set<IJavaElement> advisedJavaElements,
-			Set<IntentionElement<IElement>> enabledElements) {
-		return advisedJavaElements.size() / enabledElements.size();
 	}
 }

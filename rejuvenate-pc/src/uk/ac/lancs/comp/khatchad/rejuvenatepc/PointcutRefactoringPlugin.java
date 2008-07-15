@@ -325,21 +325,18 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 			Element adviceXMLElement,
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap,
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToEnabledElementMap,
-			final Pattern pattern) throws IOException, JavaModelException {
+			final Pattern pattern, IntentionGraph graph) throws IOException, JavaModelException {
 
 		double precision = Pattern.calculatePrecision(
 				patternToEnabledElementMap.get(pattern), patternToResultMap
 						.get(pattern));
 
-		double coverage = Pattern.calculateCoverage(Util
-				.getAdvisedJavaElements(advElem), patternToEnabledElementMap
-				.get(pattern));
-		
-		double conviction = ((double)(precision + coverage)) / 2;
+		double coverage = patternToEnabledElementMap.get(pattern).size() / graph.getEnabledElements().size();
 
 		double concreteness = Pattern.calculateConcreteness(pattern);
+		
 		double confidence = Pattern
-				.calculateConfidence(conviction, concreteness);
+				.calculateConfidence(precision, coverage, concreteness);
 
 		Element patternXMLElement = getPatternXMLElement(pattern, confidence);
 
@@ -393,13 +390,14 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	private static PrintWriter generateAdviceStatsWriter() throws IOException {
 		final PrintWriter ret = getAdviceStatsWriter();
 		ret
-				.println("Benchmark\tAdvice#\tAdvice\t#Shadows\t#Patterns\t#Results\t#Enabled\tConfidence\t");
+				.println("Benchmark\tAdvice#\tAdvice\t#Shadows\t#Patterns\t#Results\t#Enabled\t#OverallEnabled\tOverallElements\tConfidence\t");
 		return ret;
 	}
 
 	@SuppressWarnings("restriction")
 	protected void printAdviceResults(int pointcutCount, AdviceElement advElem,
-			int numOfPatterns, int numOfResults, int numOfEnabled,
+			int numOfPatterns, int numOfResults, int numOfResultsThatAreEnabled,
+			int numOfEnabledElementsOverall, int numOfElementsOverall,
 			double averageConfidence, int numOfShadows) {
 		this.adviceOut.print(advElem.getJavaProject().getProject().getName()
 				+ "\t");
@@ -408,7 +406,9 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 		this.adviceOut.print(numOfShadows + "\t");
 		this.adviceOut.print(numOfPatterns + "\t");
 		this.adviceOut.print(numOfResults + "\t");
-		this.adviceOut.print(numOfEnabled + "\t");
+		this.adviceOut.print(numOfResultsThatAreEnabled + "\t");
+		this.adviceOut.print(numOfEnabledElementsOverall + "\t");
+		this.adviceOut.print(numOfElementsOverall + "\t");
 		this.adviceOut.print(averageConfidence + "\t");
 
 		this.adviceOut.println();
