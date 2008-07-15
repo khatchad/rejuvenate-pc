@@ -403,14 +403,14 @@ public class IntentionGraph {
 		monitor.done();
 	}
 
-	public Collection<IntentionElement<IElement>> getEnabledElements() {
-		final Collection<IntentionElement<IElement>> ret = new LinkedHashSet<IntentionElement<IElement>>();
+	public Set<IntentionElement<IElement>> getEnabledElements() {
+		final Set<IntentionElement<IElement>> ret = new LinkedHashSet<IntentionElement<IElement>>();
 		for (final IntentionNode<IElement> node : this.getNodes()) {
 			if (node.isEnabled())
 				ret.add(node);
-			for (final IntentionArc<IElement> edge : node.getArcs())
-				if (edge.isEnabled())
-					ret.add(edge);
+			for (final IntentionArc<IElement> arc : node.getArcs())
+				if (arc.isEnabled())
+					ret.add(arc);
 		}
 		return ret;
 	}
@@ -492,5 +492,18 @@ public class IntentionGraph {
 					monitor, -1));
 			monitor.worked(1);
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public Collection<IntentionElement<IElement>> getAllElements() {
+		final Set<IntentionElement<IElement>> ret = new LinkedHashSet<IntentionElement<IElement>>();
+		for (final IntentionNode<IElement> node : this.getNodes()) {
+			ret.add(node);
+			for (final IntentionArc<IElement> arc : node.getArcs())
+				ret.add(arc);
+		}
+		return ret;
 	}
 }

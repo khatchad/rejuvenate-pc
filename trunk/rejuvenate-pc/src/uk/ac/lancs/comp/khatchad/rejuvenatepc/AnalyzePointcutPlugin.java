@@ -216,7 +216,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 			for (final Pattern pattern : patternToResultMap.keySet())
 				totalConfidence += calculatePatternStatistics(pointcutCount,
 						advElem, adviceXMLElement, patternToResultMap,
-						patternToEnabledElementMap, pattern);
+						patternToEnabledElementMap, pattern, graph);
 
 			writeXMLFile(advElem, adviceXMLElement);
 			pointcutCount++;
@@ -225,7 +225,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 					.keySet().size(), Util.flattenCollection(
 					patternToResultMap.values()).size(), Util
 					.flattenCollection(patternToEnabledElementMap.values())
-					.size(), totalConfidence
+					.size(), graph.getEnabledElements().size(), graph.getAllElements().size(), totalConfidence
 					/ patternToResultMap.keySet().size(), Util
 					.getAdvisedJavaElements(advElem).size());
 		}

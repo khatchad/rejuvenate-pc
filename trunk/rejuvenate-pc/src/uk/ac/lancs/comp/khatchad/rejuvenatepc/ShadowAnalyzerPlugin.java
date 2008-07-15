@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.Constants;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 /**
@@ -35,8 +36,6 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
  * 
  */
 public class ShadowAnalyzerPlugin extends Plugin {
-
-	private static final String URL = "jdbc:postgresql://localhost/rejuv-pc";
 
 	/* (non-Javadoc)
 	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.Plugin#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -89,7 +88,7 @@ public class ShadowAnalyzerPlugin extends Plugin {
 
 		try {
 			Class.forName("org.postgresql.Driver");
-			Connection conn = DriverManager.getConnection(URL, "raffi", "");
+			Connection conn = DriverManager.getConnection(Constants.URL, "raffi", "");
 			Statement st = conn.createStatement();
 
 			ResultSet res = st
@@ -168,7 +167,7 @@ public class ShadowAnalyzerPlugin extends Plugin {
 
 			try {
 				Class.forName("org.postgresql.Driver");
-				Connection conn = DriverManager.getConnection(URL, "raffi", "");
+				Connection conn = DriverManager.getConnection(Constants.URL, "raffi", "");
 				Statement st = conn.createStatement();
 
 				ResultSet res = st
