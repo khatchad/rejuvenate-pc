@@ -11,7 +11,7 @@ import java.io.*;
  * @author raffi
  * 
  */
-public aspect TimeColletor {
+public aspect TimeColleting {
 	private long collectedTime;
 
 	pointcut toRemove() : 

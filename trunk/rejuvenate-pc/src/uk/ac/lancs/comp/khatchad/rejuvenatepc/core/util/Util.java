@@ -586,4 +586,17 @@ public class Util {
 	public static Collection<SearchMatch> search(final SearchPattern pattern, IProgressMonitor monitor) {
 		return search(pattern, SearchEngine.createWorkspaceScope(), monitor);
 	}
+
+	/**
+	 * @param javaElem
+	 * @return
+	 */
+	public static String getKey(IJavaElement javaElem) {
+		StringBuilder key = new StringBuilder(javaElem.getHandleIdentifier());
+		key.delete(0, key.indexOf("<") + 1);
+		int pos = key.indexOf("!");
+		if (pos != -1)
+			key.delete(pos, key.length() - 1);
+		return key.toString();
+	}
 }
