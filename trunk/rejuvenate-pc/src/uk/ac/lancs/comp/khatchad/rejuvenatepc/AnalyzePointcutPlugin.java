@@ -25,6 +25,7 @@ import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -190,10 +191,16 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
-			
+
 			String adviceKey = DatabaseUtil.getKey(advElem);
 			try {
 				DatabaseUtil.insertAdviceIntoDatabase(adviceKey);
+
+				for (IJavaElement javaElem : AJUtil
+						.getAdvisedJavaElements(advElem))
+					DatabaseUtil.insertShadowAndRelationshipIntoDatabase(
+							adviceKey, javaElem,
+							DatabaseUtil.AdviceShadowRelationship.ADVISES);
 			}
 			catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -205,7 +212,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
-			
+
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
 
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
@@ -213,8 +220,9 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
 			graph.enableElementsAccordingTo(advElem, monitor);
 
-			GraphVizUtil.makeDotFile(graph, pointcutCount, FileUtil.WORKSPACE_LOC
-					+ advElem.getPath().toOSString() + "-");
+			GraphVizUtil.makeDotFile(graph, pointcutCount,
+					FileUtil.WORKSPACE_LOC + advElem.getPath().toOSString()
+							+ "-");
 
 			executeQueries(monitor, workingMemory, patternToResultMap,
 					patternToEnabledElementMap);
@@ -232,7 +240,8 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 					.keySet().size(), Util.flattenCollection(
 					patternToResultMap.values()).size(), Util
 					.flattenCollection(patternToEnabledElementMap.values())
-					.size(), graph.getEnabledElements().size(), graph.getAllElements().size(), totalConfidence
+					.size(), graph.getEnabledElements().size(), graph
+					.getAllElements().size(), totalConfidence
 					/ patternToResultMap.keySet().size(), AJUtil
 					.getAdvisedJavaElements(advElem).size());
 		}

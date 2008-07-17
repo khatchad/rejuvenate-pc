@@ -7,13 +7,18 @@ import java.util.Set;
 
 import org.aspectj.asm.AsmManager;
 import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.ProgramElement;
+import org.aspectj.weaver.AsmRelationshipUtils;
 import org.eclipse.ajdt.core.AspectJCore;
+import org.eclipse.ajdt.core.javaelements.AJCodeElement;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJProjectModel;
 import org.eclipse.jdt.core.IJavaElement;
 import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
+
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
 
 import ca.mcgill.cs.swevo.jayfx.FastConverter;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
@@ -256,9 +261,21 @@ public class IntentionArc<E extends IElement> extends IntentionElement<E> {
 	 */
 	@Override
 	public IJavaElement toJavaElement(JayFX database) {
-		IJavaElement parent = this.fromNode.toJavaElement(database);
-		IProgramElement root = AsmManager.getDefault().getHierarchy().getRoot();
-		System.out.println(root);
+		//TODO: Need to find line number.
+		
+		IJavaElement source = this.fromNode.toJavaElement(database);
+		IJavaElement target = this.toNode.toJavaElement(database);
+		
+		IProgramElement p = new ProgramElement();
+		AsmManager.getDefault().getHandleProvider().createHandleIdentifier()
+		
+		System.out.println(target);
+		
+//		AJCodeElement ajc = new AJCodeElement()
+		
+		IJavaElement test = AspectJCore.create("=SimpleTestCase0/src<p{A.java[A~m2?method-call(void p.A.p())!13!0!0!0!I");
+		System.out.println(DatabaseUtil.getKey(test));
+		
 		return null;
 	}
 }

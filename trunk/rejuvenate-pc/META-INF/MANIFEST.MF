@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.jdt.core,
  org.aspectj.ajde,
  org.aspectj.weaver,
  org.eclipse.jdt.ui,
- org.eclipse.jdt
+ org.eclipse.jdt,
+ ca.ubc.cs.pointcutdoctor.core
 Bundle-ClassPath: .,
  lib/drools-compiler-4.0.4.jar,
  lib/drools-core-4.0.4.jar,

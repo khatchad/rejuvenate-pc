@@ -28,8 +28,8 @@ public aspect TimeColleting {
 		(execution(* *.*(..)) && within(java.io..*)) ||
 		execution( * DatabaseUtil.*(..)) ||
 		execution( * FileUtil.*(..)) ||
-		execution( * ASTUtil.*(..)) ||
-		(call(void PointcutRefactoringPlugin.executeQueries(..)) && withincode(void RejuvenatePointcutPlugin.analyzeAdviceCollection(..)));
+		execution( * ASTUtil.*(..));
+//		(call(void PointcutRefactoringPlugin.executeQueries(..)) && withincode(void RejuvenatePointcutPlugin.analyzeAdviceCollection(..)));
 
 	Object around() : toRemove() && !cflowbelow(toRemove()){
 		final long start = System.currentTimeMillis();
