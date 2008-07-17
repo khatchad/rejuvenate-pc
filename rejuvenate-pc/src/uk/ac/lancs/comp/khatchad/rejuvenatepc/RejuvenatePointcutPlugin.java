@@ -20,9 +20,11 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.aspectj.asm.AsmManager;
 import org.drools.WorkingMemory;
 import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -50,10 +52,12 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model.Suggestion;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
+import ca.ubc.cs.pointcutdoctor.core.virtual.VirtualShadowUtil;
 
 /**
  * @author raffi

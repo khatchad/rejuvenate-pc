@@ -80,12 +80,13 @@ public class DatabaseUtil {
 	 * @param adviceKey
 	 * @param shadowKey
 	 * @param version
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
 	 */
 	public static void insertAdviceShadowRelationshipIntoDatabase(
 			String adviceKey, String shadowKey, int version,
-			AdviceShadowRelationship relationship) throws ClassNotFoundException, SQLException {
+			AdviceShadowRelationship relationship)
+			throws ClassNotFoundException, SQLException {
 		Statement st = null;
 		ResultSet res = null;
 		try {
@@ -188,21 +189,33 @@ public class DatabaseUtil {
 	 */
 	public static int getVersionNumber(String benchmark) {
 		int pos = benchmark.indexOf('_');
-		String number = benchmark.substring(pos + 1, pos + 3);
-		int ret = Integer.valueOf(number);
-		System.err.println("Version number: " + ret);
-		return ret;
+		
+		String number;
+		try {
+			number = benchmark.substring(pos + 1, pos + 3);
+		}
+		catch (IndexOutOfBoundsException e) {
+			return 0;
+		}
+
+		try {
+			return Integer.valueOf(number);
+		}
+		catch (NumberFormatException e) {
+			return 0;
+		}
 	}
 
 	/**
 	 * @param adviceKey
 	 * @param javaElem
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
 	 */
 	public static void insertShadowAndRelationshipIntoDatabase(
 			String adviceKey, IJavaElement javaElem,
-			AdviceShadowRelationship relationship) throws ClassNotFoundException, SQLException {
+			AdviceShadowRelationship relationship)
+			throws ClassNotFoundException, SQLException {
 		String benchmark = javaElem.getJavaProject().getProject().getName();
 		String shadowKey = getKey(javaElem);
 

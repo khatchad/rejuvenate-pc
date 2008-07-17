@@ -96,6 +96,7 @@ public class ShadowAnalyzerPlugin extends Plugin {
 				advisedJavaElements.size());
 
 		for (IJavaElement javaElem : advisedJavaElements) {
+			System.out.println(javaElem.getHandleIdentifier());
 			DatabaseUtil.insertShadowAndRelationshipIntoDatabase(adviceKey, javaElem,
 					DatabaseUtil.AdviceShadowRelationship.ADVISES);
 			monitor.worked(1);
