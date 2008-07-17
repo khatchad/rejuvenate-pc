@@ -29,7 +29,8 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchPattern;
 
 import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.SearchEngineUtil;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
@@ -121,7 +122,7 @@ public class IntentionGraph {
 
 		this.resetAllElements(new SubProgressMonitor(monitor, -1));
 
-		final List<AJRelationship> relationshipList = Util
+		final List<AJRelationship> relationshipList = AJUtil
 				.getAdviceRelationshipList(advisingElement);
 
 		monitor.beginTask("Enabling elements according to advice pointcut.",
@@ -302,7 +303,7 @@ public class IntentionGraph {
 				javaSearchConstant, IJavaSearchConstants.DECLARATIONS,
 				SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
 
-		final Collection<SearchMatch> results = Util.search(pattern,
+		final Collection<SearchMatch> results = SearchEngineUtil.search(pattern,
 				SearchEngine.createWorkspaceScope(), monitor);
 
 		IElement sourceElement = this.database.convertToElement(parent);
@@ -484,6 +485,8 @@ public class IntentionGraph {
 			Collection<IJavaElement> advisedElements, IProgressMonitor monitor)
 			throws JavaModelException, ConversionException {
 
+		this.resetAllElements(new SubProgressMonitor(monitor, -1));
+		
 		monitor.beginTask("Enabling graph according the advised elements.",
 				advisedElements.size());
 
@@ -505,5 +508,20 @@ public class IntentionGraph {
 				ret.add(arc);
 		}
 		return ret;
+	}
+
+	/**
+	 * @param subProgressMonitor
+	 */
+	public void enableAllElements(IProgressMonitor monitor) {
+		Collection<IntentionElement<IElement>> allElements = this.getAllElements();
+		monitor.beginTask("Enabling all graph elements.", allElements.size());
+		for ( IntentionElement elem : allElements )
+			elem.enable();
+		monitor.done();
+	}
+
+	public JayFX getDatabase() {
+		return this.database;
 	}
 }

@@ -12,7 +12,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
  * @author raffi
  * 
  */
-public class Suggestion<E extends IntentionElement<IElement>> {
+public class Suggestion<E> {
 	private E suggestion;
 	private Pattern<IntentionArc<IElement>> pattern;
 	private double confidence;

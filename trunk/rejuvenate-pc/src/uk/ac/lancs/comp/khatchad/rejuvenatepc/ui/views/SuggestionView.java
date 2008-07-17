@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -65,10 +66,10 @@ public class SuggestionView extends ViewPart {
 			if (!(obj instanceof Suggestion))
 				throw new IllegalArgumentException("Expecting Suggestion, not "
 						+ obj.getClass().getSimpleName());
-			Suggestion<IntentionElement<IElement>> suggestion = (Suggestion<IntentionElement<IElement>>) obj;
+			Suggestion<IJavaElement> suggestion = (Suggestion<IJavaElement>) obj;
 			switch (index) {
 				case 0:
-					return suggestion.getSuggestion().toPrettyString();
+					return suggestion.getSuggestion().getElementName();
 				case 1:
 					return suggestion.getPattern().toString();
 				case 2:

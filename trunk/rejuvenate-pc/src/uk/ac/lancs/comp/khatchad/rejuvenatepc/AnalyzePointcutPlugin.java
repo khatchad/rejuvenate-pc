@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -42,7 +43,12 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.FileUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.GraphVizUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 
 public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
@@ -54,7 +60,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	private static PrintWriter getBenchmarkStatsWriter() throws IOException {
 		final File aFile = new File(PointcutRefactoringPlugin.RESULT_PATH
 				+ "benchmarks.csv");
-		return Util.getPrintWriter(aFile, true);
+		return FileUtil.getPrintWriter(aFile, true);
 	}
 
 	protected void run(IProgressMonitor monitor) {
@@ -101,7 +107,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 			final IJavaProject proj, final IProgressMonitor lMonitor) {
 		Collection<? extends AdviceElement> toAnalyze = null;
 		try {
-			toAnalyze = Util.extractValidAdviceElements(proj);
+			toAnalyze = AJUtil.extractValidAdviceElements(proj);
 			if (!toAnalyze.isEmpty()) {
 				this.analyze(toAnalyze, lMonitor);
 			}
@@ -134,21 +140,6 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		}
 		benchmarkOut.println("Benchmark\t#Advice\t#Shadows\tTime(s)");
 		return benchmarkOut;
-	}
-
-	/**
-	 * @param start
-	 * @return
-	 */
-	private int calculateTimeStatistics(final long start) {
-		uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.TimeColletor collector = uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.TimeColletor
-				.aspectOf();
-
-		final long elapsed = System.currentTimeMillis()
-				- (start + collector.getCollectedTime());
-		collector.clear();
-		final int secs = (int) elapsed / 1000;
-		return secs;
 	}
 
 	/**
@@ -199,6 +190,22 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
+			
+			String adviceKey = DatabaseUtil.getKey(advElem);
+			try {
+				DatabaseUtil.insertAdviceIntoDatabase(adviceKey);
+			}
+			catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
 
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> patternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
@@ -206,7 +213,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
 			graph.enableElementsAccordingTo(advElem, monitor);
 
-			Util.makeDotFile(graph, pointcutCount, Util.WORKSPACE_LOC
+			GraphVizUtil.makeDotFile(graph, pointcutCount, FileUtil.WORKSPACE_LOC
 					+ advElem.getPath().toOSString() + "-");
 
 			executeQueries(monitor, workingMemory, patternToResultMap,
@@ -226,7 +233,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 					patternToResultMap.values()).size(), Util
 					.flattenCollection(patternToEnabledElementMap.values())
 					.size(), graph.getEnabledElements().size(), graph.getAllElements().size(), totalConfidence
-					/ patternToResultMap.keySet().size(), Util
+					/ patternToResultMap.keySet().size(), AJUtil
 					.getAdvisedJavaElements(advElem).size());
 		}
 	}
@@ -256,7 +263,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		DocType type = new DocType(this.getClass().getSimpleName());
 		Document doc = new Document(adviceXMLElement, type);
 		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
-		PrintWriter xmlOut = Util.getXMLFileWriter(advElem);
+		PrintWriter xmlOut = XMLUtil.getXMLFileWriter(advElem);
 		serializer.output(doc, xmlOut);
 		xmlOut.close();
 	}

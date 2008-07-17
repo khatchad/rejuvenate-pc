@@ -8,9 +8,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
+
+import ca.mcgill.cs.swevo.jayfx.FastConverter;
+import ca.mcgill.cs.swevo.jayfx.JayFX;
 
 /**
  * @author raffi
@@ -104,4 +108,11 @@ public abstract class IntentionElement<E> implements Serializable {
 	 * @return
 	 */
 	public abstract String toPrettyString();
+
+	/**
+	 * Converts this IntentionElement into its corresponding IJavaElement.
+	 * @param fastConverter 
+	 * @return The IJavaElement representing this IntentionElement.
+	 */
+	public abstract IJavaElement toJavaElement(JayFX database); 
 }

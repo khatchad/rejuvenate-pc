@@ -3,6 +3,7 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -32,8 +33,8 @@ public class SuggestionViewSorter extends ViewerSorter {
 
 	@SuppressWarnings("unchecked")
 	public int compare(Viewer viewer, Object o1, Object o2) {
-		Suggestion<IntentionElement<IElement>> suggestion1 = (Suggestion<IntentionElement<IElement>>) o1;
-		Suggestion<IntentionElement<IElement>> suggestion2 = (Suggestion<IntentionElement<IElement>>) o2;
+		Suggestion<IJavaElement> suggestion1 = (Suggestion<IJavaElement>) o1;
+		Suggestion<IJavaElement> suggestion2 = (Suggestion<IJavaElement>) o2;
 
 		switch (this.type) {
 			case SUGGESTIONS:
@@ -53,10 +54,10 @@ public class SuggestionViewSorter extends ViewerSorter {
 	 * @return
 	 */
 	private int compareSuggestions(
-			Suggestion<IntentionElement<IElement>> suggestion1,
-			Suggestion<IntentionElement<IElement>> suggestion2) {
-		return suggestion1.getSuggestion().toPrettyString().compareTo(
-				suggestion2.getSuggestion().toPrettyString());
+			Suggestion<IJavaElement> suggestion1,
+			Suggestion<IJavaElement> suggestion2) {
+		return suggestion1.getSuggestion().getElementName().compareTo(
+				suggestion2.getSuggestion().getElementName());
 	}
 
 	/**
@@ -65,8 +66,8 @@ public class SuggestionViewSorter extends ViewerSorter {
 	 * @return
 	 */
 	private int comparePatterns(
-			Suggestion<IntentionElement<IElement>> suggestion1,
-			Suggestion<IntentionElement<IElement>> suggestion2) {
+			Suggestion<IJavaElement> suggestion1,
+			Suggestion<IJavaElement> suggestion2) {
 		return suggestion1.getPattern().toString().compareTo(suggestion2.getPattern().toString());
 	}
 
@@ -76,8 +77,8 @@ public class SuggestionViewSorter extends ViewerSorter {
 	 * @return
 	 */
 	private int compareConfidence(
-			Suggestion<IntentionElement<IElement>> suggestion1,
-			Suggestion<IntentionElement<IElement>> suggestion2) {
+			Suggestion<IJavaElement> suggestion1,
+			Suggestion<IJavaElement> suggestion2) {
 		return Double.compare(suggestion1.getConfidence(), suggestion2.getConfidence()) * -1;
 	}
 }
