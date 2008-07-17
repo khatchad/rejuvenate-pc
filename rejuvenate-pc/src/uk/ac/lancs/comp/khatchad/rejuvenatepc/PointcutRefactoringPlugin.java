@@ -4,6 +4,8 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 
 import java.io.File;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.*;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -41,7 +43,6 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Path;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.JayFXException;
@@ -182,24 +183,24 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 
 	private static PrintWriter getPatternStatsWriter() throws IOException {
 		final File aFile = new File(PointcutRefactoringPlugin.RESULT_PATH + "patterns.csv");
-		return Util.getPrintWriter(aFile, true);
+		return FileUtil.getPrintWriter(aFile, true);
 	}
 
 	private static PrintWriter getEnabledElementStatsWriter()
 			throws IOException {
 		final File aFile = new File(PointcutRefactoringPlugin.RESULT_PATH + "enabled.csv");
-		return Util.getPrintWriter(aFile, true);
+		return FileUtil.getPrintWriter(aFile, true);
 	}
 
 	private static PrintWriter getSuggestionStatsWriter() throws IOException {
 		final File aFile = new File(PointcutRefactoringPlugin.RESULT_PATH
 				+ "suggestions.csv");
-		return Util.getPrintWriter(aFile, true);
+		return FileUtil.getPrintWriter(aFile, true);
 	}
 
 	private static PrintWriter getAdviceStatsWriter() throws IOException {
 		final File aFile = new File(PointcutRefactoringPlugin.RESULT_PATH + "advice.csv");
-		return Util.getPrintWriter(aFile, true);
+		return FileUtil.getPrintWriter(aFile, true);
 	}
 
 	private PrintWriter patternOut;
@@ -520,9 +521,9 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 			throws JavaModelException {
 		Element adviceXMLElement = new Element(AdviceElement.class
 				.getSimpleName());
-		Element ret = Util.getXML(advElem);
+		Element ret = XMLUtil.getXML(advElem);
 		Element advisedElementXML = getAdvisedJavaElementsXMLElement(
-				adviceXMLElement, Util.getAdvisedJavaElements(advElem));
+				adviceXMLElement, AJUtil.getAdvisedJavaElements(advElem));
 		ret.addContent(advisedElementXML);
 		return ret;
 	}
@@ -635,7 +636,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 		lMonitor.subTask("Loading up the rulebase.");
 		final Reader source = new InputStreamReader(AnalyzePointcutPlugin.class
 				.getResourceAsStream(RULES_FILE));
-		final RuleBase ruleBase = Util.readRule(source);
+		final RuleBase ruleBase = FileUtil.readRule(source);
 		final WorkingMemory workingMemory = ruleBase.newStatefulSession();
 
 		final Set<IntentionElement<IElement>> elemCol = graph.flatten();
@@ -662,7 +663,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 			ConversionException, JavaModelException {
 		final JayFX lDB = new JayFX();
 
-		final Collection<IProject> projectsToAnalyze = Util
+		final Collection<IProject> projectsToAnalyze = AJUtil
 				.getProjects(adviceCol);
 
 		lDB.initialize(projectsToAnalyze, lMonitor, true);
@@ -682,6 +683,20 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	}
 
 	/**
+	 * @param start
+	 * @return
+	 */
+	protected int calculateTimeStatistics(final long start) {
+		TimeColleting collecting = TimeColleting.aspectOf();
+	
+		final long elapsed = System.currentTimeMillis()
+				- (start + collecting.getCollectedTime());
+		collecting.clear();
+		final int secs = (int) elapsed / 1000;
+		return secs;
+	}
+
+	/**
 	 * @param adviceXMLElement
 	 * @param advisedJavaElements
 	 */
@@ -689,7 +704,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 			Element adviceXMLElement, Set<IJavaElement> advisedJavaElements) {
 		Element ret = new Element(ADVISED_ELEMENTS);
 		for (IJavaElement jElem : advisedJavaElements) {
-			Element xmlElem = Util.getXML(jElem);
+			Element xmlElem = XMLUtil.getXML(jElem);
 			ret.addContent(xmlElem);
 		}
 		return ret;

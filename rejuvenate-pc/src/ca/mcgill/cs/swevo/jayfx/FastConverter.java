@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchPattern;
 
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.SearchEngineUtil;
 
 import ca.mcgill.cs.swevo.jayfx.model.FieldElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -202,7 +202,7 @@ public class FastConverter {
 					IJavaSearchConstants.DECLARATIONS,
 					SearchPattern.R_EXACT_MATCH
 							| SearchPattern.R_CASE_SENSITIVE);
-			Collection<SearchMatch> matches = Util.search(pattern, null);
+			Collection<SearchMatch> matches = SearchEngineUtil.search(pattern, null);
 			if ( matches.isEmpty() )
 				throw new ConversionException("Cannot find type " + pElement);
 			else

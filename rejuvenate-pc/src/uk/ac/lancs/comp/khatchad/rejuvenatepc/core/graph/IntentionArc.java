@@ -5,6 +5,8 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
 import java.util.Set;
 
+import org.aspectj.asm.AsmManager;
+import org.aspectj.asm.IProgramElement;
 import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJProjectModel;
@@ -13,6 +15,8 @@ import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
 
+import ca.mcgill.cs.swevo.jayfx.FastConverter;
+import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
@@ -245,5 +249,16 @@ public class IntentionArc<E extends IElement> extends IntentionElement<E> {
 		ret.append(": ");
 		ret.append(this.toNode);
 		return ret.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement#toJavaElement(ca.mcgill.cs.swevo.jayfx.FastConverter)
+	 */
+	@Override
+	public IJavaElement toJavaElement(JayFX database) {
+		IJavaElement parent = this.fromNode.toJavaElement(database);
+		IProgramElement root = AsmManager.getDefault().getHierarchy().getRoot();
+		System.out.println(root);
+		return null;
 	}
 }

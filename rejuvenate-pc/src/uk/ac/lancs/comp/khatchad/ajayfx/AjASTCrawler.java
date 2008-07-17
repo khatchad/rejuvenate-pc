@@ -178,7 +178,7 @@ public class AjASTCrawler extends AsmHierarchyBuilder {
 	 * @return
 	 */
 	private IElement convertBinding(final MethodBinding binding) {
-		return Util.convertBinding(Category.ADVICE, String.valueOf(binding
+		return uk.ac.lancs.comp.khatchad.ajayfx.util.Util.convertBinding(Category.ADVICE, String.valueOf(binding
 				.readableName()));
 	}
 

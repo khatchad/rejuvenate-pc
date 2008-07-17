@@ -6,6 +6,7 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,7 +50,8 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model.Suggestion;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
@@ -71,10 +73,12 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 	 */
 	private static final String PATTERN = "Pattern";
 
-	private List<Suggestion<IntentionElement<IElement>>> suggestionList = new ArrayList<Suggestion<IntentionElement<IElement>>>();
+	private List<Suggestion<IJavaElement>> suggestionList = new ArrayList<Suggestion<IJavaElement>>();
 
 	@Override
 	protected void run(IProgressMonitor monitor) {
+		final long start = System.currentTimeMillis();
+
 		this.suggestionList.clear();
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
@@ -82,6 +86,8 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 		if (!selectedAdvice.isEmpty())
 			analyzeAdvice(selectedAdvice, monitor);
 
+		final int secs = calculateTimeStatistics(start);
+		System.err.println("Time (s): " + secs);
 		monitor.done();
 	}
 
@@ -107,17 +113,32 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
+
+			String adviceKey = DatabaseUtil.getKey(advElem);
+			try {
+				DatabaseUtil.insertAdviceIntoDatabase(adviceKey);
+			}
+			catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+			catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 
-			//retrieve analysis information.
-			Document document = readXMLFile(advElem);
-			Collection<IJavaElement> advisedElements = extractAdvisedElements(document);
+			graph.enableAllElements(new SubProgressMonitor(monitor, -1));
 
-			graph.enableElementsAccordingTo(advisedElements,
-					new SubProgressMonitor(monitor, -1));
 			executeQueries(monitor, workingMemory, derivedPatternToResultMap,
 					derivedPatternToEnabledElementMap);
+
+			//retrieve analysis information.
+			Document document = readXMLFile(advElem);
 
 			//Retrieve the saved patterns.
 			Map<Pattern<IntentionArc<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
@@ -127,50 +148,68 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 					derivedPatternToResultMap, recoveredPatternToConfidenceMap);
 
 			//Make suggestions sorted by highest confidence.
-			SortedMap<Double, Set<IntentionElement<IElement>>> confidenceToSuggestedIntentionElementSetMap = new TreeMap<Double, Set<IntentionElement<IElement>>>(
+			SortedMap<Double, Set<IJavaElement>> confidenceToSuggestedJavaElementSetMap = new TreeMap<Double, Set<IJavaElement>>(
 					new Comparator<Double>() {
 						public int compare(Double o1, Double o2) {
 							return o1.compareTo(o2) * -1;
 						}
 					});
 
-			System.out.println("Suggestion\tPattern\tConfidence");
+			Collection<IJavaElement> advisedElements = extractAdvisedElements(document);
+			graph.enableElementsAccordingTo(advisedElements,
+					new SubProgressMonitor(monitor, -1));
+
+			//			System.out.println("Suggestion\tPattern\tConfidence");
 			for (Pattern<IntentionArc<IElement>> pattern : survingPatternSet) {
 				//Get the confidence.
 				double confidence = recoveredPatternToConfidenceMap
 						.get(pattern);
 
-				if (!confidenceToSuggestedIntentionElementSetMap
+				if (!confidenceToSuggestedJavaElementSetMap
 						.containsKey(confidence)) {
-					confidenceToSuggestedIntentionElementSetMap.put(confidence,
-							new LinkedHashSet<IntentionElement<IElement>>());
+					confidenceToSuggestedJavaElementSetMap.put(confidence,
+							new LinkedHashSet<IJavaElement>());
 				}
-				Set<IntentionElement<IElement>> suggestedIntentionElementSet = confidenceToSuggestedIntentionElementSetMap
+				Set<IJavaElement> suggestedJavaElementSet = confidenceToSuggestedJavaElementSetMap
 						.get(confidence);
 
 				//Get the suggestions.
 				for (IntentionElement<IElement> intentionElement : derivedPatternToResultMap
 						.get(pattern)) {
-					suggestedIntentionElementSet.add(intentionElement);
-					System.out.println(intentionElement.toPrettyString() + "\t"
-							+ pattern + "\t" + confidence);
-					Suggestion<IntentionElement<IElement>> suggestion = new Suggestion<IntentionElement<IElement>>(
-							intentionElement, pattern, confidence);
-					this.suggestionList.add(suggestion);
-				}
-			}
 
-			/*
-			System.out.println("Suggestions sorted descendingly by confidence");
-			System.out.println("Confidence\tSuggestion");
-			for (Double confidence : confidenceToSuggestedIntentionElementSetMap
-					.keySet()) {
-				for (IntentionElement<IElement> suggestion : confidenceToSuggestedIntentionElementSetMap
-						.get(confidence)) {
-					System.out.println(confidence + "\t" + suggestion);
+					IJavaElement suggestedJavaElement = intentionElement
+							.toJavaElement(graph.getDatabase());
+
+					if (suggestedJavaElement != null) { //if no java element for this suggestion, disregard.
+
+						//insert into database.
+						try {
+							DatabaseUtil
+									.insertShadowAndRelationshipIntoDatabase(
+											adviceKey,
+											suggestedJavaElement,
+											DatabaseUtil.AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE);
+						}
+						catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new RuntimeException(e);
+						}
+						catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new RuntimeException(e);
+						}
+
+						suggestedJavaElementSet.add(suggestedJavaElement);
+						//						System.out.println(intentionElement.toPrettyString()
+						//								+ "\t" + pattern + "\t" + confidence);
+						Suggestion<IJavaElement> suggestion = new Suggestion<IJavaElement>(
+								suggestedJavaElement, pattern, confidence);
+						this.suggestionList.add(suggestion);
+					}
 				}
 			}
-			*/
 
 			monitor.worked(1);
 		}
@@ -245,7 +284,7 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 	private Document readXMLFile(AdviceElement advElem) throws JDOMException,
 			IOException {
 		org.jdom.input.SAXBuilder builder = new SAXBuilder();
-		File advXMLFile = Util.getSavedXMLFile(advElem);
+		File advXMLFile = XMLUtil.getSavedXMLFile(advElem);
 		return builder.build(advXMLFile);
 	}
 
@@ -265,7 +304,7 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 	/**
 	 * @return the suggestionList
 	 */
-	public List<Suggestion<IntentionElement<IElement>>> getSuggestionList() {
+	public List<Suggestion<IJavaElement>> getSuggestionList() {
 		return this.suggestionList;
 	}
 

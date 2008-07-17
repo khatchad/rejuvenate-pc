@@ -9,10 +9,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
 
+import ca.mcgill.cs.swevo.jayfx.ConversionException;
+import ca.mcgill.cs.swevo.jayfx.FastConverter;
+import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
 import ca.mcgill.cs.swevo.jayfx.model.Category;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -207,5 +211,19 @@ public class IntentionNode<E extends IElement> extends IntentionElement<E> {
 			if ( arc.getToNode().equals(targetNode) )
 				return arc;
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement#toJavaElement()
+	 */
+	@Override
+	public IJavaElement toJavaElement(JayFX database) {
+		IJavaElement javaElement = null;
+		try {
+			javaElement = database.convertToJavaElement(this.elem);
+		}
+		catch (ConversionException e) {
+		}
+		return javaElement;
 	}
 }
