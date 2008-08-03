@@ -8,15 +8,17 @@
  * $Revision: 1.4 $
  */
 
-package ca.mcgill.cs.swevo.jayfx;
+package uk.ac.lancs.comp.khatchad.ajayfx;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
 import ca.mcgill.cs.swevo.jayfx.model.FieldElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
@@ -26,7 +28,7 @@ import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
 /**
  * Provides support for converting JCore objects to Concern Graph model objects.
  */
-class Converter {
+public class Converter {
 	private static final char DOT_CHAR = '.';
 	private static final String DOT = ".";
 	private static final String COMMA = ",";
@@ -52,14 +54,14 @@ class Converter {
 	 * 
 	 * @param pType
 	 *            The Eclipse type to convert.
-	 * @param pMethod
-	 *            the method declaring pType as a parameter type.
+	 * @param aMember
+	 *            the member declaring pType type.
 	 * @return A String representing pType in a way understandable by the
 	 *         Concern Graphs model.
 	 * @exception ConversionException
 	 *                If the type cannot be converted.
 	 */
-	public static String convertType(final String pType, final IMethod pMethod)
+	public static String convertType(final String pType, final IMember aMember)
 			throws ConversionException {
 		String lReturn = "";
 		int lDepth = 0;
@@ -96,15 +98,15 @@ class Converter {
 			final String lType = pType.substring(lIndex + 1, lIndex2);
 
 			try {
-				lReturn = Converter.resolveType(pMethod, lType);
+				lReturn = Converter.resolveType(aMember, lType);
 			}
 			catch (final ConversionException e) {
 				// We take one crack at inner classes
 				final int lIndex3 = lType.lastIndexOf(Converter.DOT_CHAR);
 				if (lIndex3 > 0) {
 					String lType1 = lType.substring(0, lIndex3);
-					lType1 = Converter.resolveType(pMethod, lType1);
-					Converter.resolveType(pMethod, lType1 + Converter.DOT
+					lType1 = Converter.resolveType(aMember, lType1);
+					Converter.resolveType(aMember, lType1 + Converter.DOT
 							+ lType.substring(lIndex3 + 1, lType.length()));
 					lReturn = lType1 + Converter.DOLLAR
 							+ lType.substring(lIndex3 + 1, lType.length());
@@ -137,14 +139,26 @@ class Converter {
 	 *            The field to convert.
 	 * @return A field element in the Concern Graph model corresponding to
 	 *         pField.
+	 * @throws ConversionException
 	 */
-	public static FieldElement getFieldElement(final IField pField) {
+	public static FieldElement getFieldElement(final IField pField)
+			throws ConversionException {
 		final String lClassName = pField.getDeclaringType()
 				.getFullyQualifiedName();
 		final String lName = lClassName + Converter.DOT
 				+ pField.getElementName();
+
+		String fieldTypeSignature = null;
+		try {
+			String fieldTypeAsString = pField.getTypeSignature();
+			fieldTypeSignature = convertType(fieldTypeAsString, pField);
+		}
+		catch (final JavaModelException pException) {
+			throw new ConversionException(pException);
+		}
+
 		return (FieldElement) FlyweightElementFactory.getElement(
-				Category.FIELD, lName);
+				Category.FIELD, fieldTypeSignature + ' ' + lName);
 	}
 
 	/**
@@ -162,14 +176,19 @@ class Converter {
 		final String lClassName = pMethod.getDeclaringType()
 				.getFullyQualifiedName();
 		String lName = lClassName + Converter.DOT + pMethod.getElementName();
+		String methodReturnTypeSignature = null;
 		String lSignature = Converter.LEFT_PAREN;
 		try {
+			String methodReturnTypeAsString = pMethod.getReturnType();
+			methodReturnTypeSignature = convertType(methodReturnTypeAsString,
+					pMethod);
+
 			if (pMethod.isConstructor())
 				lName = lClassName + Converter.DOT + Converter.CONSTRUCTOR_TAG;
 			final String[] lParams = pMethod.getParameterTypes();
 			for (int i = 0; i < lParams.length - 1; i++)
 				lSignature += Converter.convertType(lParams[i], pMethod)
-						+ Converter.COMMA;
+						+ Converter.COMMA + ' ';
 			if (lParams.length > 0)
 				lSignature += Converter.convertType(
 						lParams[lParams.length - 1], pMethod);
@@ -179,7 +198,8 @@ class Converter {
 			throw new ConversionException(pException);
 		}
 		return (MethodElement) FlyweightElementFactory.getElement(
-				Category.METHOD, lName + lSignature);
+				Category.METHOD, methodReturnTypeSignature + ' ' + lName
+						+ lSignature);
 	}
 
 	/**
@@ -220,7 +240,7 @@ class Converter {
 	 * @exception ConversionException
 	 *                If the type cannot be resolved.
 	 */
-	private static String resolveType(final IMethod pMethod, final String pType)
+	private static String resolveType(final IMember pMethod, final String pType)
 			throws ConversionException {
 		// Try to resolve from the declaring type.
 		try {

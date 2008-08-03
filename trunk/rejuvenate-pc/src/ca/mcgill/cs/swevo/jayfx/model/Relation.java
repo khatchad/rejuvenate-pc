@@ -14,6 +14,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Vector;
 
+import org.aspectj.lang.JoinPoint;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
@@ -21,7 +22,7 @@ import org.jdom.Element;
  * Encapsulate various services related to relations.
  */
 public enum Relation {
-	
+
 	EXPLICITLY_CALLS(Type.ID_EXPLICITLY_CALLS, true), ANNOTATES(
 			Type.ID_ANNOTATES, true), CONTAINS(Type.ID_CONTAINS, true), CHECKS(
 			Type.ID_CHECKS, true), CREATES(Type.ID_CREATES, true), DECLARES_METHOD(
@@ -64,9 +65,9 @@ public enum Relation {
 			false), T_REFERENCES(Type.ID_REFERENCES, false);
 
 	/**
-			 * 
-			 */
-			private static final String TYPE = "type";
+	 * 
+	 */
+	private static final String TYPE = "type";
 
 	/**
 	 * Type enum encapsulates the following information of a relation: i. code
@@ -440,10 +441,9 @@ public enum Relation {
 	/**
 	 * @return The full code for this relation.
 	 */
-//	public String toString() {
-//		return this.getFullCode();
-//	}
-
+	//	public String toString() {
+	//		return this.getFullCode();
+	//	}
 	private Type getType() {
 		return this.aId;
 	}
@@ -456,10 +456,26 @@ public enum Relation {
 		ret.setAttribute(TYPE, this.toString());
 		return ret;
 	}
-	
+
 	public static Relation valueOf(Element elem) {
 		Attribute typeAttribute = elem.getAttribute(TYPE);
 		String typeString = typeAttribute.getValue();
 		return valueOf(typeString);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isAdvisable() {
+		switch (this) {
+			case CALLS:
+			case EXPLICITLY_CALLS:
+			case GETS:
+			case SETS:
+			case STATIC_CALLS:
+				return true;
+			default:
+				return false;
+		}
 	}
 }

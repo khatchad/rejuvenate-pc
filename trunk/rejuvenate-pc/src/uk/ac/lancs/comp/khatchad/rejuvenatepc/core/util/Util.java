@@ -6,7 +6,13 @@ import java.util.LinkedHashSet;
 
 import org.aspectj.asm.IProgramElement;
 import org.drools.compiler.DroolsParserException;
+import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 
+import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 
@@ -62,5 +68,36 @@ public class Util {
 			for (E e : col)
 				ret.add(e);
 		return ret;
+	}
+
+	/**
+	 * @param ajElem
+	 */
+	public static JoinpointType getJoinPointType(final IAJCodeElement ajElem) {
+		final String type = ajElem.getElementName().substring(0,
+				ajElem.getElementName().indexOf("("));
+		final StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
+		final int pos = typeBuilder.indexOf("-");
+	
+		final String joinPointTypeAsString = typeBuilder.replace(pos, pos + 1,
+				"_").toString();
+	
+		final JoinpointType joinPointTypeAsEnum = JoinpointType
+				.valueOf(joinPointTypeAsString);
+	
+		return joinPointTypeAsEnum;
+	}
+
+	/**
+	 * @param type
+	 * @return
+	 * @throws JavaModelException 
+	 */
+	public static IMethod getDefaultConstructor(IType type) throws JavaModelException {
+		for (final IMethod meth : type.getMethods()) 
+			if (meth.isConstructor()
+					&& meth.getParameterNames().length == 0)
+					return meth;
+		return null;	
 	}
 }

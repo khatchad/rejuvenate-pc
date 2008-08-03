@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.Constants;
+
 /**
  * Represents a method element in the model.
  */
@@ -147,5 +149,9 @@ public class MethodElement extends AbstractElement {
 	private String getFirstParticle() {
 		final int lIndex = this.getId().indexOf("(");
 		return this.getId().substring(0, lIndex);
+	}
+	
+	public boolean isConstructor() {
+		return this.getId().contains(Constants.INIT_STRING);
 	}
 }

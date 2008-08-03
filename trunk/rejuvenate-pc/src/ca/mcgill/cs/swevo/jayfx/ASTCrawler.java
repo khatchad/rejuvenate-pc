@@ -218,8 +218,7 @@ public class ASTCrawler extends ASTVisitor {
 		final String lFieldID = ASTCrawler.convertBinding(
 				pBinding.getDeclaringClass()).getId()
 				+ "." + pBinding.getName();
-		return FlyweightElementFactory.getElement(Category.FIELD, lFieldID
-				);
+		return FlyweightElementFactory.getElement(Category.FIELD, lFieldID);
 	}
 
 	/**
@@ -239,11 +238,11 @@ public class ASTCrawler extends ASTVisitor {
 					Signature.C_RESOLVED + pBinding.getBinaryName()
 							+ Signature.C_SEMICOLON);
 		else
-			return FlyweightElementFactory.getElement(Category.CLASS,
-					pBinding.getBinaryName());
+			return FlyweightElementFactory.getElement(Category.CLASS, pBinding
+					.getBinaryName());
 	}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings( { "unchecked", "unused" })
 	private static List<AdviceElement> getApplicableAdvice(final IJavaElement je) {
 		final List<AdviceElement> advisedBy = new ArrayList<AdviceElement>();
 		final List<AdviceElement> direct = AJModel.getInstance()
@@ -592,8 +591,8 @@ public class ASTCrawler extends ASTVisitor {
 
 		if (Modifier.isStatic(pNode.getModifiers())) {
 			this.aCurrMethod = (MethodElement) FlyweightElementFactory
-					.getElement(Category.METHOD, this.aCurrType.getId()
-							+ "." + ASTCrawler.aCLINIT_METHOD_NAME);
+					.getElement(Category.METHOD, this.aCurrType.getId() + "."
+							+ ASTCrawler.aCLINIT_METHOD_NAME);
 			if (!this.aDB.contains(this.aCurrMethod))
 				//This <clinit>() method will be in any class that has a static field with initialization
 				//But the DECLARES relation will be linked only if this method has at least one sub relations
@@ -649,12 +648,12 @@ public class ASTCrawler extends ASTVisitor {
 
 		if (Flags.isStatic(pNode.getModifiers()))
 			this.aCurrMethod = (MethodElement) FlyweightElementFactory
-					.getElement(Category.METHOD, this.aCurrType.getId()
-							+ "." + ASTCrawler.aCLINIT_METHOD_NAME);
+					.getElement(Category.METHOD, this.aCurrType.getId() + "."
+							+ ASTCrawler.aCLINIT_METHOD_NAME);
 		else {
 			this.aCurrMethod = (MethodElement) FlyweightElementFactory
-					.getElement(Category.METHOD, this.aCurrType.getId()
-							+ "." + ASTCrawler.aINIT_METHOD_NAME);
+					.getElement(Category.METHOD, this.aCurrType.getId() + "."
+							+ ASTCrawler.aINIT_METHOD_NAME);
 			this.aCurrConstructorList.add(this.aCurrMethod);
 		}
 
@@ -1333,29 +1332,34 @@ public class ASTCrawler extends ASTVisitor {
 	 */
 	private void restoreTypeRelation() {
 		//		if this <clinit> method has relations in it, the relation DECLARES is added to the current type
-		final MethodElement lMethod = (MethodElement) FlyweightElementFactory
-				.getElement(Category.METHOD, this.aCurrType.getId() + "."
-						+ ASTCrawler.aCLINIT_METHOD_NAME);
-		if (this.aDB.contains(lMethod) && this.aDB.hasRelations(lMethod))
-			this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
-					lMethod);
-
-		if (this.aDB.hasRelations(this.aTempMethod))
-			if (this.aCurrConstructorList.size() == 0) {
-				final IElement lDefaultConstructor = FlyweightElementFactory
-						.getElement(Category.METHOD, this.aCurrType.getId()
-								+ "." + ASTCrawler.aINIT_METHOD_NAME);
-				this.aDB.addElement(lDefaultConstructor,
-						ASTCrawler.aINIT_METHOD_MODIFIERS);
-				this.aDB.copyRelations(this.aTempMethod, lDefaultConstructor);
+		if (this.aCurrType != null) {
+			final MethodElement lMethod = (MethodElement) FlyweightElementFactory
+					.getElement(Category.METHOD, this.aCurrType.getId() + "."
+							+ ASTCrawler.aCLINIT_METHOD_NAME);
+			if (this.aDB.contains(lMethod) && this.aDB.hasRelations(lMethod))
 				this.aDB.addRelation(this.aCurrType, Relation.DECLARES_METHOD,
-						lDefaultConstructor);
-			}
-			else
-				for (final MethodElement lConstructor : this.aCurrConstructorList)
-					this.aDB.copyRelations(this.aTempMethod, lConstructor);
-		//Remove temp method, and any relations associated with it, from memory database
-		this.aDB.removeElement(this.aTempMethod);
+						lMethod);
+		}
+
+		if (this.aTempMethod != null) {
+			if (this.aDB.hasRelations(this.aTempMethod))
+				if (this.aCurrConstructorList.size() == 0) {
+					final IElement lDefaultConstructor = FlyweightElementFactory
+							.getElement(Category.METHOD, this.aCurrType.getId()
+									+ "." + ASTCrawler.aINIT_METHOD_NAME);
+					this.aDB.addElement(lDefaultConstructor,
+							ASTCrawler.aINIT_METHOD_MODIFIERS);
+					this.aDB.copyRelations(this.aTempMethod,
+							lDefaultConstructor);
+					this.aDB.addRelation(this.aCurrType,
+							Relation.DECLARES_METHOD, lDefaultConstructor);
+				}
+				else
+					for (final MethodElement lConstructor : this.aCurrConstructorList)
+						this.aDB.copyRelations(this.aTempMethod, lConstructor);
+			//Remove temp method, and any relations associated with it, from memory database
+			this.aDB.removeElement(this.aTempMethod);
+		}
 
 		//restore current type and temp method
 		if (!this.aCurrTypeReminder.isEmpty())

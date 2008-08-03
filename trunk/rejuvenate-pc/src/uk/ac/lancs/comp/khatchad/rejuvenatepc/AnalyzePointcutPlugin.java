@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -22,10 +21,10 @@ import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -192,23 +191,10 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
 
-			String adviceKey = DatabaseUtil.getKey(advElem);
 			try {
-				DatabaseUtil.insertAdviceIntoDatabase(adviceKey);
-
-				for (IJavaElement javaElem : AJUtil
-						.getAdvisedJavaElements(advElem))
-					DatabaseUtil.insertShadowAndRelationshipIntoDatabase(
-							adviceKey, javaElem,
-							DatabaseUtil.AdviceShadowRelationship.ADVISES);
+				DatabaseUtil.insertIntoDatabase(advElem);
 			}
-			catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-			catch (SQLException e) {
-				// TODO Auto-generated catch block
+			catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
@@ -220,9 +206,9 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
 			graph.enableElementsAccordingTo(advElem, monitor);
 
-			GraphVizUtil.makeDotFile(graph, pointcutCount,
-					FileUtil.WORKSPACE_LOC + advElem.getPath().toOSString()
-							+ "-");
+			//			GraphVizUtil.makeDotFile(graph, pointcutCount,
+			//					FileUtil.WORKSPACE_LOC + advElem.getPath().toOSString()
+			//							+ "-");
 
 			executeQueries(monitor, workingMemory, patternToResultMap,
 					patternToEnabledElementMap);
@@ -266,14 +252,17 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	 * @param advElem
 	 * @param adviceXMLElement
 	 * @throws IOException
+	 * @throws CoreException
 	 */
 	protected void writeXMLFile(final AdviceElement advElem,
-			Element adviceXMLElement) throws IOException {
+			Element adviceXMLElement) throws IOException, CoreException {
 		DocType type = new DocType(this.getClass().getSimpleName());
 		Document doc = new Document(adviceXMLElement, type);
 		XMLOutputter serializer = new XMLOutputter(Format.getPrettyFormat());
 		PrintWriter xmlOut = XMLUtil.getXMLFileWriter(advElem);
 		serializer.output(doc, xmlOut);
 		xmlOut.close();
+		advElem.getJavaProject().getProject().refreshLocal(
+				IResource.DEPTH_INFINITE, null);
 	}
 }
