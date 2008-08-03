@@ -22,6 +22,7 @@
          <action
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin"
                definitionId="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut"
+               enablesFor="+"
                helpContextId="uk.ac.lancs.comp.khatchad.RejuvenatePointcut.help"
                id="uk.ac.lancs.comp.khatchad.RejuvinatePointcut.action"
                label="&amp;Rejuvenate Pointcut..."
@@ -53,6 +54,7 @@
          </action>
          <action
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin"
+               enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut.popup"
                label="Rejuvenate Pointcut..."
                menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2">
@@ -99,7 +101,7 @@
             <view
                   id="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionView"
                   ratio="0.5"
-                  relationship="right"
+                  relationship="bottom"
                   relative="org.eclipse.ui.views.TaskList">
             </view>
          </perspectiveExtension>

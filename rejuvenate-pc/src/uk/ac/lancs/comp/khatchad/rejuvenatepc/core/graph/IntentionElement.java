@@ -13,6 +13,7 @@ import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
 
+import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.FastConverter;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 
@@ -113,6 +114,9 @@ public abstract class IntentionElement<E> implements Serializable {
 	 * Converts this IntentionElement into its corresponding IJavaElement.
 	 * @param fastConverter 
 	 * @return The IJavaElement representing this IntentionElement.
+	 * @throws ConversionException 
 	 */
-	public abstract IJavaElement toJavaElement(JayFX database); 
+	public abstract IJavaElement toJavaElement(JayFX database) throws ConversionException; 
+	
+	public abstract boolean isAdvisable();
 }

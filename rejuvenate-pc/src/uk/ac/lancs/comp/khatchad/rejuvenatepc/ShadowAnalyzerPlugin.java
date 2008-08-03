@@ -73,6 +73,10 @@ public class ShadowAnalyzerPlugin extends Plugin {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
+			catch (Exception e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
 			monitor.worked(1);
 		}
 	}
@@ -80,23 +84,27 @@ public class ShadowAnalyzerPlugin extends Plugin {
 	/**
 	 * @param advElem
 	 * @param monitor
-	 * @throws JavaModelException
-	 * @throws SQLException
-	 * @throws ClassNotFoundException 
+	 * @throws Exception 
 	 */
 	private void analyze(AdviceElement advElem, IProgressMonitor monitor)
-			throws JavaModelException, SQLException, ClassNotFoundException {
+			throws Exception {
 
-		String adviceKey = DatabaseUtil.getKey(advElem);
-		DatabaseUtil.insertAdviceIntoDatabase(adviceKey);
+//		DatabaseUtil.updateInDatabase(advElem);
+		DatabaseUtil.insertIntoDatabase(advElem);
 
 		Set<IJavaElement> advisedJavaElements = AJUtil
 				.getAdvisedJavaElements(advElem);
 		monitor.beginTask("Retrieving advised Java Elements.",
 				advisedJavaElements.size());
 
+		String adviceKey = DatabaseUtil.getKey(advElem);
 		for (IJavaElement javaElem : advisedJavaElements) {
-			System.out.println(javaElem.getHandleIdentifier());
+			try {
+				System.out.println(javaElem.getHandleIdentifier());
+			}
+			catch (RuntimeException e) {
+				continue;
+			}
 			DatabaseUtil.insertShadowAndRelationshipIntoDatabase(adviceKey, javaElem,
 					DatabaseUtil.AdviceShadowRelationship.ADVISES);
 			monitor.worked(1);

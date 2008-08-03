@@ -3,6 +3,8 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc;
 
+import static uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util.getDefaultConstructor;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,6 +31,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -45,6 +49,8 @@ import org.jdom.filter.Filter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+
+import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
@@ -81,17 +87,18 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 
 	@Override
 	protected void run(IProgressMonitor monitor) {
-		final long start = System.currentTimeMillis();
-
 		this.suggestionList.clear();
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
 
-		if (!selectedAdvice.isEmpty())
-			analyzeAdvice(selectedAdvice, monitor);
+		System.out.println("Advice\tTime (s)");
+		for (AdviceElement advElem : selectedAdvice) {
+			final long start = System.currentTimeMillis();
+			analyzeAdvice(Collections.singleton(advElem), monitor);
+			final int secs = calculateTimeStatistics(start);
+			System.out.println(advElem.getHandleIdentifier() + "\t" + secs);
+		}
 
-		final int secs = calculateTimeStatistics(start);
-		System.err.println("Time (s): " + secs);
 		monitor.done();
 	}
 
@@ -118,17 +125,10 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
 
-			String adviceKey = DatabaseUtil.getKey(advElem);
 			try {
-				DatabaseUtil.insertAdviceIntoDatabase(adviceKey);
+				DatabaseUtil.insertIntoDatabase(advElem);
 			}
-			catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-			catch (SQLException e) {
-				// TODO Auto-generated catch block
+			catch(Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
@@ -136,7 +136,9 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 
-			graph.enableAllElements(new SubProgressMonitor(monitor, -1));
+			graph
+					.enableAllAdvisableElements(new SubProgressMonitor(monitor,
+							-1));
 
 			executeQueries(monitor, workingMemory, derivedPatternToResultMap,
 					derivedPatternToEnabledElementMap);
@@ -159,9 +161,14 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 						}
 					});
 
-			Collection<IJavaElement> advisedElements = extractAdvisedElements(document);
-			graph.enableElementsAccordingTo(advisedElements,
-					new SubProgressMonitor(monitor, -1));
+			//For aesthetic purposes.
+			try {
+				Collection<IJavaElement> advisedElements = extractAdvisedElements(document);
+				graph.enableElementsAccordingTo(advisedElements,
+						new SubProgressMonitor(monitor, -1));
+			}
+			catch (Exception e) {
+			}
 
 			//			System.out.println("Suggestion\tPattern\tConfidence");
 			for (Pattern<IntentionArc<IElement>> pattern : survingPatternSet) {
@@ -188,10 +195,12 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 
 						//insert into database.
 						try {
+							String adviceKey = DatabaseUtil.getKey(advElem);
 							DatabaseUtil
 									.insertShadowAndRelationshipIntoDatabase(
 											adviceKey,
 											suggestedJavaElement,
+											confidence,
 											DatabaseUtil.AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE);
 						}
 						catch (ClassNotFoundException e) {
@@ -200,6 +209,11 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 							throw new RuntimeException(e);
 						}
 						catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new RuntimeException(e);
+						}
+						catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							throw new RuntimeException(e);

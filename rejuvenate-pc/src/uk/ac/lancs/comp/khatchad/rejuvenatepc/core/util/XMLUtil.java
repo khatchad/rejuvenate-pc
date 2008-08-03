@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.jdom.Attribute;
 import org.jdom.Element;

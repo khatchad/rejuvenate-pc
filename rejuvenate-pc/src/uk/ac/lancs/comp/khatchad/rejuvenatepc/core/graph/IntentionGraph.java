@@ -29,12 +29,15 @@ import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchPattern;
 
 import uk.ac.lancs.comp.khatchad.ajayfx.model.JoinpointType;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.Constants;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.SearchEngineUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
+import ca.mcgill.cs.swevo.jayfx.model.MethodElement;
 import ca.mcgill.cs.swevo.jayfx.model.Relation;
 
 /**
@@ -42,8 +45,6 @@ import ca.mcgill.cs.swevo.jayfx.model.Relation;
  * 
  */
 public class IntentionGraph {
-
-	private static final String INIT_STRING = ".<init>";
 
 	private Set<IntentionNode<IElement>> nodeSet = new LinkedHashSet<IntentionNode<IElement>>();
 
@@ -216,7 +217,7 @@ public class IntentionGraph {
 					throw new IllegalStateException("Something is screwy here.");
 
 				final IAJCodeElement ajElem = (IAJCodeElement) advisedElement;
-				JoinpointType joinPointType = getJoinPointType(ajElem);
+				JoinpointType joinPointType = Util.getJoinPointType(ajElem);
 				IJavaElement source = advisedElement.getParent();
 				String targetString = ajElem.getElementName();
 
@@ -370,27 +371,9 @@ public class IntentionGraph {
 			final String targetString) {
 		String methodTargetString = transformTargetStringToMethodName(targetString);
 		StringBuilder ret = new StringBuilder(methodTargetString);
-		final int initPos = ret.indexOf(INIT_STRING);
-		ret.delete(initPos, initPos + INIT_STRING.length());
+		final int initPos = ret.indexOf(Constants.INIT_STRING);
+		ret.delete(initPos, initPos + Constants.INIT_STRING.length());
 		return ret.toString();
-	}
-
-	/**
-	 * @param ajElem
-	 */
-	private static JoinpointType getJoinPointType(final IAJCodeElement ajElem) {
-		final String type = ajElem.getElementName().substring(0,
-				ajElem.getElementName().indexOf("("));
-		final StringBuilder typeBuilder = new StringBuilder(type.toUpperCase());
-		final int pos = typeBuilder.indexOf("-");
-
-		final String joinPointTypeAsString = typeBuilder.replace(pos, pos + 1,
-				"_").toString();
-
-		final JoinpointType joinPointTypeAsEnum = JoinpointType
-				.valueOf(joinPointTypeAsString);
-
-		return joinPointTypeAsEnum;
 	}
 
 	private void resetAllElements(IProgressMonitor monitor) {
@@ -509,6 +492,18 @@ public class IntentionGraph {
 		}
 		return ret;
 	}
+	
+	public Collection<IntentionElement<IElement>> getAllAdvisableElements() {
+		final Set<IntentionElement<IElement>> ret = new LinkedHashSet<IntentionElement<IElement>>();
+		for (final IntentionNode<IElement> node : this.getNodes()) {
+			if ( node.isAdvisable() )
+				ret.add(node);
+			for (final IntentionArc<IElement> arc : node.getArcs())
+				if ( arc.isAdvisable() )
+					ret.add(arc);
+		}
+		return ret;
+	}
 
 	/**
 	 * @param subProgressMonitor
@@ -517,6 +512,14 @@ public class IntentionGraph {
 		Collection<IntentionElement<IElement>> allElements = this.getAllElements();
 		monitor.beginTask("Enabling all graph elements.", allElements.size());
 		for ( IntentionElement elem : allElements )
+			elem.enable();
+		monitor.done();
+	}
+	
+	public void enableAllAdvisableElements(IProgressMonitor monitor) {
+		Collection<IntentionElement<IElement>> allAdvisableElements = this.getAllAdvisableElements();
+		monitor.beginTask("Enabling all advisable graph elements.", allAdvisableElements.size());
+		for ( IntentionElement elem : allAdvisableElements )
 			elem.enable();
 		monitor.done();
 	}
