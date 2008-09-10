@@ -1,5 +1,6 @@
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -11,9 +12,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.*;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.jface.action.*;
@@ -27,6 +32,8 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model.Suggestion;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.ASTUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.JDTUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionViewSorter.SortBy;
 
 /**
@@ -47,7 +54,6 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionViewSorter.Sort
 public class SuggestionView extends ViewPart {
 	private TableViewer viewer;
 	private Action action1;
-	private Action action2;
 	private Action doubleClickAction;
 
 	// Set the table column property names
@@ -69,7 +75,9 @@ public class SuggestionView extends ViewPart {
 			Suggestion<IJavaElement> suggestion = (Suggestion<IJavaElement>) obj;
 			switch (index) {
 				case 0:
-					return suggestion.getSuggestion().getElementName();
+					return JDTUtil.getType(suggestion.getSuggestion())
+							.getFullyQualifiedName()
+							+ "." + suggestion.getSuggestion().getElementName();
 				case 1:
 					return suggestion.getPattern().toString();
 				case 2:
@@ -81,7 +89,8 @@ public class SuggestionView extends ViewPart {
 		}
 
 		public Image getColumnImage(Object obj, int index) {
-			return getImage(obj);
+			//			return getImage(obj);
+			return null;
 		}
 
 		public Image getImage(Object obj) {
@@ -202,53 +211,35 @@ public class SuggestionView extends ViewPart {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(action1);
-		manager.add(action2);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(action1);
-		manager.add(action2);
 	}
 
 	private void makeActions() {
 		action1 = new Action() {
 			public void run() {
-//				showMessage("Action 1 executed");
+				IContentProvider provider = RejuvenatePointcutPlugin
+						.getInstance();
+				if (provider != null)
+					viewer.setContentProvider(provider);
 				SuggestionView.this.viewer.refresh();
 			}
 		};
-//		action1.setText("Action 1");
 		action1.setText("Refresh");
-//		action1.setToolTipText("Action 1 tooltip");
 		action1.setToolTipText("Refresh the view");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		doubleClickAction = new Action() {
-			public void run() {
-				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection) selection)
-						.getFirstElement();
-				showMessage("Double-click detected on " + obj.toString());
-			}
-		};
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
+				SuggestionView.class, "reload.gif");
+		action1.setImageDescriptor(descriptor);
+		//		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+		//				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
 
 	private void hookDoubleClickAction() {

@@ -103,7 +103,7 @@ public class Path<E extends IntentionArc<IElement>> extends Stack<E> implements
 
 		final Pattern<IntentionArc<IElement>> ret = new Pattern<IntentionArc<IElement>>();
 		for (final IntentionArc<IElement> edge : this)
-			if (edge.getFromNode().equals(commonNode)) {
+			if (edge.getFromNode().equals(commonNode)) { //upwards pattern?
 				final IntentionArc<IElement> newEdge = new IntentionArc<IElement>(
 						edge.getFromNode(),
 						edge.getToNode().equals(enabledNode) ? IntentionNode.ENABLED_WILDCARD

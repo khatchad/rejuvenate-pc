@@ -50,8 +50,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
-
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
@@ -63,7 +61,6 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
-import ca.ubc.cs.pointcutdoctor.core.virtual.VirtualShadowUtil;
 
 /**
  * @author raffi
@@ -104,10 +101,11 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 
 	@Override
 	public void run(IAction action) {
+		this.instance = this;
 		final IProgressMonitor monitor = getProgressMonitor();
 		this.run(monitor);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#analyzeAdviceCollection(java.util.Collection, org.eclipse.core.runtime.IProgressMonitor, uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph, org.drools.WorkingMemory, java.io.PrintWriter)
 	 */
@@ -128,7 +126,7 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 			try {
 				DatabaseUtil.insertIntoDatabase(advElem);
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
@@ -152,8 +150,12 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 			//Intersect pattern sets.
 			Set<Pattern<IntentionArc<IElement>>> survingPatternSet = obtainSurvingPatterns(
 					derivedPatternToResultMap, recoveredPatternToConfidenceMap);
+			
+			for (Object obj : survingPatternSet )
+				System.out.println(obj);
 
 			//Make suggestions sorted by highest confidence.
+			//TODO: Actually, sort these by highest *combined* confidence.
 			SortedMap<Double, Set<IJavaElement>> confidenceToSuggestedJavaElementSetMap = new TreeMap<Double, Set<IJavaElement>>(
 					new Comparator<Double>() {
 						public int compare(Double o1, Double o2) {
@@ -172,6 +174,10 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 
 			//			System.out.println("Suggestion\tPattern\tConfidence");
 			for (Pattern<IntentionArc<IElement>> pattern : survingPatternSet) {
+				
+				if ( pattern.toString().equals("[HealthWatcherFacade, declares_method, *?]") )
+					System.out.println("here");
+				
 				//Get the confidence.
 				double confidence = recoveredPatternToConfidenceMap
 						.get(pattern);
@@ -200,8 +206,26 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 									.insertShadowAndRelationshipIntoDatabase(
 											adviceKey,
 											suggestedJavaElement,
+											pattern,
 											confidence,
 											DatabaseUtil.AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE);
+
+							String benchmark = null;
+							try {
+								benchmark = suggestedJavaElement
+										.getJavaProject().getProject()
+										.getName();
+							}
+							catch (RuntimeException e) {
+								return;
+							}
+							System.out.println(benchmark);
+							System.out.println(DatabaseUtil.getVersionNumber(benchmark));
+
+							//							DatabaseUtil.updatePatternInDatabase(adviceKey,
+							//									DatabaseUtil.getKey(suggestedJavaElement),
+							//									DatabaseUtil.getVersionNumber(benchmark),
+							//									pattern, confidence);
 						}
 						catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block

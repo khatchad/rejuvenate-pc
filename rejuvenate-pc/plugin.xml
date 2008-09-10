@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+	<!--
 	<extension
 	    point="org.eclipse.ui.actionSets">
 	    <actionSet
-            description="Analyzes a pointcut expression."
+            description="Rejuvenates a pointcut expression."
             id="uk.ac.lancs.comp.khatchad.analyze.pointcut"
             label="Rejuvinate Pointcut"
             visible="true">
@@ -32,6 +33,7 @@
                tooltip="Rejuvenate Pointcut"/>
       </actionSet>
    </extension>
+   -->
       <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -45,6 +47,7 @@
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.popup">
          </action>
+         <!--
          <action
                label="Analyze Shadows"
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ShadowAnalyzerPlugin"
@@ -52,6 +55,7 @@
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.shadows.popup">
          </action>
+         -->
          <action
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.RejuvenatePointcutPlugin"
                enablesFor="+"
@@ -71,6 +75,7 @@
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.popup">
          </action>
+         <!--
          <action
                label="Analyze Shadows"
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ShadowAnalyzerPlugin"
@@ -78,6 +83,7 @@
                enablesFor="+"
                id="uk.ac.lancs.comp.khatchad.analyze.shadows.project.popup">
          </action>
+         -->
       </objectContribution>
    </extension>
       <extension
@@ -89,7 +95,7 @@
          <view
                category="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui"
                class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionView"
-               icon="icons/sample.gif"
+               icon="icons/icon.png"
                id="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionView"
                name="Suggestions">
          </view>
