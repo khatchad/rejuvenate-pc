@@ -20,7 +20,6 @@ Require-Bundle: org.eclipse.jdt.core,
  org.aspectj.weaver,
  org.eclipse.jdt.ui,
  org.eclipse.jdt,
- ca.ubc.cs.pointcutdoctor.core,
  org.eclipse.core.filebuffers,
  org.eclipse.core.filesystem
 Bundle-ClassPath: .,

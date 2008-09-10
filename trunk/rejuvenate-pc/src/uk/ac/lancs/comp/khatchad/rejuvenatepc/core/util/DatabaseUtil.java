@@ -23,7 +23,11 @@ import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.internal.core.PackageFragment;
 import org.postgresql.ds.PGPoolingDataSource;
 
+import ca.mcgill.cs.swevo.jayfx.model.IElement;
+
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.Constants;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 
 /**
  * @author raffi
@@ -137,7 +141,8 @@ public class DatabaseUtil {
 	}
 
 	public static void insertAdviceShadowRelationshipIntoDatabase(
-			String adviceKey, String shadowKey, int version, double confidence,
+			String adviceKey, String shadowKey, int version,
+			Pattern<IntentionArc<IElement>> pattern, double confidence,
 			AdviceShadowRelationship relationship) throws Exception {
 		Connection conn = null;
 		Statement st = null;
@@ -155,7 +160,8 @@ public class DatabaseUtil {
 				st.executeUpdate("insert into "
 						+ relationship.getRelationshipTableName()
 						+ " values ('" + adviceKey + "', " + "'" + shadowKey
-						+ "', " + version + ", " + confidence + ")");
+						+ "', " + version + ", " + confidence + ", " + "'"
+						+ pattern + "')");
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -380,7 +386,8 @@ public class DatabaseUtil {
 					packageName = ((IType) javaElem.getParent())
 							.getPackageFragment().getElementName();
 				else if (javaElem.getParent().getParent().getParent() instanceof IPackageFragment)
-					packageName = ((IPackageDeclaration)javaElem.getParent()).getElementName();
+					packageName = ((IPackageDeclaration) javaElem.getParent())
+							.getElementName();
 				else {
 					if (!(javaElem.getParent().getParent() instanceof IType))
 						packageName = ((IType) javaElem.getParent().getParent()
@@ -407,7 +414,8 @@ public class DatabaseUtil {
 	}
 
 	public static void insertShadowAndRelationshipIntoDatabase(
-			String adviceKey, IJavaElement javaElem, double confidence,
+			String adviceKey, IJavaElement javaElem,
+			Pattern<IntentionArc<IElement>> pattern, double confidence,
 			AdviceShadowRelationship relationship) throws Exception {
 		String benchmark = javaElem.getJavaProject().getProject().getName();
 		String shadowKey = getKey(javaElem);
@@ -442,7 +450,7 @@ public class DatabaseUtil {
 				enclosingMethodName, className, packageName, version);
 
 		insertAdviceShadowRelationshipIntoDatabase(adviceKey, shadowKey,
-				version, confidence, relationship);
+				version, pattern, confidence, relationship);
 	}
 
 	/**
@@ -507,6 +515,44 @@ public class DatabaseUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * @param adviceKey
+	 * @param suggestedJavaElement
+	 * @param pattern
+	 * @param confidence
+	 * @throws Exception
+	 */
+	public static void updatePatternInDatabase(String adviceKey,
+			String shadowKey, int version,
+			Pattern<IntentionArc<IElement>> pattern, double confidence)
+			throws Exception {
+		Connection conn = null;
+		Statement st = null;
+
+		try {
+			conn = getConnection();
+			st = conn.createStatement();
+
+			String sql = "update "
+					+ AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE
+							.getRelationshipTableName() + " set "
+					+ "pattern = " + "'" + pattern + "' "
+					+ "where advice_key = '" + adviceKey + "' "
+					+ "and shadow_key = '" + shadowKey + "' "
+					+ "and version = " + version + " " + "and confidence = "
+					+ confidence;
+
+			st.executeUpdate(sql);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		finally {
+			closeConnections(conn, st);
 		}
 	}
 }
