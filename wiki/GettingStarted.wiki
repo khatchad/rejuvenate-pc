@@ -1,6 +1,8 @@
 #summary Instructions on how to use the plugin.
 
-Once the plugin is properly installed, two choices on the refactoring context menu should appear when an advice declaration is selected in any Eclipse view. 
+Once the plugin is properly installed, two choices on the refactoring context menu should appear when an advice declaration is selected in any Eclipse view. An example is below:
+
+http://rejuvenate-pc.googlecode.com/files/screenshot2.png
 
  # The _Analyze Pointcut_ selection analyzes the underlying intention patterns in the base-code in which the advice applies. In fact, you may analyze all advice contained within a project by selecting the project's context menu and then selecting _Analyze Pointcut_. Keep in mind that pointcuts can not be rejuvenated unless they are *analyzed first*. 
  # The _Rejuvenate Pointcut_ selection populates the _Suggestions_ view with suggested join point shadows for corresponding advice. Unlike _Analyze Pointcut_, the _Rejuvenate Pointcut_ selection may only be executed on a single advice.
