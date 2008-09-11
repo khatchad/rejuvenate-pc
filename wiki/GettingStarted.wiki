@@ -1,4 +1,4 @@
-#summary Instructions on how to use the plugin.
+﻿#summary Instructions on how to use the plugin.
 
 Once the plugin is properly installed, two choices on the refactoring context menu should appear when an advice declaration is selected in any Eclipse view. An example is below:
 
@@ -9,3 +9,7 @@ http://rejuvenate-pc.googlecode.com/files/screenshot2.png
  # Once the _Rejuvenate Pointcut_ selection has been executed, the next step is to _view_ the suggestions. Open the _Show View_ dialog in Eclipse, scroll down to the _Rejuvenate Pointcut_ folder, expand it, and select _Suggestions View_.
 
 You should now be able to see all the suggestions for your rejuvenated pointcut. Note that if the list appears empty, please press the _Refresh_ button located at the top right-hand corner of the view. 
+
+=== How to read the suggestions ===
+
+A method signature by iteself denotes an _execution_ join point suggestion for the corresponding method. For all other types of join points, a specific tag will be shown that qualifies the suggestion (e.g., _calls_). Future plans involve displaying suggestions in a similar way found in the _Cross References_ AJDT view.
