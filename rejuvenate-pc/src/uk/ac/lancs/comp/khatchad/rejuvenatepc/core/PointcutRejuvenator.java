@@ -1,19 +1,11 @@
-/**
- * 
- */
-package uk.ac.lancs.comp.khatchad.rejuvenatepc;
-
-import static uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util.getDefaultConstructor;
+package uk.ac.lancs.comp.khatchad.rejuvenatepc.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,92 +14,46 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.aspectj.asm.AsmManager;
 import org.drools.WorkingMemory;
 import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
-import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.jdom.Attribute;
 import org.jdom.DataConversionException;
-import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.filter.Filter;
 import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionArc;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionElement;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionNode;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model.Suggestion;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
-/**
- * @author raffi
- * 
- */
-public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
-		implements IStructuredContentProvider {
+public class PointcutRejuvenator extends PointcutProcessor {
 
-	private static RejuvenatePointcutPlugin instance;
-
-	/**
-	 * 
-	 */
 	private static final String PATH = "path";
-	/**
-	 * 
-	 */
+
 	private static final String PATTERN = "Pattern";
 
 	private List<Suggestion<IJavaElement>> suggestionList = new ArrayList<Suggestion<IJavaElement>>();
 
-	@Override
-	protected void run(IProgressMonitor monitor) {
-		this.suggestionList.clear();
-		final Collection<AdviceElement> selectedAdvice = this
-				.getSelectedAdvice();
-
-		System.out.println("Advice\tTime (s)");
-		for (AdviceElement advElem : selectedAdvice) {
-			final long start = System.currentTimeMillis();
-			analyzeAdvice(Collections.singleton(advElem), monitor);
-			final int secs = calculateTimeStatistics(start);
-			System.out.println(advElem.getHandleIdentifier() + "\t" + secs);
-		}
-
-		monitor.done();
-	}
-
-	@Override
-	public void run(IAction action) {
-		this.instance = this;
-		final IProgressMonitor monitor = getProgressMonitor();
-		this.run(monitor);
-	}
-	
-	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#analyzeAdviceCollection(java.util.Collection, org.eclipse.core.runtime.IProgressMonitor, uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph, org.drools.WorkingMemory, java.io.PrintWriter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeuk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#
+	 * analyzeAdviceCollection(java.util.Collection,
+	 * org.eclipse.core.runtime.IProgressMonitor,
+	 * uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.IntentionGraph,
+	 * org.drools.WorkingMemory, java.io.PrintWriter)
 	 */
 	@SuppressWarnings("restriction")
 	@Override
@@ -125,8 +71,7 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 
 			try {
 				DatabaseUtil.insertIntoDatabase(advElem);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
@@ -141,21 +86,21 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 			executeQueries(monitor, workingMemory, derivedPatternToResultMap,
 					derivedPatternToEnabledElementMap);
 
-			//retrieve analysis information.
+			// retrieve analysis information.
 			Document document = readXMLFile(advElem);
 
-			//Retrieve the saved patterns.
+			// Retrieve the saved patterns.
 			Map<Pattern<IntentionArc<IElement>>, Double> recoveredPatternToConfidenceMap = extractPatterns(document);
 
-			//Intersect pattern sets.
+			// Intersect pattern sets.
 			Set<Pattern<IntentionArc<IElement>>> survingPatternSet = obtainSurvingPatterns(
 					derivedPatternToResultMap, recoveredPatternToConfidenceMap);
-			
-			for (Object obj : survingPatternSet )
-				System.out.println(obj);
 
-			//Make suggestions sorted by highest confidence.
-			//TODO: Actually, sort these by highest *combined* confidence.
+//			for (Object obj : survingPatternSet)
+//				System.out.println(obj);
+
+			// Make suggestions sorted by highest confidence.
+			// TODO: Actually, sort these by highest *combined* confidence.
 			SortedMap<Double, Set<IJavaElement>> confidenceToSuggestedJavaElementSetMap = new TreeMap<Double, Set<IJavaElement>>(
 					new Comparator<Double>() {
 						public int compare(Double o1, Double o2) {
@@ -163,22 +108,18 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 						}
 					});
 
-			//For aesthetic purposes.
+			// For aesthetic purposes.
 			try {
 				Collection<IJavaElement> advisedElements = extractAdvisedElements(document);
 				graph.enableElementsAccordingTo(advisedElements,
 						new SubProgressMonitor(monitor, -1));
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 			}
 
-			//			System.out.println("Suggestion\tPattern\tConfidence");
+			// System.out.println("Suggestion\tPattern\tConfidence");
 			for (Pattern<IntentionArc<IElement>> pattern : survingPatternSet) {
-				
-				if ( pattern.toString().equals("[HealthWatcherFacade, declares_method, *?]") )
-					System.out.println("here");
-				
-				//Get the confidence.
+
+				// Get the confidence.
 				double confidence = recoveredPatternToConfidenceMap
 						.get(pattern);
 
@@ -190,16 +131,18 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 				Set<IJavaElement> suggestedJavaElementSet = confidenceToSuggestedJavaElementSetMap
 						.get(confidence);
 
-				//Get the suggestions.
+				// Get the suggestions.
 				for (IntentionElement<IElement> intentionElement : derivedPatternToResultMap
 						.get(pattern)) {
 
 					IJavaElement suggestedJavaElement = intentionElement
 							.toJavaElement(graph.getDatabase());
 
-					if (suggestedJavaElement != null) { //if no java element for this suggestion, disregard.
+					if (suggestedJavaElement != null) { // if no java element
+						// for this suggestion,
+						// disregard.
 
-						//insert into database.
+						// insert into database.
 						try {
 							String adviceKey = DatabaseUtil.getKey(advElem);
 							DatabaseUtil
@@ -215,37 +158,34 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 								benchmark = suggestedJavaElement
 										.getJavaProject().getProject()
 										.getName();
-							}
-							catch (RuntimeException e) {
+							} catch (RuntimeException e) {
 								return;
 							}
-							System.out.println(benchmark);
-							System.out.println(DatabaseUtil.getVersionNumber(benchmark));
+							// System.out.println(benchmark);
+							// System.out.println(DatabaseUtil
+							// .getVersionNumber(benchmark));
 
-							//							DatabaseUtil.updatePatternInDatabase(adviceKey,
-							//									DatabaseUtil.getKey(suggestedJavaElement),
-							//									DatabaseUtil.getVersionNumber(benchmark),
-							//									pattern, confidence);
-						}
-						catch (ClassNotFoundException e) {
+							// DatabaseUtil.updatePatternInDatabase(adviceKey,
+							// DatabaseUtil.getKey(suggestedJavaElement),
+							// DatabaseUtil.getVersionNumber(benchmark),
+							// pattern, confidence);
+						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							throw new RuntimeException(e);
-						}
-						catch (SQLException e) {
+						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							throw new RuntimeException(e);
-						}
-						catch (Exception e) {
+						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							throw new RuntimeException(e);
 						}
 
 						suggestedJavaElementSet.add(suggestedJavaElement);
-						//						System.out.println(intentionElement.toPrettyString()
-						//								+ "\t" + pattern + "\t" + confidence);
+						// System.out.println(intentionElement.toPrettyString()
+						// + "\t" + pattern + "\t" + confidence);
 						Suggestion<IJavaElement> suggestion = new Suggestion<IJavaElement>(
 								suggestedJavaElement, pattern, confidence);
 						this.suggestionList.add(suggestion);
@@ -325,41 +265,16 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin
 	 */
 	private Document readXMLFile(AdviceElement advElem) throws JDOMException,
 			IOException {
-		org.jdom.input.SAXBuilder builder = new SAXBuilder();
+		SAXBuilder builder = new SAXBuilder();
 		File advXMLFile = XMLUtil.getSavedXMLFile(advElem);
 		return builder.build(advXMLFile);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object inputElement) {
-		return this.suggestionList.toArray();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	}
-
-	/**
-	 * @return the suggestionList
-	 */
 	public List<Suggestion<IJavaElement>> getSuggestionList() {
-		return this.suggestionList;
+		return suggestionList;
 	}
-
-	/* (non-Javadoc)
-	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	@Override
-	public void init(IWorkbenchWindow window) {
-		super.init(window);
-		this.instance = this;
-	}
-
-	public static RejuvenatePointcutPlugin getInstance() {
-		return instance;
+	
+	public void clearSuggestionList() {
+		this.suggestionList.clear();
 	}
 }
