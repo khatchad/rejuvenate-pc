@@ -8,6 +8,9 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc.core;
  * 
  */
 public class Constants {
+	
+	@SuppressWarnings("unused")
+	private static final String DATABASE_FILE_NAME = "rejuv-pc.xml";
 
 	public static final String DB_URL = "jdbc:postgresql:rejuv-pc";
 	public static final String INIT_STRING = ".<init>";
