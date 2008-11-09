@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%SuggestionView.label"
+            icon="icons/icon.png"
+            category="org.eclipse.ajdt.ui.cat"
+            class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionView"
+            id="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.views.SuggestionView"
+               ratio="0.6"
+               relationship="bottom"
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+   </extension>
+      <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.ajdt.core.javaelements.AdviceElement"
+            adaptable="true"
+            id="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut.object.contribution">
+         <action
+               label="Analyze Pointcut..."
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.AnalyzePointcutPlugin"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.analyze.pointcut.popup">
+         </action>
+         <action
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.RejuvenatePointcutPlugin"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.rejuvenate.pointcut.popup"
+               label="Rejuvenate Pointcut..."
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.contribution">
+         <action
+               label="Analyze Pointcut..."
+               class="uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.AnalyzePointcutPlugin"
+               menubarPath="org.eclipse.jdt.ui.refactoring.menu/reorgGroup2"
+               enablesFor="+"
+               id="uk.ac.lancs.comp.khatchad.analyze.pointcut.project.popup">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
