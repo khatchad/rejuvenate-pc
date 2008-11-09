@@ -243,26 +243,26 @@ public class ASTCrawler extends ASTVisitor {
 	}
 
 	@SuppressWarnings( { "unchecked", "unused" })
-	private static List<AdviceElement> getApplicableAdvice(final IJavaElement je) {
-		final List<AdviceElement> advisedBy = new ArrayList<AdviceElement>();
-		final List<AdviceElement> direct = AJModel.getInstance()
-				.getRelatedElements(AJRelationshipManager.ADVISED_BY, je);
-		if (direct != null)
-			advisedBy.addAll(direct);
-
-		// check for advised code elements
-		final List extras = AJModel.getInstance().getExtraChildren(je);
-		if (extras != null)
-			for (final Iterator iter = extras.iterator(); iter.hasNext();) {
-				final IJavaElement element = (IJavaElement) iter.next();
-				final List<AdviceElement> indirect = AJModel.getInstance()
-						.getRelatedElements(AJRelationshipManager.ADVISED_BY,
-								element);
-				if (indirect != null)
-					advisedBy.addAll(indirect);
-			}
-		return advisedBy;
-	}
+//	private static List<AdviceElement> getApplicableAdvice(final IJavaElement je) {
+//		final List<AdviceElement> advisedBy = new ArrayList<AdviceElement>();
+//		final List<AdviceElement> direct = AJModel.getInstance()
+//				.getRelatedElements(AJRelationshipManager.ADVISED_BY, je);
+//		if (direct != null)
+//			advisedBy.addAll(direct);
+//
+//		// check for advised code elements
+//		final List extras = AJModel.getInstance().getExtraChildren(je);
+//		if (extras != null)
+//			for (final Iterator iter = extras.iterator(); iter.hasNext();) {
+//				final IJavaElement element = (IJavaElement) iter.next();
+//				final List<AdviceElement> indirect = AJModel.getInstance()
+//						.getRelatedElements(AJRelationshipManager.ADVISED_BY,
+//								element);
+//				if (indirect != null)
+//					advisedBy.addAll(indirect);
+//			}
+//		return advisedBy;
+//	}
 
 	private static Assignment getAssignment(final ASTNode node) {
 		if (node == null)

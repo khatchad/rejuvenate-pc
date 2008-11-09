@@ -13,7 +13,6 @@ import org.aspectj.weaver.AsmRelationshipUtils;
 import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AJCodeElement;
 import org.eclipse.ajdt.core.model.AJModel;
-import org.eclipse.ajdt.core.model.AJProjectModel;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
@@ -291,8 +290,8 @@ public class IntentionArc<E extends IElement> extends IntentionElement<E> {
 		name.append(targetString);
 		name.append(')');
 
-		AJCodeElement ret = new AJCodeElement((JavaElement) source, 0, name
-				.toString());
+		AJCodeElement ret = new AJCodeElement((JavaElement) source, name
+				.toString(), 0);
 
 		return ret;
 	}

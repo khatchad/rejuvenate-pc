@@ -17,7 +17,6 @@ import org.aspectj.org.eclipse.jdt.internal.compiler.lookup.ReferenceBinding;
 import org.aspectj.org.eclipse.jdt.internal.compiler.lookup.SourceTypeBinding;
 import org.aspectj.org.eclipse.jdt.internal.compiler.lookup.TypeBinding;
 import org.eclipse.ajdt.core.AspectJCore;
-import org.eclipse.ajdt.core.model.AJProjectModel;
 
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import ca.mcgill.cs.swevo.jayfx.FastConverter;
