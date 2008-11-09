@@ -6,7 +6,7 @@ http://rejuvenate-pc.googlecode.com/files/screenshot2.png
 
  # The _Analyze Pointcut_ selection analyzes the underlying intention patterns in the base-code in which the advice applies. In fact, you may analyze all advice contained within a project by selecting the project's context menu and then selecting _Analyze Pointcut_. Keep in mind that pointcuts can not be rejuvenated unless they are *analyzed first*. 
  # The _Rejuvenate Pointcut_ selection populates the _Suggestions_ view with suggested join point shadows for corresponding advice. Unlike _Analyze Pointcut_, the _Rejuvenate Pointcut_ selection may only be executed on a single advice.
- # Once the _Rejuvenate Pointcut_ selection has been executed, the next step is to _view_ the suggestions. Open the _Show View_ dialog in Eclipse, scroll down to the _AspectJ_ folder, expand it, and select the _Suggestions_ view.
+ # Once the _Rejuvenate Pointcut_ selection has been executed, the next step is to _view_ the suggestions. Open the _Show View_ dialog in Eclipse, scroll down to the AspectJ folder, expand it, and select the _Suggestions_ view.
 
 You should now be able to see all the suggestions for your rejuvenated pointcut. Note that if the list appears empty, please make sure that the enclosing aspect is focused in the UI either by clicking on its source editor window, its icon in the _Outline_ view, etc. 
 
