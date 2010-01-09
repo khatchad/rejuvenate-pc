@@ -52,7 +52,8 @@ public class XMLUtil {
 			throws IOException {
 		String fileName = getRelativeXMLFileName(advElem);
 		final File aFile = new File(FileUtil.WORKSPACE_LOC, fileName);
-		return FileUtil.getPrintWriter(aFile, false);
+		PrintWriter ret = FileUtil.getPrintWriter(aFile, false);
+		return ret;
 	}
 
 	/**
