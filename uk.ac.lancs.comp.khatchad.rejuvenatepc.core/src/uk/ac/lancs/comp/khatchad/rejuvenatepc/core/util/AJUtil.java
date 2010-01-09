@@ -16,6 +16,8 @@ import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
 import org.eclipse.ajdt.core.model.AJModel;
+//import org.eclipse.ajdt.core.model.AJProjectModelFacade;
+//import org.eclipse.ajdt.core.model.AJProjectModelFactory;
 import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
@@ -59,6 +61,13 @@ public class AJUtil {
 	public static Set<IJavaElement> getAdvisedJavaElements(AdviceElement advElem)
 			throws JavaModelException {
 		Set<IJavaElement> ret = new LinkedHashSet<IJavaElement>();
+		
+		/* TODO: Broken (it seems).
+		 * AJProjectModelFactory factory = AJProjectModelFactory.getInstance();
+		 * AJProjectModelFacade facade = factory.getModelForJavaElement(advElem);
+		 * List list = facade.getRelationshipsForElement(advElem, null);
+		*/
+		
 		List<AJRelationship> relationshipList = getAdviceRelationshipList(advElem);
 		for (final AJRelationship relationship : relationshipList) {
 			final IJavaElement advice = relationship.getSource();

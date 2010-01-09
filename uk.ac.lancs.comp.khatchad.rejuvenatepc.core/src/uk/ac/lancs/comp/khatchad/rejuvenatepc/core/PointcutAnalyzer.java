@@ -56,12 +56,12 @@ public class PointcutAnalyzer extends PointcutProcessor {
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
 
-			try {
-				DatabaseUtil.insertIntoDatabase(advElem);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
+//			try {
+//				DatabaseUtil.insertIntoDatabase(advElem);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				throw new RuntimeException(e);
+//			}
 
 			Element adviceXMLElement = createAdviceXMLElement(advElem);
 
@@ -70,9 +70,9 @@ public class PointcutAnalyzer extends PointcutProcessor {
 
 			graph.enableElementsAccordingTo(advElem, monitor);
 
-			GraphVizUtil.makeDotFile(graph, pointcutCount,
-					FileUtil.WORKSPACE_LOC + advElem.getPath().toOSString()
-							+ "-");
+//			GraphVizUtil.makeDotFile(graph, pointcutCount,
+//					FileUtil.WORKSPACE_LOC + advElem.getPath().toOSString()
+//							+ "-");
 
 			executeQueries(monitor, workingMemory, patternToResultMap,
 					patternToEnabledElementMap);
