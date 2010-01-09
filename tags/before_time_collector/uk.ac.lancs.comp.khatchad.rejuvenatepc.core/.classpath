@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="uk/ac/lancs/comp/khatchad/rejuvenatepc/core/util/DatasbaseControlling.aj" kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/drools-compiler-4.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/drools-core-4.0.4.jar" sourcepath="lib/drools-core-4.0.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/Users/raffi/local/drools-4/documentation/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/mvel14-1.2.21.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ant-1.6.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/antlr-runtime-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ant-nodeps-1.6.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/janino-2.5.10.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jsr94-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jxl-2.4.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xercesImpl-2.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xml-apis-1.0.b2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.3.4.O.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xstream-1.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/jdom.jar" sourcepath="/Users/raffi/local/jdom-1.1/src/java">
+		<attributes>
+			<attribute name="javadoc_location" value="http://www.jdom.org/docs/apidocs/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/postgresql-8.3-603.jdbc3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
