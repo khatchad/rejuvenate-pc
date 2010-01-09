@@ -59,6 +59,7 @@ public class FileUtil {
 	public static PrintWriter getPrintWriter(final File aFile,
 			final boolean append) throws IOException {
 		final FileWriter resFileOut = new FileWriter(aFile, append);
-		return new PrintWriter(resFileOut);
+		PrintWriter ret = new PrintWriter(resFileOut);
+		return ret;
 	}
 }
