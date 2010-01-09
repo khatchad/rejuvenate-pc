@@ -3,32 +3,18 @@
  */
 package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph;
 
-import java.util.Set;
-
-import org.aspectj.asm.AsmManager;
-import org.aspectj.asm.IProgramElement;
-import org.aspectj.asm.internal.ProgramElement;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.weaver.AsmRelationshipUtils;
-import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AJCodeElement;
-import org.eclipse.ajdt.core.model.AJModel;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.core.JavaElement;
-import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 import org.jdom.Element;
 
 import uk.ac.lancs.comp.khatchad.ajayfx.Converter;
-import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
-
 import ca.mcgill.cs.swevo.jayfx.ConversionException;
-import ca.mcgill.cs.swevo.jayfx.FastConverter;
 import ca.mcgill.cs.swevo.jayfx.JayFX;
 import ca.mcgill.cs.swevo.jayfx.model.FieldElement;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
@@ -290,8 +276,10 @@ public class IntentionArc<E extends IElement> extends IntentionElement<E> {
 		name.append(targetString);
 		name.append(')');
 
-		AJCodeElement ret = new AJCodeElement((JavaElement) source, name
-				.toString(), 0);
+//		AJCodeElement ret = new AJCodeElement((JavaElement) source, name
+//				.toString(), 0);
+		AJCodeElement ret = new AJCodeElement((JavaElement) source, 0, name
+				.toString());
 
 		return ret;
 	}
