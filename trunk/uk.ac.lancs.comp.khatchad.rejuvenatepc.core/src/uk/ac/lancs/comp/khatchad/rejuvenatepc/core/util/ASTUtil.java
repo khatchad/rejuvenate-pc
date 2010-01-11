@@ -78,10 +78,12 @@ public class ASTUtil {
 
 	public static CompilationUnit getCompilationUnit(
 			final ICompilationUnit icu, final IProgressMonitor monitor) {
+		TimeCollector.start();
 		final ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(icu);
 		parser.setResolveBindings(true);
 		final CompilationUnit ret = (CompilationUnit) parser.createAST(monitor);
+		TimeCollector.stop();
 		return ret;
 	}
 

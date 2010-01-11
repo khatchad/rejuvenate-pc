@@ -58,8 +58,10 @@ public class FileUtil {
 	 */
 	public static PrintWriter getPrintWriter(final File aFile,
 			final boolean append) throws IOException {
+		TimeCollector.start();
 		final FileWriter resFileOut = new FileWriter(aFile, append);
 		PrintWriter ret = new PrintWriter(resFileOut);
+		TimeCollector.stop();
 		return ret;
 	}
 }

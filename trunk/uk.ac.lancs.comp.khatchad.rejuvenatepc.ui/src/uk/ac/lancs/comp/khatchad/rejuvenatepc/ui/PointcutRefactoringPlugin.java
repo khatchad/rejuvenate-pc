@@ -79,13 +79,17 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	private static PrintWriter generateSuggestionStatsWriter()
 			throws IOException {
 		final PrintWriter ret = getSuggestionStatsWriter();
+		TimeCollector.start();
 		ret.println("Benchmark\tAdvice#\tAdvice\tPattern\tElement\t");
+		TimeCollector.stop();
 		return ret;
 	}
 
 	private static PrintWriter generateEnabledStatsWriter() throws IOException {
 		final PrintWriter patternOut = getEnabledElementStatsWriter();
+		TimeCollector.start();
 		patternOut.println("Benchmark\tAdvice#\tAdvice\tPattern\tElement\t");
+		TimeCollector.stop();
 		return patternOut;
 	}
 
@@ -97,10 +101,12 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	 * 
 	 */
 	protected void closeConnections() {
+		TimeCollector.start();
 		this.patternOut.close();
 		this.suggestionOut.close();
 		this.enabledOut.close();
 		this.adviceOut.close();
+		TimeCollector.stop();
 	}
 
 	/**
@@ -155,8 +161,10 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 
 	private static PrintWriter generateAdviceStatsWriter() throws IOException {
 		final PrintWriter ret = getAdviceStatsWriter();
+		TimeCollector.start();
 		ret
 				.println("Benchmark\tAdvice#\tAdvice\t#Shadows\t#Patterns\t#Results\t#Enabled\t#OverallEnabled\tOverallElements\tConfidence\t");
+		TimeCollector.stop();
 		return ret;
 	}
 
@@ -193,8 +201,10 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	 */
 	private static PrintWriter generatePatternStatsWriter() throws IOException {
 		final PrintWriter patternOut = getPatternStatsWriter();
+		TimeCollector.start();
 		patternOut
 				.println("Benchmark\tAdvice#\tAdvice\tPattern\t#Results\t#Enabled\tSize\tPrecision\tConcreteness\tConfidence");
+		TimeCollector.stop();
 		return patternOut;
 	}
 
@@ -287,11 +297,13 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	 * @return
 	 */
 	protected int calculateTimeStatistics(final long start) {
-		TimeColleting collecting = TimeColleting.aspectOf();
-	
-		final long elapsed = System.currentTimeMillis()
-				- (start + collecting.getCollectedTime());
-		collecting.clear();
+		long end = System.currentTimeMillis();
+		
+		long collectedTime = TimeCollector.getCollectedTime();
+		long newStart = start + collectedTime;
+		final long elapsed = end - newStart;	
+		
+		TimeCollector.clear();
 		final int secs = (int) elapsed / 1000;
 		return secs;
 	}
