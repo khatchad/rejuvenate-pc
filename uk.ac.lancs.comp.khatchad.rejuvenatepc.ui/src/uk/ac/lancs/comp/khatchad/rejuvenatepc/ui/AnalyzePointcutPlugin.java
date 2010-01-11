@@ -41,6 +41,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.FileUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.GraphVizUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.TimeCollector;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 
@@ -131,7 +132,9 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+		TimeCollector.start();
 		benchmarkOut.println("Benchmark\t#Advice\t#Shadows\tTime(s)");
+		TimeCollector.stop();
 		return benchmarkOut;
 	}
 
@@ -153,12 +156,15 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
 	@SuppressWarnings("unchecked")
 	private int getTotalNumberOfShadows(final IJavaProject proj) {
+		TimeCollector.start();
 		final List<AJRelationship> relationshipList = AJModel
 				.getInstance()
 				.getAllRelationships(
 						proj.getProject(),
 						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
-		return relationshipList.size();
+		int ret = relationshipList.size();
+		TimeCollector.stop();
+		return ret;
 	}
 
 	/* (non-Javadoc)

@@ -65,6 +65,8 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.TimeCollector;
+
 import ca.mcgill.cs.swevo.jayfx.model.ClassElement;
 import ca.mcgill.cs.swevo.jayfx.model.FlyweightElementFactory;
 import ca.mcgill.cs.swevo.jayfx.model.Category;
@@ -325,6 +327,7 @@ public class ASTCrawler extends ASTVisitor {
 	 */
 	@SuppressWarnings( { "restriction", "unchecked" })
 	public void analyze(final ICompilationUnit pCU) {
+		TimeCollector.start();
 		this.resetSpider();
 
 		this.extractTypes(pCU);
@@ -334,6 +337,7 @@ public class ASTCrawler extends ASTVisitor {
 		final CompilationUnit lResult = (CompilationUnit) lParser
 				.createAST(null);
 		lResult.accept(this);
+		TimeCollector.stop();
 	}
 
 	@Override
