@@ -46,7 +46,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
 
 public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
-	
+
 	private PointcutAnalyzer analyzer = new PointcutAnalyzer();
 
 	private PrintWriter benchmarkOut;
@@ -58,38 +58,43 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	}
 
 	protected void run(IProgressMonitor monitor) {
-		//TODO: Don't know why I should have to call this manually.
-		this.init(null);
 
-		final Collection<AdviceElement> selectedAdvice = this
-				.getSelectedAdvice();
-		final Collection<IJavaProject> selectedProjectCol = this
-				.getSelectedJavaProjects();
+		try {
+			// TODO: Don't know why I should have to call this manually.
+			this.init(null);
 
-		if (!selectedAdvice.isEmpty() && !selectedProjectCol.isEmpty())
-			throw new IllegalStateException(
-					"For test runs, select *either* project or advice but not both.");
-		
-		if (!selectedAdvice.isEmpty())
-			analyzer.analyzeAdvice(selectedAdvice, monitor);
+			final Collection<AdviceElement> selectedAdvice = this
+					.getSelectedAdvice();
+			final Collection<IJavaProject> selectedProjectCol = this
+					.getSelectedJavaProjects();
 
-		else if (!selectedProjectCol.isEmpty()) {
-			for (final IJavaProject proj : selectedProjectCol) {
-				final long start = System.currentTimeMillis();
+			if (!selectedAdvice.isEmpty() && !selectedProjectCol.isEmpty())
+				throw new IllegalStateException(
+						"For test runs, select *either* project or advice but not both.");
 
-				Collection<? extends AdviceElement> analyzedAdvice = analyzeAdviceInProject(
-						proj, monitor);
+			if (!selectedAdvice.isEmpty())
+				analyzer.analyzeAdvice(selectedAdvice, monitor);
 
-				int numShadows = 0;
-				if (!analyzedAdvice.isEmpty())
-					numShadows = this.getTotalNumberOfShadows(proj);
+			else if (!selectedProjectCol.isEmpty()) {
+				for (final IJavaProject proj : selectedProjectCol) {
+					final long start = System.currentTimeMillis();
 
-				final int secs = calculateTimeStatistics(start);
+					Collection<? extends AdviceElement> analyzedAdvice = analyzeAdviceInProject(
+							proj, monitor);
 
-				printBenchmarkStatistics(proj, analyzedAdvice, numShadows, secs);
+					int numShadows = 0;
+					if (!analyzedAdvice.isEmpty())
+						numShadows = this.getTotalNumberOfShadows(proj);
+
+					final int secs = calculateTimeStatistics(start);
+
+					printBenchmarkStatistics(proj, analyzedAdvice, numShadows,
+							secs);
+				}
 			}
+		} finally {
+			this.closeConnections();
 		}
-		this.closeConnections();
 	}
 
 	/**
@@ -105,13 +110,11 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 			if (!toAnalyze.isEmpty()) {
 				this.analyzer.analyze(toAnalyze, lMonitor);
 			}
-		}
-		catch (final JavaModelException e) {
+		} catch (final JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
-		}
-		catch (final Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -126,8 +129,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		PrintWriter benchmarkOut = null;
 		try {
 			benchmarkOut = AnalyzePointcutPlugin.getBenchmarkStatsWriter();
-		}
-		catch (final IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -167,7 +169,9 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		return ret;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see uk.ac.lancs.comp.khatchad.rejuvenatepc.PointcutRefactoringPlugin#closeConnections()
 	 */
 	@Override
