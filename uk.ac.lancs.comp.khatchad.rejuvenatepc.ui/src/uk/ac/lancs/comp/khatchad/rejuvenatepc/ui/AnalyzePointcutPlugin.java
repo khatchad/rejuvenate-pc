@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.mail.MessagingException;
+
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.model.AJModel;
@@ -44,6 +46,7 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.GraphVizUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.TimeCollector;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.util.PostMan;
 
 public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 
@@ -92,8 +95,16 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 							secs);
 				}
 			}
-		} finally {
+		}
+		finally {
 			this.closeConnections();
+			try {
+				PostMan.postMail("Done", "Done", "khatchad@cse.ohio-state.edu",
+						"khatchad@cse.ohio-state.edu");
+			}
+			catch (MessagingException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -110,11 +121,13 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 			if (!toAnalyze.isEmpty()) {
 				this.analyzer.analyze(toAnalyze, lMonitor);
 			}
-		} catch (final JavaModelException e) {
+		}
+		catch (final JavaModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
-		} catch (final Exception e) {
+		}
+		catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -129,7 +142,8 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		PrintWriter benchmarkOut = null;
 		try {
 			benchmarkOut = AnalyzePointcutPlugin.getBenchmarkStatsWriter();
-		} catch (final IOException e) {
+		}
+		catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
