@@ -191,7 +191,9 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	@Override
 	protected void closeConnections() {
 		super.closeConnections();
+		TimeCollector.start();
 		this.benchmarkOut.close();
+		TimeCollector.stop();
 	}
 
 	@Override
