@@ -98,13 +98,18 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 		}
 		finally {
 			this.closeConnections();
-			try {
-				PostMan.postMail("Done", "Done", "khatchad@cse.ohio-state.edu",
-						"khatchad@cse.ohio-state.edu");
-			}
-			catch (MessagingException e) {
-				e.printStackTrace();
-			}
+			PostMan.postMail("Done", "Done", "khatchad@cse.ohio-state.edu",
+					"khatchad@cse.ohio-state.edu");
+			if (System.getProperty("os.name").equalsIgnoreCase("Mac OS X"))
+				try {
+					Runtime.getRuntime().exec(
+							"/usr/local/bin/growlnotify -n Eclipse -a Eclipse -m "
+									+ this.getClass().getSimpleName()
+									+ " is done");
+				}
+				catch (final IOException e) {
+					System.err.println("Can't send notification.");
+				}
 		}
 	}
 
