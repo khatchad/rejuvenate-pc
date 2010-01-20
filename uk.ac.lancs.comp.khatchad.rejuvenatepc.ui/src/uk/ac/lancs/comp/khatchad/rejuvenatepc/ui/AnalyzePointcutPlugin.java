@@ -89,7 +89,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 					if (!analyzedAdvice.isEmpty())
 						numShadows = this.getTotalNumberOfShadows(proj);
 
-					final int secs = calculateTimeStatistics(start);
+					final double secs = calculateTimeStatistics(start);
 
 					printBenchmarkStatistics(proj, analyzedAdvice, numShadows,
 							secs);
@@ -167,7 +167,7 @@ public class AnalyzePointcutPlugin extends PointcutRefactoringPlugin {
 	 */
 	private void printBenchmarkStatistics(final IJavaProject proj,
 			Collection<? extends AdviceElement> toAnalyze, int numShadows,
-			final int secs) {
+			final double secs) {
 		benchmarkOut.print(proj.getProject().getName() + "\t");
 		benchmarkOut.print(toAnalyze.size() + "\t");
 		benchmarkOut.print(numShadows + "\t");

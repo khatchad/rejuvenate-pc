@@ -72,9 +72,9 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin {
 
 //		System.out.println("Advice\tTime (s)");
 		for (AdviceElement advElem : selectedAdvice) {
-			final long start = System.currentTimeMillis();
+//			final long start = System.currentTimeMillis();
 			this.rejuvenator.analyzeAdvice(Collections.singleton(advElem), monitor);
-			final int secs = calculateTimeStatistics(start);
+//			final double secs = calculateTimeStatistics(start);
 //			System.out.println(advElem.getHandleIdentifier() + "\t" + secs);
 		}
 
