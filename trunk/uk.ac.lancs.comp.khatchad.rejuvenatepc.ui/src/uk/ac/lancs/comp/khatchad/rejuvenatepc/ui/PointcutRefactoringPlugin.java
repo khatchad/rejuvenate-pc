@@ -296,7 +296,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 	 * @param start
 	 * @return
 	 */
-	protected int calculateTimeStatistics(final long start) {
+	protected double calculateTimeStatistics(final long start) {
 		long end = System.currentTimeMillis();
 		
 		long collectedTime = TimeCollector.getCollectedTime();
@@ -304,7 +304,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 		final long elapsed = end - newStart;	
 		
 		TimeCollector.clear();
-		final int secs = (int) elapsed / 1000;
+		final double secs = elapsed / 1000;
 		return secs;
 	}
 }
