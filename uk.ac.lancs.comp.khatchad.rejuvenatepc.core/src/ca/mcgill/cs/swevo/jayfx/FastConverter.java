@@ -157,8 +157,10 @@ public class FastConverter {
 			System.out.println(lName);
 		}
 
-		if (lReturn == null)
+		if (lReturn == null) {
+			System.err.println("Error with element: " + pElement);
 			throw new IllegalStateException("In trouble.");
+		}
 		return lReturn;
 	}
 

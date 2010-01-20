@@ -62,7 +62,15 @@ public class XMLUtil {
 	 */
 	public static Element getXML(IJavaElement elem) {
 		Element ret = new Element(elem.getClass().getSimpleName());
-		ret.setAttribute(new Attribute("id", elem.getHandleIdentifier()));
+		String handleIdentifier = null;
+		try {
+			handleIdentifier = elem.getHandleIdentifier();
+		}
+		catch(NullPointerException e) {
+			System.err.println("Can't retrieve element handler for: " + elem);
+			System.exit(-1);
+		}
+		ret.setAttribute(new Attribute("id", handleIdentifier));
 		ret.setAttribute(new Attribute("name", elem.getElementName()));
 		ret.setAttribute(new Attribute("type", String.valueOf(elem
 				.getElementType())));
