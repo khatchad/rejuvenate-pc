@@ -304,7 +304,7 @@ public abstract class PointcutRefactoringPlugin extends Plugin {
 		final long elapsed = end - newStart;	
 		
 		TimeCollector.clear();
-		final double secs = elapsed / 1000;
+		final double secs = (double) elapsed / 1000;
 		return secs;
 	}
 }
