@@ -69,12 +69,12 @@ public class PointcutRejuvenator extends PointcutProcessor {
 		int pointcutCount = 0;
 		for (final AdviceElement advElem : adviceCol) {
 
-			try {
-				DatabaseUtil.insertIntoDatabase(advElem);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
+//			try {
+//				DatabaseUtil.insertIntoDatabase(advElem);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				throw new RuntimeException(e);
+//			}
 
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToResultMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
 			final Map<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>> derivedPatternToEnabledElementMap = new LinkedHashMap<Pattern<IntentionArc<IElement>>, Set<IntentionElement<IElement>>>();
@@ -143,15 +143,15 @@ public class PointcutRejuvenator extends PointcutProcessor {
 						// disregard.
 
 						// insert into database.
-						try {
+//						try {
 							String adviceKey = DatabaseUtil.getKey(advElem);
-							DatabaseUtil
-									.insertShadowAndRelationshipIntoDatabase(
-											adviceKey,
-											suggestedJavaElement,
-											pattern,
-											confidence,
-											DatabaseUtil.AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE);
+//							DatabaseUtil
+//									.insertShadowAndRelationshipIntoDatabase(
+//											adviceKey,
+//											suggestedJavaElement,
+//											pattern,
+//											confidence,
+//											DatabaseUtil.AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE);
 
 							String benchmark = null;
 							try {
@@ -169,19 +169,19 @@ public class PointcutRejuvenator extends PointcutProcessor {
 							// DatabaseUtil.getKey(suggestedJavaElement),
 							// DatabaseUtil.getVersionNumber(benchmark),
 							// pattern, confidence);
-						} catch (ClassNotFoundException e) {
+//						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
-							throw new RuntimeException(e);
-						} catch (SQLException e) {
+							//e.printStackTrace();
+							//throw new RuntimeException(e);
+//						} catch (SQLException e) {
 							// TODO Auto-generated catch block
-							e.printStackTrace();
-							throw new RuntimeException(e);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							throw new RuntimeException(e);
-						}
+//							e.printStackTrace();
+//							throw new RuntimeException(e);
+//						} catch (Exception e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//							throw new RuntimeException(e);
+//						}
 
 						suggestedJavaElementSet.add(suggestedJavaElement);
 						// System.out.println(intentionElement.toPrettyString()
@@ -198,7 +198,7 @@ public class PointcutRejuvenator extends PointcutProcessor {
 	}
 
 	/**
-	 * @param derivedPatternToResultMap
+ * @param derivedPatternToResultMap
 	 * @param recoveredPatternToConfidenceMap
 	 * @return
 	 */
