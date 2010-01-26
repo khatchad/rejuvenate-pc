@@ -56,6 +56,11 @@ import ca.mcgill.cs.swevo.jayfx.model.IElement;
  */
 public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin {	
 	
+	/**
+	 * Number of times to run the experiment per advice.
+	 */
+	private static final int NUMBER_OF_RUNS = 3;
+
 	private PointcutRejuvenator rejuvenator = new PointcutRejuvenator();
 
 	private static RejuvenatePointcutPlugin instance;
@@ -72,10 +77,15 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin {
 
 		System.out.println("Advice\tTime (s)");
 		for (AdviceElement advElem : selectedAdvice) {
-			final long start = System.currentTimeMillis();
-			this.rejuvenator.analyzeAdvice(Collections.singleton(advElem), monitor);
-			final double secs = calculateTimeStatistics(start);
-			System.out.println(advElem.getHandleIdentifier() + "\t" + secs);
+			double totalSecs = 0;
+			for ( int i = 0; i < NUMBER_OF_RUNS; i++ ) {
+				final long start = System.currentTimeMillis();
+				this.rejuvenator.analyzeAdvice(Collections.singleton(advElem), monitor);
+				final double secs = calculateTimeStatistics(start);
+				System.out.println(advElem.getHandleIdentifier() + "\t" + secs);
+				totalSecs += secs; 
+			}
+			System.out.println("Average:" + "\t" + totalSecs / NUMBER_OF_RUNS);
 		}
 
 		monitor.done();
