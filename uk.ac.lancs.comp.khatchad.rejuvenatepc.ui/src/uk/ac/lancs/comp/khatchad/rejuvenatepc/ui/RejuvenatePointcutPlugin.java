@@ -47,7 +47,9 @@ import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.graph.Pattern;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.model.Suggestion;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.AJUtil;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.DatabaseUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.Util;
 import uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util.XMLUtil;
+import uk.ac.lancs.comp.khatchad.rejuvenatepc.ui.util.PostMan;
 import ca.mcgill.cs.swevo.jayfx.model.IElement;
 
 /**
@@ -75,19 +77,27 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin {
 		final Collection<AdviceElement> selectedAdvice = this
 				.getSelectedAdvice();
 
-		System.out.println("Advice\tTime (s)");
+		StringBuffer emailMessage = new StringBuffer();
+		final String header = "Advice\tTime (s)";
+		System.out.println(header);
+		emailMessage.append(header + '\n');
 		for (AdviceElement advElem : selectedAdvice) {
 			double totalSecs = 0;
 			for ( int i = 0; i < NUMBER_OF_RUNS; i++ ) {
 				final long start = System.currentTimeMillis();
 				this.rejuvenator.analyzeAdvice(Collections.singleton(advElem), monitor);
 				final double secs = calculateTimeStatistics(start);
-				System.out.println(advElem.getHandleIdentifier() + "\t" + secs);
+				final String row = advElem.getHandleIdentifier() + "\t" + secs;
+				System.out.println(row);
+				emailMessage.append(row + '\n');
 				totalSecs += secs; 
 			}
-			System.out.println("Average:" + "\t" + totalSecs / NUMBER_OF_RUNS);
+			final String average = "Average:" + "\t" + totalSecs / NUMBER_OF_RUNS;
+			System.out.println(average);
+			emailMessage.append(average + '\n');
 		}
-
+		
+		PostMan.postMail("Rejuvenation complete.", emailMessage.toString(), "Raffi Khatchadourian <khatchad@cse.ohio-state.edu>", "Raffi Khatchadourian <khatchad@cse.ohio-state.edu>");
 		monitor.done();
 	}
 
