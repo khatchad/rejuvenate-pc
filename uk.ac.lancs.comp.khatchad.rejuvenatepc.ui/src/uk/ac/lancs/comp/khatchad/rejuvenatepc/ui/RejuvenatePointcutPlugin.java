@@ -97,7 +97,7 @@ public class RejuvenatePointcutPlugin extends PointcutRefactoringPlugin {
 			emailMessage.append(average + '\n');
 		}
 		
-		PostMan.postMail("Rejuvenation complete.", emailMessage.toString(), "khatchad@cse.ohio-state.edu", "khatchad@cse.ohio-state.edu");
+//		PostMan.postMail("Rejuvenation complete.", emailMessage.toString(), "khatchad@cse.ohio-state.edu", "khatchad@cse.ohio-state.edu");
 		monitor.done();
 	}
 
