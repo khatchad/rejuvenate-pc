@@ -37,23 +37,8 @@ import org.eclipse.jdt.core.JavaModelException;
  * 
  */
 public class AJUtil {
+	
 	private AJUtil() {
-	}
-
-	/**
-	 * @param advElem
-	 * @return
-	 */
-	@SuppressWarnings( { "restriction", "unchecked" })
-	public static List<AJRelationship> getAdviceRelationshipList(
-			final AdviceElement advElem) {
-		final IProject proj = advElem.getJavaProject().getProject();
-		final List<AJRelationship> relationshipList = AJModel
-				.getInstance()
-				.getAllRelationships(
-						proj,
-						new AJRelationshipType[] { AJRelationshipManager.ADVISES });
-		return relationshipList;
 	}
 
 	/**
@@ -61,6 +46,7 @@ public class AJUtil {
 	 * @return
 	 * @throws JavaModelException
 	 */
+	@SuppressWarnings("unchecked")
 	public static Set<IJavaElement> getAdvisedJavaElements(AdviceElement advElem)
 			throws JavaModelException {
 		Set<IJavaElement> ret = new LinkedHashSet<IJavaElement>();

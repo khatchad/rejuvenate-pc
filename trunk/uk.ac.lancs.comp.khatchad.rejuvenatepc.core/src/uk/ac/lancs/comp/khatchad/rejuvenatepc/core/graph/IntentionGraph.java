@@ -122,20 +122,15 @@ public class IntentionGraph {
 			ConversionException {
 
 		this.resetAllElements(new SubProgressMonitor(monitor, -1));
-
-		final List<AJRelationship> relationshipList = AJUtil
-				.getAdviceRelationshipList(advisingElement);
+		
+		Collection<IJavaElement> advisedJavaElements = AJUtil.getAdvisedJavaElements(advisingElement);
 
 		monitor.beginTask("Enabling elements according to advice pointcut.",
-				relationshipList.size());
+				advisedJavaElements.size());
 
-		for (final AJRelationship relationship : relationshipList) {
-
-			if (relationship.getSource().equals(advisingElement)) {
-				final IJavaElement target = relationship.getTarget();
-				enableElementsAccordingTo(target, new SubProgressMonitor(
-						monitor, -1));
-			}
+		for (final IJavaElement advisedElement: advisedJavaElements) {
+			enableElementsAccordingTo(advisedElement, new SubProgressMonitor(
+					monitor, -1));
 			monitor.worked(1);
 		}
 		monitor.done();
