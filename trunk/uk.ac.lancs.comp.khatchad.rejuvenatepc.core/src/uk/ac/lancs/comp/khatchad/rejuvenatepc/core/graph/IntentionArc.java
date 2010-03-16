@@ -276,9 +276,7 @@ public class IntentionArc<E extends IElement> extends IntentionElement<E> {
 		name.append(targetString);
 		name.append(')');
 
-//		AJCodeElement ret = new AJCodeElement((JavaElement) source, name
-//				.toString(), 0);
-		AJCodeElement ret = new AJCodeElement((JavaElement) source, 0, name
+		AJCodeElement ret = new AJCodeElement((JavaElement) source, name
 				.toString());
 
 		return ret;

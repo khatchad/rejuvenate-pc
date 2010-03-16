@@ -5,6 +5,7 @@ package uk.ac.lancs.comp.khatchad.rejuvenatepc.core.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,9 +16,10 @@ import org.eclipse.ajdt.core.javaelements.AJCompilationUnitManager;
 import org.eclipse.ajdt.core.javaelements.AdviceElement;
 import org.eclipse.ajdt.core.javaelements.AspectElement;
 import org.eclipse.ajdt.core.javaelements.IAJCodeElement;
-import org.eclipse.ajdt.core.model.AJModel;
-//import org.eclipse.ajdt.core.model.AJProjectModelFacade;
+import org.eclipse.ajdt.core.model.AJModel; //import org.eclipse.ajdt.core.model.AJProjectModelFacade;
 //import org.eclipse.ajdt.core.model.AJProjectModelFactory;
+import org.eclipse.ajdt.core.model.AJProjectModelFacade;
+import org.eclipse.ajdt.core.model.AJProjectModelFactory;
 import org.eclipse.ajdt.core.model.AJRelationship;
 import org.eclipse.ajdt.core.model.AJRelationshipManager;
 import org.eclipse.ajdt.core.model.AJRelationshipType;
@@ -32,10 +34,11 @@ import org.eclipse.jdt.core.JavaModelException;
 
 /**
  * @author raffi
- *
+ * 
  */
 public class AJUtil {
-	private AJUtil() {}
+	private AJUtil() {
+	}
 
 	/**
 	 * @param advElem
@@ -61,49 +64,42 @@ public class AJUtil {
 	public static Set<IJavaElement> getAdvisedJavaElements(AdviceElement advElem)
 			throws JavaModelException {
 		Set<IJavaElement> ret = new LinkedHashSet<IJavaElement>();
-		
-		/* TODO: Broken (it seems).
-		 * AJProjectModelFactory factory = AJProjectModelFactory.getInstance();
-		 * AJProjectModelFacade facade = factory.getModelForJavaElement(advElem);
-		 * List list = facade.getRelationshipsForElement(advElem, null);
-		*/
-		
-		List<AJRelationship> relationshipList = getAdviceRelationshipList(advElem);
-		for (final AJRelationship relationship : relationshipList) {
-			final IJavaElement advice = relationship.getSource();
-			if (advice.equals(advElem)) {
-				final IJavaElement target = relationship.getTarget();
-				switch (target.getElementType()) {
-					case IJavaElement.METHOD: {
-						final IMethod meth = (IMethod) target;
-						if (meth.getParent() instanceof AspectElement)
-							break; //don't consider advice right now.
-						ret.add(meth);
-						break;
-					}
-					case IJavaElement.TYPE: {
-						// its a default ctor.
-						final IType type = (IType) target;
-						for (final IMethod meth : type.getMethods())
-							if (meth.isConstructor()
-									&& meth.getParameterNames().length == 0) {
-								ret.add(meth);
-							}
-						break;
-					}
-					case IJavaElement.LOCAL_VARIABLE: {
-						// its an aspect element.
-						if (!(target instanceof IAJCodeElement))
-							throw new IllegalStateException(
-									"Something is screwy here.");
-						ret.add(target);
-						break;
-					}
-					default:
-						throw new IllegalStateException(
-								"Unexpected relationship target type: "
-										+ target.getElementType());
+		AJProjectModelFacade model = AJProjectModelFactory.getInstance()
+				.getModelForJavaElement(advElem);
+		List relationshipsForElement = model.getRelationshipsForElement(
+				advElem, AJRelationshipManager.ADVISES);
+		for (Iterator it = relationshipsForElement.iterator(); it.hasNext();) {
+			IJavaElement target = (IJavaElement) it.next();
+			switch (target.getElementType()) {
+				case IJavaElement.METHOD: {
+					final IMethod meth = (IMethod) target;
+					if (meth.getParent() instanceof AspectElement)
+						break; //TODO: don't consider advice right now.
+					ret.add(meth);
+					break;
 				}
+				case IJavaElement.TYPE: {
+					// its a default ctor.
+					final IType type = (IType) target;
+					for (final IMethod meth : type.getMethods())
+						if (meth.isConstructor()
+								&& meth.getParameterNames().length == 0) {
+							ret.add(meth);
+						}
+					break;
+				}
+				case IJavaElement.LOCAL_VARIABLE: {
+					// its an aspect element.
+					if (!(target instanceof IAJCodeElement))
+						throw new IllegalStateException(
+								"Something is screwy here.");
+					ret.add(target);
+					break;
+				}
+				default:
+					throw new IllegalStateException(
+							"Unexpected relationship target type: "
+									+ target.getElementType());
 			}
 		}
 		return ret;
@@ -117,7 +113,7 @@ public class AJUtil {
 	public static Collection<? extends AdviceElement> extractValidAdviceElements(
 			final IJavaProject proj) throws JavaModelException {
 		final Collection<AdviceElement> ret = new LinkedHashSet<AdviceElement>();
-	
+
 		if (AspectJPlugin.isAJProject(proj.getProject()))
 			for (final IPackageFragment frag : proj.getPackageFragments())
 				for (final ICompilationUnit unit : frag.getCompilationUnits()) {
