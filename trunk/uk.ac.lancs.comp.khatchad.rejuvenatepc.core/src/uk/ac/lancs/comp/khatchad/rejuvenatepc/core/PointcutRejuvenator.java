@@ -144,7 +144,7 @@ public class PointcutRejuvenator extends PointcutProcessor {
 
 						// insert into database.
 //						try {
-							String adviceKey = DatabaseUtil.getKey(advElem);
+//							String adviceKey = DatabaseUtil.getKey(advElem);
 //							DatabaseUtil
 //									.insertShadowAndRelationshipIntoDatabase(
 //											adviceKey,
@@ -153,14 +153,14 @@ public class PointcutRejuvenator extends PointcutProcessor {
 //											confidence,
 //											DatabaseUtil.AdviceShadowRelationship.HAS_BEEN_SUGGESTED_TO_ADVISE);
 
-							String benchmark = null;
-							try {
-								benchmark = suggestedJavaElement
-										.getJavaProject().getProject()
-										.getName();
-							} catch (RuntimeException e) {
-								return;
-							}
+//							String benchmark = null;
+//							try {
+//								benchmark = suggestedJavaElement
+//										.getJavaProject().getProject()
+//										.getName();
+//							} catch (RuntimeException e) {
+//								return;
+//							}
 							// System.out.println(benchmark);
 							// System.out.println(DatabaseUtil
 							// .getVersionNumber(benchmark));
