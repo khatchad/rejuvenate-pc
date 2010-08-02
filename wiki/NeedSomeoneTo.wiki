@@ -1,4 +1,1 @@
-=== I need someone to: ===
-  * Run experiments
-  * Gather results
-  * Record and report crashes (bug submission) 
+=== Need someone to: ===
