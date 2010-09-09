@@ -75,9 +75,6 @@ class SuggestionViewLabelProvider extends LabelProvider implements
 		Suggestion<IJavaElement> suggestion = (Suggestion<IJavaElement>) obj;
 		switch (index) {
 		case 0:
-			// return JDTUtil.getType(suggestion.getSuggestion())
-			// .getFullyQualifiedName()
-			// + "." + suggestion.getSuggestion().getElementName();
 			return labelProvider.getText(suggestion.getSuggestion());
 		case 1:
 			return suggestion.getPattern().toString();
