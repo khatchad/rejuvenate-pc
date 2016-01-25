@@ -16,7 +16,7 @@ The plugin now works with the latest AJDT version (version 2.0.2 as of this writ
 
 ## Download
 
-The latest stable release is [Rejuvenate Pointcut 1.2](files/RejuvenatePointcut-1_2.zip) and has been tested with [Eclipse 3.5 SR2](https://www.eclipse.org/downloads) and [AJDT 2.0.2](http://www.eclipse.org/ajdt/downloads/). The archive also includes source code used for that particular version. To install, simply unzip the archive into your Eclipse distribution directory. We hope to have an automated update site set up in the near future. Also feel free to check out the latest sources from the SVN repository.
+The latest stable release is [Rejuvenate Pointcut 1.2](https://github.com/khatchad/Rejuvenate-Pointcut/raw/master/files/RejuvenatePointcut-1_2.zip) and has been tested with [Eclipse 3.5 SR2](https://www.eclipse.org/downloads) and [AJDT 2.0.2](http://www.eclipse.org/ajdt/downloads/). The archive also includes source code used for that particular version. To install, simply unzip the archive into your Eclipse distribution directory. We hope to have an automated update site set up in the near future. Also feel free to check out the latest sources from the SVN repository.
 
 ## Getting started
 
