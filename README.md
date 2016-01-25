@@ -20,7 +20,7 @@ The latest stable release is [Rejuvenate Pointcut 1.2](files/RejuvenatePointcut-
 
 ## Getting started
 
-Take a look at the GettingStarted page. Also, slides from a recent tool demonstration at the International Conference on Aspect-Oriented Software Development (AOSD '09) are available [here](http://www.cse.ohio-state.edu/~khatchad/talks/aosd09.pdf). A research poster depicting an earlier version of the tool, presented at AOSD '08, is available [here](http://www.cse.ohio-state.edu/~khatchad/posters/aosd08-poster.pdf).
+Take a look at the [GettingStarted](https://github.com/khatchad/Rejuvenate-Pointcut/wiki) page. Also, slides from a recent tool demonstration at the International Conference on Aspect-Oriented Software Development (AOSD '09) are available [here](http://www.cse.ohio-state.edu/~khatchad/talks/aosd09.pdf). A research poster depicting an earlier version of the tool, presented at AOSD '08, is available [here](http://www.cse.ohio-state.edu/~khatchad/posters/aosd08-poster.pdf).
 
 ## Getting help
 
