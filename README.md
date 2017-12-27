@@ -1,12 +1,12 @@
 # Rejuvenate Pointcut
 
-<img src="images/icon.png" width="10%" alt="logo" title="Logo" align="right" /> A tool for pointcut expression recovery in evolving Aspect-Oriented software.
+![Logo](https://raw.githubusercontent.com/ponder-lab/rejuvenate-pointcut/master/images/icon.png) A tool for pointcut expression recovery in evolving Aspect-Oriented software.
 
 ## Introduction
 
 Rejuvenate Pointcut is an open source, research prototype [Eclipse](http://www.eclipse.org) plugin that limits the problems associated with fragile pointcuts in AspectJ by assisting developers in rejuvenating pointcuts as the base-code evolves.
 
-![images/screenshot1.png](images/screenshot1.png)
+![Screenshot](https://raw.githubusercontent.com/ponder-lab/rejuvenate-pointcut/master/screenshot1.png)
 
 Development of the tool is current in its early stages and we welcome interested participants to join in the development effort by contacting the initial [author](mailto:khatchad@cse.ohio-state.edu). It is built as an extension to the [AspectJ Development Tools (AJDT)](http://www.eclipse.org/ajdt/) and leverages the [JayFX fact extractor plugin](http://www.cs.mcgill.ca/~swevo/jayfx/), the [Drools rules engine](http://www.jboss.org/drools/), and the [JDOM](http://www.jdom.org/) XML parser. Please visit the [research web site](http://tinyurl.com/63qv97) for more details about the internals of the tool.
 
